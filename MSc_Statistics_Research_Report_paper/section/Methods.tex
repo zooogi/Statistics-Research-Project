@@ -154,3 +154,80 @@ $$
 + \log \pi(\boldsymbol{\beta}) + \log \pi(\alpha) + \text{const}.
 $$
 As in the exponential regression case, this posterior distribution does not have a closed form and must be sampled numerically. It can be shown that, given the normal prior for $\boldsymbol{\beta}$ and Gamma prior for $\alpha$, the log-posterior is concave with respect to each parameter, satisfying the log-concavity condition and making ARS or Gibbs sampling applicable for efficient inference.
+
+\subsubsection{Extreme Value Model}
+The Extreme Value (EV) model can be viewed as a reparameterization of the Weibull model in the log-time domain, which reformulates the hazard function as an exponential-linear form in log time, facilitating direct integration of covariates.
+
+Specifically, if the survival time $T \sim \text{Weibull}(\alpha, \gamma)$, define:
+$$
+Y = \log T.
+$$
+Then,
+$$
+P(Y \le y) 
+= P(\log T \le y)
+= P(T \le e^y)
+= F_T(e^y)
+= 1 - \exp\big( - \gamma e^{\alpha y} \big).
+$$
+Therefore, the cumulative distribution function (CDF) for the EV model is:
+$$
+F(y) = 1 - \exp\big( - \exp(\lambda + \alpha y) \big), 
+\quad \text{where}~\lambda = \log \gamma.
+$$
+It follows that:
+$$
+\begin{aligned}
+S(y) &= \exp\big( - \exp(\lambda + \alpha y) \big),\\
+f(y) &= \alpha \exp(\lambda + \alpha y) \exp\big( - \exp(\lambda + \alpha y) \big),\\
+h(y) &= \alpha \exp(\lambda + \alpha y).
+\end{aligned}
+$$
+Compared to the power-form hazard in the Weibull model, the hazard in the EV model becomes exponential-linear with respect to log time and covariates, making the derivation simpler, the interpretation more straightforward, and the link with covariates naturally linear. In this formulation, $Y \in (-\infty, +\infty)$ is no longer constrained to be positive.
+
+With covariates, the location parameter is specified as:
+$$
+\lambda_i = \mathbf{x}_i^\top \boldsymbol{\beta}, 
+\quad i = 1, \ldots, n.
+$$
+Accordingly,
+$$
+f(y_i) = \alpha \exp(\alpha y_i + \lambda_i) \exp\big( -\exp(\alpha y_i + \lambda_i) \big), 
+\quad
+S(y_i) = \exp\big( -\exp(\alpha y_i + \lambda_i) \big).
+$$
+The observations $\{ Y_i, \nu_i \}_{i=1}^n$ are assumed to be independent and identically distributed (i.i.d.).
+
+The likelihood function is then:
+$$
+L(\boldsymbol{\beta}, \alpha) 
+= \prod_{i=1}^n 
+\big[ f(y_i) \big]^{\nu_i} 
+\big[ S(y_i) \big]^{1 - \nu_i}
+= \prod_{i=1}^n 
+\big[ \alpha \exp(\alpha y_i + \lambda_i) \big]^{\nu_i} 
+\exp\big( -\exp(\alpha y_i + \lambda_i) \big).
+$$
+The prior distributions are the same as for the Weibull model:
+$$
+\boldsymbol{\beta} \sim N(\boldsymbol{\mu}_0, \Sigma_0), 
+\quad 
+\alpha \sim \text{Gamma}(a_0, b_0).
+$$
+The joint posterior (up to a normalizing constant) is:
+$$
+\pi(\boldsymbol{\beta}, \alpha | D) 
+\propto L(\boldsymbol{\beta}, \alpha)
+\, \pi(\boldsymbol{\beta}) 
+\, \pi(\alpha).
+$$
+The log-kernel of the posterior is:
+$$
+\log \pi(\boldsymbol{\beta}, \alpha | D)
+= \sum_{i=1}^n 
+\big[
+\nu_i \log \alpha + \nu_i \alpha y_i + \nu_i \lambda_i - \exp(\alpha y_i + \lambda_i)
+\big]
++ \log \pi(\boldsymbol{\beta}) + \log \pi(\alpha) + \text{const}.
+$$
+It can be shown that the Hessian of this log-posterior with respect to both $\boldsymbol{\beta}$ and $\alpha$ is non-positive definite, implying log-concavity, which allows safe and efficient inference using ARS or Gibbs sampling in practice.
