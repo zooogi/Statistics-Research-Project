@@ -36,5 +36,5 @@ bayesian-survival-project/
 │   └── ...
 │
 ├── README.md              # 项目描述 + 如何 reproduce
-└── .gitignore             # 忽略不必要的中间文件
+└── .gitignore            
 ```
