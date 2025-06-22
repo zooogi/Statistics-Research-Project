@@ -1,3 +1,4 @@
+```bash
 bayesian-survival-project/
 │
 ├── data/                  # 原始数据 (小数据可放这里，大数据用链接)
@@ -36,3 +37,4 @@ bayesian-survival-project/
 │
 ├── README.md              # 项目描述 + 如何 reproduce
 └── .gitignore             # 忽略不必要的中间文件
+```
