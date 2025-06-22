@@ -1,30 +1,156 @@
-\paragraph{Tips for the Methods section.} In general, you may structure the main body of your report in a form that suits your project best. We recommend to start with a substantial Methods section that includes, as in a research paper, a description of the following:
-\begin{itemize}
-    \item Key definitions and setting using mathematical notation. Any terminology related to the topic/data needs to be clearly presented and explained to the reader.
-    \item Any data used in the project should be clearly explained in sufficient detail in the Methods section so that readers can follow the rest of your report without the need to consult an other report or any of your references.
-    \item If in the project you have generated simulated data, a clear presentation of the generative procedure needs to be included. 
-    \item Background statistical work using mathematical notation.
-    \item All maths should be presented in inline or display formulas with appropriate referencing. For example, use $\exp(x)$ not exp(x) and $\sin(\theta)$ not $sin(\theta)$ or sin($\theta$). Display formulas should be numbered using the equation environment if they are referenced in the main text. Display equation blocks should be numbered using the subequations environment:
-\begin{subequations}\label{eq:Y}
-    \begin{align}
-        Y & = 1 + Z \label{eq:Y1} \\ 
-        Z & \sim \mathcal{N}(0,1) \label{eq:Y2},
-    \end{align}
-\end{subequations}
-    so that you can reference~\eqref{eq:Y}, ~\eqref{eq:Y1}, and ~\eqref{eq:Y2}.
-    \item If your main findings are of an applied nature, you may prefer to describe any new/original statistical procedures or models here. Include the key derivations and proofs if there are any, and any supplementary derivations in the appendix. Clearly highlight your contribution relative to existing work. 
-    \item If your main findings are of a theoretical nature, you may prefer to describe any new/original statistical procedures or models in the Results section.
-    \item Structure your Methods section using LaTeX   subsections and reference them using labels.
-    \item Aim for approximately 8-15 pages, similar in style to a general science or statistics research paper.
-\end{itemize}
+In survival analysis, the random variable $Y$ represents the time until an event of interest occurs (e.g., death or failure). The distribution of $Y$ is commonly described by the following fundamental functions:
+\begin{enumerate}
+    \item \textbf{Survival function}, which gives the probability that the event has not occurred by time $y$:
+   $$
+   S(y) = P(Y > y) = 1 - F(y).
+   $$
+   \item \textbf{Probability density function (PDF)}, which represents the instantaneous probability density of the event occurring exactly at time $y$:
+   $$
+   f(y) = \frac{d}{dy} F(y).
+   $$
+   \item \textbf{Hazard function}, defined as:
+   $$
+   h(y) = \lim_{\Delta y \to 0} 
+   \frac{P(y \le Y < y + \Delta y \mid Y \ge y)}{\Delta y}
+   = \frac{f(y)}{S(y)},
+   $$
+   It represents the instantaneous risk that an event occurs within an infinitesimally small time interval, given that the individual has survived up to time \( y \).
+\end{enumerate}
+
+The relationships among these functions are:
+$$
+f(y) = h(y) S(y),
+\quad
+S(y) = \exp\Big( - \int_0^y h(u) du \Big).
+$$
+Therefore, these three functions can be derived from each other and jointly describe the probabilistic behavior of the survival time.
+
+\subsection{Parametric Survival Model} 
+In practical analysis, for more convenient modeling and interpretation of survival data, it is common to make parametric assumptions for the hazard function $h(y)$, thereby constructing parametric survival models \cite{ibrahim2013bayesian}. This section introduces several typical parametric models and their corresponding Bayesian inference procedures.
+
+\subsubsection{Exponential Model} \label{Exponential Model}
+The simplest and most classical parametric survival model is the Exponential Model, which assumes that the hazard rate $h(y)$ remains constant over the entire time interval:
+$$
+h(y) = \lambda.
+$$
+This means that at any time $y$, the instantaneous risk of an event occurring for an individual does not change with survival time. Therefore, the exponential model has a simple structure and is easy to interpret and derive.
+
+According to the basic relationships in survival analysis, we have:
+$$
+S(y) = \exp\Big( -\int_0^y h(u) du \Big) = \exp(-\lambda y), 
+\quad 
+f(y) = h(y) S(y) = \lambda \exp(-\lambda y).
+$$
+Thus, when the hazard rate is constant, the probability density function of the survival time is an exponential density.
+
+Let the random sample of survival times be $Y = (Y_1, \ldots, Y_n)$, which are independently and identically distributed (i.i.d.) and follow an exponential distribution with parameter $\lambda$:
+$$
+Y_i \sim \text{Exponential}(\lambda), 
+\quad 
+\text{with density} ~ f_{Y_i}(y) = \lambda \exp(-\lambda y).
+$$
+where $\lambda$ represents the average event rate per unit time.
+
+To flexibly capture individual heterogeneity, it is common in practical survival analysis to incorporate covariates by modeling the hazard rate $\lambda$ as a function of individual characteristics. The most widely used approach is to adopt a log-link function:
+$$
+\lambda_i = \exp(\mathbf{x}_i^\top \boldsymbol{\beta}),
+\quad i = 1, \ldots, n,
+$$
+where $\mathbf{x}_i$ denotes the covariate vector for the $i$-th individual and $\boldsymbol{\beta}$ is the vector of regression coefficients to be estimated.
+
+Under this specification, the exponential model naturally extends to the \textbf{exponential regression model}, and conditional on $\boldsymbol{\beta}$, the survival times $Y_i$ are assumed to be independently and identically distributed (i.i.d.). For right-censored observations $(y_i, \nu_i)$, the likelihood function is given by:
+\begin{align*}
+L(\boldsymbol{\beta} | D)
+&= \prod_{i=1}^n 
+\big[ f(y_i | \boldsymbol{\beta}) \big]^{\nu_i}
+\big[ S(y_i | \boldsymbol{\beta}) \big]^{1 - \nu_i} \\
+&= \prod_{i=1}^n 
+\big[ \lambda_i \exp(-\lambda_i y_i) \big]^{\nu_i}
+\big[ \exp(-\lambda_i y_i) \big]^{1 - \nu_i} \\
+&= \prod_{i=1}^n 
+\lambda_i^{\nu_i} 
+\exp(-\lambda_i y_i) \\
+&= \prod_{i=1}^n 
+\exp\big( \nu_i \mathbf{x}_i^\top \boldsymbol{\beta} \big)
+\exp\big( - y_i \exp(\mathbf{x}_i^\top \boldsymbol{\beta}) \big).
+\end{align*}
+In the absence of prior knowledge, a common choice for the prior distribution of $\boldsymbol{\beta}$ is either an improper uniform prior, $\pi(\boldsymbol{\beta}) \propto 1$, or a multivariate normal prior:
+$$
+\boldsymbol{\beta} \sim N(\boldsymbol{\mu}_0, \Sigma_0).
+$$
+Here, we adopt the normal prior as an example. The posterior distribution (up to a normalizing constant) is then:
+$$
+\pi(\boldsymbol{\beta} | D)
+\propto L(\boldsymbol{\beta} | D) \, \pi(\boldsymbol{\beta})
+= \prod_{i=1}^n 
+\exp\big( \nu_i \mathbf{x}_i^\top \boldsymbol{\beta} 
+- y_i \exp(\mathbf{x}_i^\top \boldsymbol{\beta}) \big)
+\times \exp\Big( -\frac{1}{2} (\boldsymbol{\beta} - \boldsymbol{\mu}_0)^\top \Sigma_0^{-1} (\boldsymbol{\beta} - \boldsymbol{\mu}_0) \Big).
+$$
+Taking the logarithm, the log-posterior kernel is:
+$$
+\log \pi(\boldsymbol{\beta} | D) 
+= \sum_{i=1}^n \big[ \nu_i \mathbf{x}_i^\top \boldsymbol{\beta} 
+- y_i \exp(\mathbf{x}_i^\top \boldsymbol{\beta}) \big]
+- \frac{1}{2} (\boldsymbol{\beta} - \boldsymbol{\mu}_0)^\top \Sigma_0^{-1} (\boldsymbol{\beta} - \boldsymbol{\mu}_0) + \text{const}.
+$$
+Clearly, this posterior distribution does not admit a closed-form solution and can be sampled using MCMC methods. According to \cite{gilks1992adaptive}, if the posterior distribution is log-concave with respect to the parameter, adaptive rejection sampling (ARS) can be efficiently employed. By verifying that the second derivative of the log-posterior kernel is non-positive, it follows that when the prior is normal, the posterior distribution for the exponential regression model is log-concave, and hence ARS can be safely applied for efficient sampling.
 
 
-\subsection{My Methods subsection}\label{subsec:my_subsec}
-
-This text is in Subsection~\ref{subsec:my_subsec}, which is a part of Section~\ref{sec:methods}.
-
-\subsubsection{My subsubsection}
-If needed, subsections can also have subsubsections within them. Keep subsections and subsubsections numbered, which will help us to reference them.
 
 
-\paragraph{Paragraphs.} In the rare event that you need a more deeply nested structure within a subsubsection, the \texttt{\textbackslash paragraph\{\}} command can be useful. 
+\subsubsection{Weibull Model} \label{Weibull Model}
+The Weibull model is a natural generalization of the exponential model and is suitable for describing scenarios where the hazard rate changes monotonically over time. Compared to the exponential model, which assumes a constant hazard rate, the Weibull model introduces a shape parameter $\alpha$, allowing the hazard rate $h(y)$ to increase or decrease with survival time $y$, providing greater flexibility to capture realistic survival or failure patterns.
+
+The hazard function, probability density function, and survival function are given by:
+$$
+h(y) = \alpha \gamma y^{\alpha - 1}, 
+\quad 
+f(y) = \alpha \gamma y^{\alpha - 1} \exp(-\gamma y^{\alpha}), 
+\quad 
+S(y) = \exp(-\gamma y^{\alpha}),
+\quad \gamma > 0,
+$$
+where $\alpha$ is the shape parameter and $\gamma = \exp(\lambda)$ is the scale parameter. When $\alpha > 1$, the hazard rate increases over time (indicating an aging effect); when $\alpha < 1$, the hazard rate decreases over time (indicating early failure); and when $\alpha = 1$, the Weibull model reduces to the exponential model.
+
+Similar to the exponential case, suppose the survival time sample $Y = (Y_1, \ldots, Y_n)$ is independently and identically distributed according to a common Weibull distribution. To further incorporate individual covariate effects, the scale parameter can be modeled as:
+$$
+\gamma_i = \exp(\mathbf{x}_i^\top \boldsymbol{\beta}),
+\quad i = 1, \ldots, n,
+$$
+where $\mathbf{x}_i$ denotes the covariate vector and $\boldsymbol{\beta}$ is the vector of regression coefficients. The functional forms of the hazard and density remain unchanged, with $\gamma$ replaced by $\gamma_i$.
+Assuming independent samples and right-censoring, the full likelihood function is:
+$$
+L(\boldsymbol{\beta}, \alpha)
+= \prod_{i=1}^n 
+\big[ f(y_i) \big]^{\nu_i} 
+\big[ S(y_i) \big]^{1 - \nu_i}
+= \prod_{i=1}^n 
+\big[ \alpha \gamma_i y_i^{\alpha - 1} \big]^{\nu_i} 
+\exp(-\gamma_i y_i^\alpha).
+$$
+For the prior specification, $\boldsymbol{\beta}$ can be assigned the same normal prior as in the exponential regression case, while the shape parameter $\alpha$ is commonly assigned a Gamma prior:
+$$
+\boldsymbol{\beta} \sim N(\boldsymbol{\mu}_0, \Sigma_0), 
+\quad 
+\alpha \sim \text{Gamma}(a_0, b_0).
+$$
+Assuming $\boldsymbol{\beta}$ and $\alpha$ are conditionally independent a priori, the joint posterior distribution (up to a normalizing constant) is:
+$$
+\pi(\boldsymbol{\beta}, \alpha | D)
+\propto L(\boldsymbol{\beta}, \alpha)
+\, \pi(\boldsymbol{\beta})
+\, \pi(\alpha).
+$$
+Taking logarithms yields the log-posterior kernel:
+$$
+\log \pi(\boldsymbol{\beta}, \alpha | D)
+= \sum_{i=1}^n 
+\big[
+\nu_i \log \alpha + \nu_i \mathbf{x}_i^\top \boldsymbol{\beta} 
++ \nu_i (\alpha - 1) \log y_i 
+- \exp(\mathbf{x}_i^\top \boldsymbol{\beta}) y_i^\alpha
+\big]
++ \log \pi(\boldsymbol{\beta}) + \log \pi(\alpha) + \text{const}.
+$$
+As in the exponential regression case, this posterior distribution does not have a closed form and must be sampled numerically. It can be shown that, given the normal prior for $\boldsymbol{\beta}$ and Gamma prior for $\alpha$, the log-posterior is concave with respect to each parameter, satisfying the log-concavity condition and making ARS or Gibbs sampling applicable for efficient inference.
