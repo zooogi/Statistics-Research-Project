@@ -1,4 +1,6 @@
-In survival analysis, the random variable $Y$ represents the time until an event of interest occurs (e.g., death or failure). The distribution of $Y$ is commonly described by the following fundamental functions:
+\subsection{Fundamentals of Survival Analysis} \label{Fundamentals of Survival Analysis}
+
+In survival analysis, the random variable $Y$ represents the time until an event of interest occurs (e.g., death or failure). The distribution of $Y$ is commonly described by the following fundamental functions (\cite{kleinbaum1996survival}):
 \begin{enumerate}
     \item \textbf{Survival function}, which gives the probability that the event has not occurred by time $y$:
    $$
@@ -25,40 +27,76 @@ S(y) = \exp\Big( - \int_0^y h(u) du \Big).
 $$
 Therefore, these three functions can be derived from each other and jointly describe the probabilistic behavior of the survival time.
 
-\subsection{Parametric Survival Model} 
-In practical analysis, for more convenient modeling and interpretation of survival data, it is common to make parametric assumptions for the hazard function $h(y)$, thereby constructing parametric survival models \cite{ibrahim2013bayesian}. This section introduces several typical parametric models and their corresponding Bayesian inference procedures.
 
-\subsubsection{Exponential Model} \label{Exponential Model}
-The simplest and most classical parametric survival model is the Exponential Model, which assumes that the hazard rate $h(y)$ remains constant over the entire time interval:
+\subsection{Why Bayesian}\label{Why Bayesian}
+When we first encounter survival analysis, it may seem sufficient to estimate the risk rate $\lambda$ with a single best value (for example, via Maximum Likelihood Estimation, MLE). However, as we begin to truly reflect on the relationship between data and models, we realize that merely obtaining a point estimate is far from enough. For instance, under the exponential survival model, we maximize the likelihood function (\cite{ibrahim2013bayesian}):
+$$
+L(\lambda) = \prod_{i=1}^{n} [\lambda e^{-\lambda y_i}]^{\delta_i} [e^{-\lambda y_i}]^{1 - \delta_i}
+$$
+This formula tells us how to find the most likely value of $\lambda$, but it does not tell us: how uncertain is this estimate? In real-world applications, we often need more than a single number. We want to understand the plausible range of this value given the data. This is precisely where the Bayesian approach fills the gap. The core of Bayesian inference is that it treats parameters not as fixed unknowns but as random variables (\cite{bartovs2022informed}). Through the formula:
+$$
+\text{Posterior}(\lambda \mid data) \propto \text{Likelihood}(data \mid \lambda) \times \text{Prior}(\lambda)
+$$
+It combines prior knowledge (Prior) with the information provided by the current data (Likelihood), yielding the posterior distribution (Posterior). This inference framework shows that the integration of data and prior knowledge is not an either-or choice, but a continuous process of updating and refinement.
+
+In the context of survival analysis, the advantages of Bayesian methods become even clearer (\cite{bartovs2022informed}). Firstly, survival data are typically censored. In the Bayesian framework, censored observations are naturally incorporated into the likelihood—the likelihood contribution of a censored sample is simply its survival function $S(y) = e^{-\lambda y}$. Secondly, Bayesian methods allow us to incorporate historical information or expert opinion as priors. This is particularly useful when the sample size is small or the censoring proportion is high, providing more stable parameter estimates. Thirdly, the Bayesian framework is inherently extendable. From the simple exponential model to more complex Weibull models, or even to non-parametric and semi-parametric models, we only need to adjust the definitions of the likelihood and prior to obtain structured posterior inference, ensuring model interpretability and stability.
+
+Thus, adopting a Bayesian approach is not merely a technical choice, but an expression of a more honest and deeper understanding of uncertainty. In survival analysis, estimating parameters is not the hard part; the real challenge lies in fully capturing and communicating the uncertainty around those estimates, so that robust decisions can be made in practice. This is the fundamental advantage of Bayesian methods in survival analysis.
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Parametric Exponential Model} \label{Exponential Model}
+
+The exponential model is one of the simplest and most classic Bayesian survival models, assuming a constant hazard rate over time:
 $$
 h(y) = \lambda.
 $$
-This means that at any time $y$, the instantaneous risk of an event occurring for an individual does not change with survival time. Therefore, the exponential model has a simple structure and is easy to interpret and derive.
+This implies that the instantaneous event risk remains unchanged regardless of survival time. For example, if a light bulb has the same failure risk at any moment, we only need to know $\lambda$ without modeling time-varying risks, simplifying inference and calculation.
 
-According to the basic relationships in survival analysis, we have:
+In general, for any parametric survival model with density $f(y|\theta)$ and survival function $S(y|\theta)$ (\cite{enwiki:1270064454}), the likelihood is:
 $$
-S(y) = \exp\Big( -\int_0^y h(u) du \Big) = \exp(-\lambda y), 
-\quad 
-f(y) = h(y) S(y) = \lambda \exp(-\lambda y).
+L(\theta | D)
+= \prod_{i=1}^n
+[ f(y_i | \theta) ]^{\nu_i}
+[ S(y_i | \theta) ]^{1 - \nu_i},
 $$
-Thus, when the hazard rate is constant, the probability density function of the survival time is an exponential density.
+where $\nu_i=1$ indicates an observed event (contributing $f(y_i|\theta)$) and $\nu_i=0$ indicates right-censoring (contributing $S(y_i|\theta)$). Thus, the likelihood combines exact failure information and partial censoring information coherently within a Bayesian framework.
 
-Let the random sample of survival times be $Y = (Y_1, \ldots, Y_n)$, which are independently and identically distributed (i.i.d.) and follow an exponential distribution with parameter $\lambda$:
+For the exponential model (\cite{ibrahim2013bayesian}):
 $$
-Y_i \sim \text{Exponential}(\lambda), 
-\quad 
-\text{with density} ~ f_{Y_i}(y) = \lambda \exp(-\lambda y).
+S(y) = 
+\begin{cases}
+\exp\Big( -\int_0^y h(u) du \Big)=\exp(-\lambda y), & y \ge 0 \\
+1, & y < 0 
+\end{cases}
 $$
-where $\lambda$ represents the average event rate per unit time.
-
-To flexibly capture individual heterogeneity, it is common in practical survival analysis to incorporate covariates by modeling the hazard rate $\lambda$ as a function of individual characteristics. The most widely used approach is to adopt a log-link function:
+$$
+f(y) = 
+\begin{cases}
+h(y) S(y)=\lambda \exp(-\lambda y), & y \ge 0 \\
+0, & y < 0
+\end{cases}
+$$
+Including covariates via a log-link yields  (\cite{ibrahim2013bayesian}):
 $$
 \lambda_i = \exp(\mathbf{x}_i^\top \boldsymbol{\beta}),
 \quad i = 1, \ldots, n,
 $$
-where $\mathbf{x}_i$ denotes the covariate vector for the $i$-th individual and $\boldsymbol{\beta}$ is the vector of regression coefficients to be estimated.
+Without covariates, the hazard reduces to (\cite{chen2025survival}):
+$$
+\lambda_i = \exp(\beta_0),
+$$
+representing a single baseline hazard rate for all individuals. With covariates, $\lambda_i$ varies with individual characteristics.
 
-Under this specification, the exponential model naturally extends to the \textbf{exponential regression model}, and conditional on $\boldsymbol{\beta}$, the survival times $Y_i$ are assumed to be independently and identically distributed (i.i.d.). For right-censored observations $(y_i, \nu_i)$, the likelihood function is given by:
+Here $\boldsymbol{\beta}$ are regression coefficients, and the likelihood becomes:
 \begin{align*}
 L(\boldsymbol{\beta} | D)
 &= \prod_{i=1}^n 
@@ -74,28 +112,54 @@ L(\boldsymbol{\beta} | D)
 \exp\big( \nu_i \mathbf{x}_i^\top \boldsymbol{\beta} \big)
 \exp\big( - y_i \exp(\mathbf{x}_i^\top \boldsymbol{\beta}) \big).
 \end{align*}
-In the absence of prior knowledge, a common choice for the prior distribution of $\boldsymbol{\beta}$ is either an improper uniform prior, $\pi(\boldsymbol{\beta}) \propto 1$, or a multivariate normal prior:
+In Bayesian inference, we assign priors $\pi(\theta)$, either weakly informative (e.g. $\pi(\theta)\propto1$) or informative (e.g. $\boldsymbol{\beta} \sim N(\boldsymbol{\mu}_0, \Sigma_0)$). Priors stabilize estimation, especially with small samples.
+
+Overall, Bayesian inference proceeds by specifying the model and prior, computing the posterior:
 $$
-\boldsymbol{\beta} \sim N(\boldsymbol{\mu}_0, \Sigma_0).
+\pi(\theta | D)
+\propto
+L(\theta | D) \times \pi(\theta),
 $$
-Here, we adopt the normal prior as an example. The posterior distribution (up to a normalizing constant) is then:
+then summarizing it via means, medians, credible intervals, or posterior predictive distributions.
+
+For example, with a normal prior, the (unnormalized) posterior is:
 $$
 \pi(\boldsymbol{\beta} | D)
-\propto L(\boldsymbol{\beta} | D) \, \pi(\boldsymbol{\beta})
-= \prod_{i=1}^n 
-\exp\big( \nu_i \mathbf{x}_i^\top \boldsymbol{\beta} 
-- y_i \exp(\mathbf{x}_i^\top \boldsymbol{\beta}) \big)
-\times \exp\Big( -\frac{1}{2} (\boldsymbol{\beta} - \boldsymbol{\mu}_0)^\top \Sigma_0^{-1} (\boldsymbol{\beta} - \boldsymbol{\mu}_0) \Big).
+\propto
+L(\boldsymbol{\beta} | D)
+\times
+\pi(\boldsymbol{\beta}).
 $$
-Taking the logarithm, the log-posterior kernel is:
+With log posterior:
 $$
-\log \pi(\boldsymbol{\beta} | D) 
-= \sum_{i=1}^n \big[ \nu_i \mathbf{x}_i^\top \boldsymbol{\beta} 
+\log \pi(\boldsymbol{\beta} | D)
+\propto \sum_{i=1}^n
+\big[ \nu_i \mathbf{x}_i^\top \boldsymbol{\beta}
 - y_i \exp(\mathbf{x}_i^\top \boldsymbol{\beta}) \big]
-- \frac{1}{2} (\boldsymbol{\beta} - \boldsymbol{\mu}_0)^\top \Sigma_0^{-1} (\boldsymbol{\beta} - \boldsymbol{\mu}_0) + \text{const}.
+- \frac{1}{2}
+(\boldsymbol{\beta} - \boldsymbol{\mu}_0)^\top
+\Sigma_0^{-1}
+(\boldsymbol{\beta} - \boldsymbol{\mu}_0).
 $$
-Clearly, this posterior distribution does not admit a closed-form solution and can be sampled using MCMC methods. According to \cite{gilks1992adaptive}, if the posterior distribution is log-concave with respect to the parameter, adaptive rejection sampling (ARS) can be efficiently employed. By verifying that the second derivative of the log-posterior kernel is non-positive, it follows that when the prior is normal, the posterior distribution for the exponential regression model is log-concave, and hence ARS can be safely applied for efficient sampling.
+As this posterior lacks a closed form, MCMC methods are used for sampling (\cite{stats5010006}). Here, we implement it via \texttt{brms} in R.
 
+For instance, fitting the exponential model without covariates to the veteran dataset yields the posterior distribution of $\lambda$ (Figure ~\ref{fig:exp veteran}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=6cm, width=0.9\textwidth]{MSc_Statistics_Research_Report_paper/images/exp model veteran.png}
+    \caption{An example posterior density (left) and trace plot (right).}
+    \label{fig:exp veteran}
+\end{figure}
+Posterior density plot shows the distribution and uncertainty of $\lambda$; Trace plot shows four MCMC chains with good mixing and convergence.
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
