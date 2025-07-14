@@ -1,22 +1,48 @@
+\subsection{Why Bayesian}\label{Why Bayesian}
+When we first encounter statistical modelling, we often focus on finding the “best parameter estimate,” such as using Maximum Likelihood Estimation (MLE) to obtain the point estimate that maximises the probability of the observed data (\cite{van2021bayesian}). This works well in many tasks: given data, find the most likely parameter, and the problem seems solved. However, upon deeper reflection, we realise that the relationship between data and model goes far beyond this. We not only need to know what the most likely value is, but also how certain we are about it.
+
+MLE provides only a single-point estimate. In situations with limited data, complex structures, or sparse observations, such estimates can be biased and their uncertainty hard to quantify. Although classical methods provide standard errors or asymptotic confidence intervals, these rely on ideal conditions and often fail to reflect true inferential uncertainty.
+
+Bayesian methods directly address this limitation. By treating parameters as unknown but probabilistic quantities (\cite{van2021bayesian}), Bayesian inference combines prior knowledge and data evidence through
+$$
+\text{Posterior}(\theta \mid data)
+\propto
+\text{Likelihood}(data \mid \theta)
+\times
+\text{Prior}(\theta),
+$$
+yielding a full posterior distribution rather than a single estimate. This reframes inference from merely “finding the right number” to a dynamic process of updating and refining our beliefs. It not only provides point estimates but also credible intervals and posterior predictive distributions, giving a complete picture of uncertainty.
+
+The generality of this approach makes it suitable for tasks from simple mean estimation and regression to complex hierarchical models, structural equation models, time series, and deep generative models. In any situation where understanding uncertainty, integrating prior knowledge, and making robust decisions matter, Bayesian inference offers distinct advantages.
+
+Applied to survival analysis, these benefits become especially clear. Survival data often involve censoring, which Bayesian models naturally accommodate within the likelihood (\cite{bartovs2022informed}). Moreover, when sample sizes are small or censoring rates are high, priors can stabilise estimation by formally incorporating historical data or expert knowledge. Whether for exponential, Weibull, or more complex semi- or non-parametric models, Bayesian inference provides a structured, interpretable, and extensible framework.
+
+Thus, choosing Bayesian methods is not just a technical decision; it represents a fundamentally more honest, systematic, and insightful way of expressing uncertainty and updating knowledge in statistical inference.
+
+
+
+
+
+
 \subsection{Fundamentals of Survival Analysis} \label{Fundamentals of Survival Analysis}
 
 In survival analysis, the random variable $Y$ represents the time until an event of interest occurs (e.g., death or failure). The distribution of $Y$ is commonly described by the following fundamental functions (\cite{kleinbaum1996survival}):
 \begin{enumerate}
-    \item \textbf{Survival function}, which gives the probability that the event has not occurred by time $y$:
+    \item \textbf{Survival function}, which gives the probability that the event has not occurred by time $y \ge 0$
    $$
    S(y) = P(Y > y) = 1 - F(y).
    $$
-   \item \textbf{Probability density function (PDF)}, which represents the instantaneous probability density of the event occurring exactly at time $y$:
+   \item \textbf{Probability density function (PDF)}, which represents the instantaneous probability density of the event occurring exactly at time $y \ge 0$
    $$
    f(y) = \frac{d}{dy} F(y).
    $$
-   \item \textbf{Hazard function}, defined as:
+   \item \textbf{Hazard function}, defined as
    $$
    h(y) = \lim_{\Delta y \to 0} 
    \frac{P(y \le Y < y + \Delta y \mid Y \ge y)}{\Delta y}
    = \frac{f(y)}{S(y)},
    $$
-   It represents the instantaneous risk that an event occurs within an infinitesimally small time interval, given that the individual has survived up to time \( y \).
+   It represents the instantaneous risk that an event occurs within an infinitesimally small time interval, given that the individual has survived up to time \( y \ge 0\).
 \end{enumerate}
 
 The relationships among these functions are:
@@ -28,77 +54,141 @@ $$
 Therefore, these three functions can be derived from each other and jointly describe the probabilistic behavior of the survival time.
 
 
-\subsection{Why Bayesian}\label{Why Bayesian}
-When we first encounter survival analysis, it may seem sufficient to estimate the risk rate $\lambda$ with a single best value (for example, via Maximum Likelihood Estimation, MLE). However, as we begin to truly reflect on the relationship between data and models, we realize that merely obtaining a point estimate is far from enough. For instance, under the exponential survival model, we maximize the likelihood function (\cite{ibrahim2013bayesian}):
-$$
-L(\lambda) = \prod_{i=1}^{n} [\lambda e^{-\lambda y_i}]^{\delta_i} [e^{-\lambda y_i}]^{1 - \delta_i}
-$$
-This formula tells us how to find the most likely value of $\lambda$, but it does not tell us: how uncertain is this estimate? In real-world applications, we often need more than a single number. We want to understand the plausible range of this value given the data. This is precisely where the Bayesian approach fills the gap. The core of Bayesian inference is that it treats parameters not as fixed unknowns but as random variables (\cite{bartovs2022informed}). Through the formula:
-$$
-\text{Posterior}(\lambda \mid data) \propto \text{Likelihood}(data \mid \lambda) \times \text{Prior}(\lambda)
-$$
-It combines prior knowledge (Prior) with the information provided by the current data (Likelihood), yielding the posterior distribution (Posterior). This inference framework shows that the integration of data and prior knowledge is not an either-or choice, but a continuous process of updating and refinement.
-
-In the context of survival analysis, the advantages of Bayesian methods become even clearer (\cite{bartovs2022informed}). Firstly, survival data are typically censored. In the Bayesian framework, censored observations are naturally incorporated into the likelihood—the likelihood contribution of a censored sample is simply its survival function $S(y) = e^{-\lambda y}$. Secondly, Bayesian methods allow us to incorporate historical information or expert opinion as priors. This is particularly useful when the sample size is small or the censoring proportion is high, providing more stable parameter estimates. Thirdly, the Bayesian framework is inherently extendable. From the simple exponential model to more complex Weibull models, or even to non-parametric and semi-parametric models, we only need to adjust the definitions of the likelihood and prior to obtain structured posterior inference, ensuring model interpretability and stability.
-
-Thus, adopting a Bayesian approach is not merely a technical choice, but an expression of a more honest and deeper understanding of uncertainty. In survival analysis, estimating parameters is not the hard part; the real challenge lies in fully capturing and communicating the uncertainty around those estimates, so that robust decisions can be made in practice. This is the fundamental advantage of Bayesian methods in survival analysis.
-
-
-
-
-
-
-
-
-
 
 
 \subsection{Parametric Exponential Model} \label{Exponential Model}
 
-The exponential model is one of the simplest and most classic Bayesian survival models, assuming a constant hazard rate over time:
+In general, for any parametric Bayesian survival model with density $f(y|\theta)$ and survival function $S(y|\theta)$ (\cite{ibrahim2013bayesian}), the likelihood is
 $$
-h(y) = \lambda.
-$$
-This implies that the instantaneous event risk remains unchanged regardless of survival time. For example, if a light bulb has the same failure risk at any moment, we only need to know $\lambda$ without modeling time-varying risks, simplifying inference and calculation.
-
-In general, for any parametric survival model with density $f(y|\theta)$ and survival function $S(y|\theta)$ (\cite{enwiki:1270064454}), the likelihood is:
-$$
-L(\theta | D)
+L( D | \theta)
 = \prod_{i=1}^n
 [ f(y_i | \theta) ]^{\nu_i}
 [ S(y_i | \theta) ]^{1 - \nu_i},
 $$
 where $\nu_i=1$ indicates an observed event (contributing $f(y_i|\theta)$) and $\nu_i=0$ indicates right-censoring (contributing $S(y_i|\theta)$). Thus, the likelihood combines exact failure information and partial censoring information coherently within a Bayesian framework.
 
-For the exponential model (\cite{ibrahim2013bayesian}):
+The exponential model is one of the simplest and most classic survival models, assuming a constant hazard rate over time
 $$
-S(y) = 
+h(y) = \lambda \cdot I(\lambda \ge 0).
+$$
+This implies that the instantaneous event risk remains unchanged regardless of survival time. For example, if a light bulb has the same failure risk at any moment, we only need to know $\lambda$ without modeling time-varying risks, simplifying inference and calculation.
+
+For the exponential model (\cite{ibrahim2013bayesian})
+
+
+\begin{equation}
+    S(y) = 
 \begin{cases}
 \exp\Big( -\int_0^y h(u) du \Big)=\exp(-\lambda y), & y \ge 0 \\
 1, & y < 0 
 \end{cases}
-$$
-$$
-f(y) = 
+\end{equation}
+
+\begin{equation}
+    f(y) = 
 \begin{cases}
 h(y) S(y)=\lambda \exp(-\lambda y), & y \ge 0 \\
 0, & y < 0
 \end{cases}
+\end{equation}
+
+The likelihood becomes
+\begin{align*}
+L(D | \lambda)
+&=\prod_{i=1}^{n}
+[f(y_i|\lambda)]^{\nu_i}
+[S(y_i|\lambda)]^{1-\nu_i}\\
+&=\prod_{i=1}^{n}
+[\lambda \exp(-\lambda y_i)]^{\nu_i}
+[\exp(-\lambda y_i)]^{1-\nu_i}, \quad   y_i \ge 0 \\
+&=
+\prod_{i=1}^{n}
+\lambda^{\nu_i}
+\exp\left(
+- \lambda y_i (\nu_i + 1 - \nu_i)
+\right) \\
+&=
+\left(
+\prod_{i=1}^{n}
+\lambda^{\nu_i}
+\right)
+\exp\left(
+- \lambda \sum_{i=1}^{n} y_i
+\right)\\
+&=
+\lambda^{\sum_{i=1}^{n} \nu_i}
+\exp\left(
+- \lambda \sum_{i=1}^{n} y_i
+\right)\\
+&\propto
+\text{Gamma}
+\left(
+\sum_{i=1}^{n} \nu_i + 1,
+\sum_{i=1}^{n} y_i
+\right).
+\end{align*}
+In Bayesian inference, we need to choose a prior distribution $\pi(\theta)$ for the parameter $\theta$. This can be a weakly informative prior, such as $\pi(\theta) \propto 1$, indicating no strong preference for the parameter, or an informative prior, for example $\boldsymbol{\beta} \sim N(\boldsymbol{\mu}_0, \Sigma_0)$, which incorporates prior knowledge or findings from previous studies. The role of the prior is to provide stable estimates and prevent overfitting, especially when the data sample is small or information is limited.
+
+Overall, Bayesian inference proceeds by specifying the model and prior, computing the (unnormalized) posterior
 $$
-Including covariates via a log-link yields  (\cite{ibrahim2013bayesian}):
+\pi(\theta | D)
+\propto
+L(D | \theta) \times \pi(\theta),
+$$
+then summarizing it via means, medians, credible intervals, or posterior predictive distributions.
+
+For the exponential model, using a weakly informative prior $\text{Gamma}(\alpha, \beta)$ for $\lambda \ge 0$ gives an unnormalized posterior of 
+\begin{align*}
+p(\lambda|D)
+&\propto
+\lambda^{\sum \nu_i}
+\exp(-\lambda \sum y_i)
+\times
+\lambda^{\alpha - 1}
+\exp(-\beta \lambda)\\
+&=\lambda^{\sum \nu_i + \alpha - 1}
+\exp \left( - \lambda (\sum y_i + \beta) \right)\\
+&\sim
+\text{Gamma}
+\left(
+\sum_{i=1}^{n} \nu_i + \alpha,
+\sum_{i=1}^{n} y_i + \beta
+\right)
+\end{align*}
+For instance, applying custom Stan code to fit the veteran dataset in R provides the posterior distribution of $\lambda$ (Figure ~\ref{fig:exp veteran}).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=8cm, width=0.7\textwidth]{MSc_Statistics_Research_Report_paper/images/直方图.png}
+    \caption{An example posterior density}
+    \label{fig:exp veteran}
+\end{figure}
+Posterior density plot shows the distribution and uncertainty of $\boldsymbol{\lambda}$; Trace plot shows four MCMC chains with good mixing and convergence.
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%
+%下面是指数回归模型的贝叶斯推断
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+If introducing covariates $\mathbf{x}_i$, it is common to link the parameters and covariates through a linear regression (\cite{ibrahim2013bayesian}),
 $$
 \lambda_i = \exp(\mathbf{x}_i^\top \boldsymbol{\beta}),
 \quad i = 1, \ldots, n,
 $$
-Without covariates, the hazard reduces to (\cite{chen2025survival}):
+Without covariates, the hazard reduces to (\cite{chen2025survival})
 $$
 \lambda_i = \exp(\beta_0),
 $$
 representing a single baseline hazard rate for all individuals. With covariates, $\lambda_i$ varies with individual characteristics.
 
-Here $\boldsymbol{\beta}$ are regression coefficients, and the likelihood becomes:
+Here $\boldsymbol{\beta}$ are regression coefficients, and the likelihood becomes
 \begin{align*}
-L(\boldsymbol{\beta} | D)
+L(D | \boldsymbol{\beta})
 &= \prod_{i=1}^n 
 \big[ f(y_i | \boldsymbol{\beta}) \big]^{\nu_i}
 \big[ S(y_i | \boldsymbol{\beta}) \big]^{1 - \nu_i} \\
@@ -114,23 +204,23 @@ L(\boldsymbol{\beta} | D)
 \end{align*}
 In Bayesian inference, we assign priors $\pi(\theta)$, either weakly informative (e.g. $\pi(\theta)\propto1$) or informative (e.g. $\boldsymbol{\beta} \sim N(\boldsymbol{\mu}_0, \Sigma_0)$). Priors stabilize estimation, especially with small samples.
 
-Overall, Bayesian inference proceeds by specifying the model and prior, computing the posterior:
+Overall, Bayesian inference proceeds by specifying the model and prior, computing the posterior
 $$
 \pi(\theta | D)
 \propto
-L(\theta | D) \times \pi(\theta),
+L(D | \theta) \times \pi(\theta),
 $$
 then summarizing it via means, medians, credible intervals, or posterior predictive distributions.
 
-For example, with a normal prior, the (unnormalized) posterior is:
+For example, with a normal prior, the (unnormalized) posterior is
 $$
 \pi(\boldsymbol{\beta} | D)
 \propto
-L(\boldsymbol{\beta} | D)
+L(D | \boldsymbol{\beta})
 \times
 \pi(\boldsymbol{\beta}).
 $$
-With log posterior:
+With log posterior
 $$
 \log \pi(\boldsymbol{\beta} | D)
 \propto \sum_{i=1}^n
@@ -142,16 +232,6 @@ $$
 (\boldsymbol{\beta} - \boldsymbol{\mu}_0).
 $$
 As this posterior lacks a closed form, MCMC methods are used for sampling (\cite{stats5010006}). Here, we implement it via \texttt{brms} in R.
-
-For instance, fitting the exponential model without covariates to the veteran dataset yields the posterior distribution of $\lambda$ (Figure ~\ref{fig:exp veteran}).
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[height=6cm, width=0.9\textwidth]{MSc_Statistics_Research_Report_paper/images/exp model veteran.png}
-    \caption{An example posterior density (left) and trace plot (right).}
-    \label{fig:exp veteran}
-\end{figure}
-Posterior density plot shows the distribution and uncertainty of $\lambda$; Trace plot shows four MCMC chains with good mixing and convergence.
 
 
 
