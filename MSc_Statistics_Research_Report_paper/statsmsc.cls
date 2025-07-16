@@ -192,7 +192,7 @@ otherwise stated.
 %     Header style
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\usepackage{float}
 \usepackage[headsepline,plainheadsepline]{scrlayer-scrpage}
 \clearpairofpagestyles
 \automark{chapter}
