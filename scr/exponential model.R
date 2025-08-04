@@ -1,19 +1,21 @@
 df <- read.csv("data/raw_data_turnover.csv")
 table(df$event)
 summary(df$stag)
+length(df$event)
 #是否有缺失值
 sum(is.na(df))  
 library(bayesplot)
+library(rstan)
 library(ggplot2)
-ggplot(df, aes(x = stag, fill = factor(event))) +
-  geom_histogram(position = "identity", alpha = 0.6, binwidth = 3) +
-  scale_fill_manual(values = c("orange", "dodgerblue"),
-                    labels = c("Censored", "Event Occurred")) +
-  labs(title = "Duration Histogram: Censored vs. Event",
+
+ggplot(df, aes(x = stag)) +
+  geom_histogram(binwidth = 3, fill = "steelblue", alpha = 0.7) +
+  facet_wrap(~ event, labeller = labeller(event = c("0" = "Censored", "1" = "Event Occurred"))) +
+  labs(title = "Duration Histogram by Event Status",
        x = "Duration",
-       y = "Count",
-       fill = "Event Status") +
+       y = "Count") +
   theme_minimal()
+
 #save
 ggsave("images/separate_hist.png", width = 6, height = 4)
 
@@ -55,6 +57,7 @@ fit_stan_turnover <- stan(
   chains     = 4,
   iter       = 1000,
   warmup     = 50,
+  seed = 2,
   refresh    = 0
 )
 
@@ -67,8 +70,18 @@ bayesplot::mcmc_trace(
   pars = "lambda"
 )
 ggsave("images/turnover_exp_model_traceplot.png", width = 6, height = 4)
+
 #取后验采样的lambda
 post_lam_turnover_stan <- extract(fit_stan_turnover,"lambda")$lambda
+
+d <- sum(df$event == 1)
+alpha<-0.001
+sum_y  <- sum(df$stag)
+beta<-0.001
+# 用一个网格来评估解析密度
+lambda_grid  <- seq(min(post_lam_turnover_stan), max(post_lam_turnover_stan), length = 1000)
+analytic_dens <- dgamma(lambda_grid, shape =  d + alpha, rate = sum_y+beta)
+
 #画出后验采样的lambda直方图
 hist(post_lam_turnover_stan,
      breaks = 30,           
@@ -77,28 +90,42 @@ hist(post_lam_turnover_stan,
      border = "white",
      xlab   = expression(lambda),
      main   = "posterior of lambda",
-     ylab   = "Density")
+     ylab   = "Density",
+     ylim   = c(0, max(density(post_lam_turnover_stan)$y, analytic_dens)))
+lines(lambda_grid, analytic_dens,
+      lty = 2, lwd = 2, col = "red")
+legend("topright",
+       legend = c("MCMC posterior", "Analytic"),
+       lty    = c(NA,2),
+       pch    = c(15, NA),
+       pt.cex = c(2.5, NA),
+       col    = c("#1f77b4","red"),
+       bty    = "n",
+       inset  = c(-0.07, 0)
+)
 ggsave("images/turnover post lambda.png", width = 6, height = 4)
 
 #计算后验预测
-d <- sum(df$event == 1)  # 真实的 event 个数
-# 对每一个 lambda 后验样本，生成一个预测样本
-yrep <- replicate(n = length(post_lam_turnover_stan), rexp(n = d, rate = post_lam_turnover_stan))
-summary(as.vector(yrep))
-summary(df$stag)
 
-#画出对比图（事件数据的）
-bayesplot::ppc_dens_overlay(y = df$stag[df$event == 1], yrep = t(yrep[ , 1:100])) + 
-  ggplot2::xlim(0, 500)+  
-  ggplot2::scale_color_manual(
-  name = "Data Type", 
-  values = c("y" = "#000000", "yrep" = "#3182bd"),
-  labels = c("y" = "Observed event", "yrep" = "Posterior Predictive")
-)+ 
-  ggplot2::theme(
-    plot.margin = margin(10, 0, 10, 10),  # 左右边距，右边多留一点空
-    legend.position.inside = c(3, 0.75),
-    legend.text = element_text(size = 9), # 图例字体变小
-    legend.title = element_text(size = 8)
-  ) 
-ggsave("images/turnover_post_predic_event.png", width = 6, height = 4)
+#------------ecdf vs cdf 事件数据event------------------
+set.seed(123)
+# 使用Monte Carlo近似
+y_grid <- seq(0, 400, length.out = 500)
+cdf_vals <- sapply(y_grid, function(t) {
+  mean(pexp(t, rate = post_lam_turnover_stan))  # pexp 是 CDF
+})
+
+# 画图：event 数据的 ECDF + 后验预测的 CDF
+ggplot() +
+  stat_ecdf(data = df[df$event == 1, ],
+            aes(x = stag), 
+            color = "black", size = 1, geom = "step") +
+  geom_line(data = data.frame(t = y_grid, cdf = cdf_vals),
+            aes(x = t, y = cdf),
+            color = "blue", size = 1.2) +
+  labs(title = "Posterior Predictive CDF vs Observed ECDF",
+       x = "Time", y = "Cumulative Probability") +
+  theme_minimal()
+ggsave("images/turnover_post_predic_event_ecdf.png", width = 6, height = 4)
+
+
