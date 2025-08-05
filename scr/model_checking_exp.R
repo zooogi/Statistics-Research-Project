@@ -60,6 +60,8 @@ ggsave("images/ppc_censored_ecdf_exp.png", width = 6, height = 4)
 fake_ppc_a30_exp<- generate_data_fixed_lambda(n = N, lambda = post_mean_lam_turnover,
                                                a = -30, seed = 295)
 summary(fake_ppc_a30_exp)
+table(fake_ppc_a30_exp$event)
+
 fake_a30 <- fake_ppc_a30_exp %>%
   transmute(source = "fake",
             Y = time,  # 统一成正的观测时长
@@ -71,6 +73,8 @@ dat_a30 <- bind_rows(real, fake_a30)
 fake_ppc_a1000_exp<- generate_data_fixed_lambda(n = N, lambda = post_mean_lam_turnover,
                                               a = -1000, seed = 295)
 summary(fake_ppc_a1000_exp)
+table(fake_ppc_a1000_exp$event)
+
 fake_a1000 <- fake_ppc_a1000_exp %>%
   transmute(source = "fake",
             Y = time,  # 统一成正的观测时长
@@ -109,6 +113,18 @@ ggplot(filter(dat_a30, delta == 0),
 #save
 ggsave("images/ppc_censored_ecdf_A30.png", width = 6, height = 4, dpi = 300)
 
+
+ggplot(fake_ppc_a30_exp, aes(x = time)) +
+  geom_histogram(binwidth = 3, fill = "#D55E00", alpha = 0.7) +
+  facet_wrap(~ event, labeller = labeller(event = c("0" = "Censored", "1" = "Event Occurred"))) +
+  labs(title = "Fake Data Duration by Event Status (A = 30)",
+       x = "Duration",
+       y = "Count") +
+  theme_minimal()
+ggsave("images/fake_duration_hist_a30.png", width = 6, height = 4)
+
+
+#------------------------a=-1000-----------------
 # ECDF（事件子样本）
 ggplot(filter(dat_a1000, delta == 1),
        aes(x = Y, colour = source)) +
@@ -119,7 +135,8 @@ ggplot(filter(dat_a1000, delta == 1),
   theme_bw()
 #save
 ggsave("images/ppc_event_ecdf_A1000.png", width = 6, height = 4, dpi = 300)
-#------------------------a=-1000-----------------
+
+
 #ECDF（删失子样本）
 ggplot(filter(dat_a1000, delta == 0),
        aes(x = Y, colour = source)) +
@@ -130,3 +147,12 @@ ggplot(filter(dat_a1000, delta == 0),
   theme_bw()
 #save
 ggsave("images/ppc_censored_ecdf_A1000.png", width = 6, height = 4, dpi = 300)
+
+ggplot(fake_ppc_a1000_exp, aes(x = time)) +
+  geom_histogram(binwidth = 3, fill = "#D55E00", alpha = 0.7) +
+  facet_wrap(~ event, labeller = labeller(event = c("0" = "Censored", "1" = "Event Occurred"))) +
+  labs(title = "Fake Data Duration by Event Status (A = 1000)",
+       x = "Duration",
+       y = "Count") +
+  theme_minimal()
+ggsave("images/fake_duration_hist_a1000.png", width = 6, height = 4)
