@@ -9,8 +9,9 @@ library(patchwork)
 sum_post_lam_turnover <- summary(fit_stan_turnover, pars = "lambda")$summary
 post_mean_lam_turnover <- sum_post_lam_turnover["lambda", "mean"]
 #---------------- generate_data (via post mean)-------
-fake_postpred_modelcheck_exp<- generate_data_fixed_lambda(n = 1000, lambda = post_mean_lam_turnover,
-                                                          a = -160, seed = 25)
+N<- length(df$event)
+fake_postpred_modelcheck_exp<- generate_data_fixed_lambda(n = N, lambda = post_mean_lam_turnover,
+                                                          a = -150, seed = 25)
 #----------------summary------------------
 summary(fake_postpred_modelcheck_exp)
 
@@ -51,3 +52,81 @@ ggplot(filter(dat_all, delta == 0),
 ggsave("images/ppc_censored_ecdf_exp.png", width = 6, height = 4)
 
 
+
+
+######################################
+###### try different a----------------
+#---------------a=-30-------------------
+fake_ppc_a30_exp<- generate_data_fixed_lambda(n = N, lambda = post_mean_lam_turnover,
+                                               a = -30, seed = 295)
+summary(fake_ppc_a30_exp)
+fake_a30 <- fake_ppc_a30_exp %>%
+  transmute(source = "fake",
+            Y = time,  # 统一成正的观测时长
+            delta = event)
+# 合并
+dat_a30 <- bind_rows(real, fake_a30)
+
+#########-----------a=-1000----------------------
+fake_ppc_a1000_exp<- generate_data_fixed_lambda(n = N, lambda = post_mean_lam_turnover,
+                                              a = -1000, seed = 295)
+summary(fake_ppc_a1000_exp)
+fake_a1000 <- fake_ppc_a1000_exp %>%
+  transmute(source = "fake",
+            Y = time,  # 统一成正的观测时长
+            delta = event)
+# 合并
+dat_a1000 <- bind_rows(real, fake_a1000)
+
+
+
+
+#----------plot----------------
+
+#----------plot----------------
+#a=-30-------------------
+# ECDF（事件子样本）
+ggplot(filter(dat_a30, delta == 1),
+       aes(x = Y, colour = source)) +
+  stat_ecdf(size = 1) +
+  labs(x = "Y | delta = 1 (event times)",
+       y = "ECDF",
+       title =  "ECDF of Y | delta = 1 (A = 30)",
+       colour = "source"
+  ) +
+  theme_bw()
+#save
+ggsave("images/ppc_event_ecdf_A30.png", width = 6, height = 4, dpi = 300)
+
+#ECDF（删失子样本）
+ggplot(filter(dat_a30, delta == 0),
+       aes(x = Y, colour = source)) +
+  stat_ecdf(size = 1) +
+  labs(x="Y | delta = 0 (censored durations)",
+       y = "ECDF",
+       title = "ECDF of Y | delta = 0 (A = 30)") +
+  theme_bw()
+#save
+ggsave("images/ppc_censored_ecdf_A30.png", width = 6, height = 4, dpi = 300)
+
+# ECDF（事件子样本）
+ggplot(filter(dat_a1000, delta == 1),
+       aes(x = Y, colour = source)) +
+  stat_ecdf(size = 1) +
+  labs(x = "Y | delta = 1 (event times)",
+       y = "ECDF",
+       title = "ECDF of Y | delta = 1 (A = 1000)") +
+  theme_bw()
+#save
+ggsave("images/ppc_event_ecdf_A1000.png", width = 6, height = 4, dpi = 300)
+#------------------------a=-1000-----------------
+#ECDF（删失子样本）
+ggplot(filter(dat_a1000, delta == 0),
+       aes(x = Y, colour = source)) +
+  stat_ecdf(size = 1) +
+  labs(x="Y | delta = 0 (censored durations)",
+       y = "ECDF",
+       title = "ECDF of Y | delta = 0 (A = 1000)") +
+  theme_bw()
+#save
+ggsave("images/ppc_censored_ecdf_A1000.png", width = 6, height = 4, dpi = 300)
