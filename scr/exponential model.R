@@ -105,6 +105,11 @@ legend("topright",
 )
 ggsave("images/turnover post lambda.png", width = 6, height = 4)
 
+
+
+
+######下面可以删了，因为下面是事件数据的后验预测cdf
+
 #计算后验预测
 
 #------------ecdf vs cdf 事件数据event------------------
