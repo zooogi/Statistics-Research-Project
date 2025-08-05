@@ -26,212 +26,158 @@ Thus, choosing Bayesian methods is not just a technical decision; it represents 
 
 \subsection{Fundamentals of Survival Analysis} \label{Fundamentals of Survival Analysis}
 
-In survival analysis, the random variable $Y$ represents the time until an event of interest occurs (e.g., death or failure). The distribution of $Y$ is commonly described by the following fundamental functions (\cite{kleinbaum1996survival}):
+In survival analysis, let the true event time for subject $i=1,\dots,n$ be the random variable $T_i\ge 0$. Assume
+$$
+T_1,\ldots,T_n \stackrel{\text{i.i.d.}}{\sim} F_T,\qquad \text{support }[0,\infty).
+$$
+If right censoring is present, introduce a censoring time $C_i\ge 0$ and adopt the independent censoring assumption: for each $i$, $T_i\perp C_i$, and observations are independent across subjects; the actually observed data are
+$$
+Y_i=\min(T_i,\;C_i),\qquad \delta_i=\mathbf 1\{T_i\le C_i\}.
+$$
+The basic functions that describe the distribution of $T$ are (\cite{kleinbaum1996survival}):
 \begin{enumerate}
-    \item \textbf{Survival function}, which gives the probability that the event has not occurred by time $y \ge 0$
-   $$
-   S(y) = P(Y > y) = 1 - F(y).
-   $$
-   \item \textbf{Probability density function (PDF)}, which represents the instantaneous probability density of the event occurring exactly at time $y \ge 0$
-   $$
-   f(y) = \frac{d}{dy} F(y).
-   $$
-   \item \textbf{Hazard function}, defined as
-   $$
-   h(y) = \lim_{\Delta y \to 0} 
-   \frac{P(y \le Y < y + \Delta y \mid Y \ge y)}{\Delta y}
-   = \frac{f(y)}{S(y)},
-   $$
-   It represents the instantaneous risk that an event occurs within an infinitesimally small time interval, given that the individual has survived up to time \( y \ge 0\).
+    \item \textbf{Survival function}, the probability that the event has not occurred after time $t$
+   \begin{equation}
+       S_T(t)=\mathbb P(T>t)=1-F_T(t),\qquad t\ge 0,
+   \end{equation}
+   where $F_T(t)=\mathbb P(T\le t)$. The function $S_T(\cdot)$ is non-increasing in $t$, is typically taken to be right-continuous, and satisfies $S_T(0^-)=1$.
+   \item \textbf{Probability density function (PDF)}, the instantaneous density of failure at time $t$ (when $F_T$ is absolutely continuous with respect to Lebesgue measure)
+   \begin{equation}
+        f_T(t)=\frac{d}{dt}F_T(t)=-\frac{d}{dt}S_T(t)\quad(\text{holds at differentiable points / almost everywhere}).
+   \end{equation}
+   \item \textbf{Hazard function}, defined by
+   \begin{equation}
+          h_T(t)=\lim_{\Delta\downarrow 0}\frac{\mathbb P\big(t\le T<t+\Delta\ \big|\ T\ge t\big)}{\Delta}
+          =\frac{f_T(t)}{S_T(t)}\quad(\text{when }S_T(t)>0),
+   \end{equation}
+   which quantifies the instantaneous failure rate given survival up to $t$. Define the cumulative hazard $H_T(t)=\int_0^{t} h_T(u)\,du.$
 \end{enumerate}
 
-The relationships among these functions are:
-$$
-f(y) = h(y) S(y),
-\quad
-S(y) = \exp\Big( - \int_0^y h(u) du \Big).
-$$
-Therefore, these three functions can be derived from each other and jointly describe the probabilistic behavior of the survival time.
+Their relationships (under the usual regularity conditions) are
+\begin{equation}
+    f_T(t)=h_T(t)\,S_T(t),\qquad
+S_T(t)=\exp\!\Big(-\!\int_0^{t} h_T(u)\,du\Big)=\exp\!\big(-H_T(t)\big),
+\label{eq:4}
+\end{equation}
+and, at differentiable points,
+\begin{equation}
+    h_T(t)=-\frac{d}{dt}\log S_T(t).
+\end{equation}
+Therefore, these three functions can be derived from one another and jointly characterize the probabilistic properties of the event time $T$.
+
 
 
 
 
 \subsection{Parametric Exponential Model} \label{Exponential Model}
-
-In general, for any parametric Bayesian survival model with density $f(y|\theta)$ and survival function $S(y|\theta)$ (\cite{ibrahim2013bayesian}), the likelihood is
-$$
-L( D | \theta)
-= \prod_{i=1}^n
-[ f(y_i | \theta) ]^{\nu_i}
-[ S(y_i | \theta) ]^{1 - \nu_i},
-$$
-where $\nu_i=1$ indicates an observed event (contributing $f(y_i|\theta)$) and $\nu_i=0$ indicates right-censoring (contributing $S(y_i|\theta)$). Thus, the likelihood combines exact failure information and partial censoring information coherently within a Bayesian framework.
-
 The exponential model is one of the simplest and most classic survival models, assuming a constant hazard rate over time
-$$
-h(y) = \lambda \cdot I(\lambda \ge 0).
-$$
+\begin{equation}
+h_T(t)=\lambda,\qquad t\ge 0,\ \ \lambda>0 .
+\end{equation}
 This implies that the instantaneous event risk remains unchanged regardless of survival time. For example, if a light bulb has the same failure risk at any moment, we only need to know $\lambda$ without modeling time-varying risks, simplifying inference and calculation.
 
-For the exponential model (\cite{ibrahim2013bayesian})
-
-
+Based on the relationship in Equation~\eqref{eq:4}, the survival and density functions of the exponential model (\cite{ibrahim2013bayesian}) are given by
 \begin{equation}
-    S(y) = 
+S_T(t) =
 \begin{cases}
-\exp\Big( -\int_0^y h(u) du \Big)=\exp(-\lambda y), & y \ge 0 \\
-1, & y < 0 
+\exp\Big( -\displaystyle\int_0^t h_T(u), du \Big)=\exp(-\lambda t), & t \ge 0 \\
+1, & t < 0
 \end{cases}
 \end{equation}
 
 \begin{equation}
-    f(y) = 
+f_T(t) =
 \begin{cases}
-h(y) S(y)=\lambda \exp(-\lambda y), & y \ge 0 \\
-0, & y < 0
+h_T(t), S_T(t)=\lambda \exp(-\lambda t), & t \ge 0 \\
+0, & t < 0
 \end{cases}
 \end{equation}
 
-The likelihood becomes
-\begin{align*}
-L(D | \lambda)
+In general, for any parametric Bayesian survival model with density $f_T(t\mid\theta)$ and survival function $S_T(t\mid\theta)$ (\cite{ibrahim2013bayesian}), the likelihood is
+\begin{equation}
+L( D \mid \theta)
+= \prod_{i=1}^n
+\big[ f_T(y_i \mid \theta) \big]^{\delta_i}
+\big[ S_T(y_i \mid \theta) \big]^{1 - \delta_i},
+\label{eq:8}
+\end{equation}
+where $\delta_i=1$ indicates an observed event for subject $i$ (contributing $f_T(y_i\mid\theta)$) and $\delta_i=0$ indicates right-censoring (contributing $S_T(y_i\mid\theta)$). Here $y_i$ denotes the observed time $Y_i=\min(T_i,C_i)$. Thus, the likelihood combines exact failure information and partial censoring information coherently within a Bayesian framework.
+
+Starting from Equation~\eqref{eq:8}, the likelihood simplifies as follows
+\begin{align}
+L(D \mid \lambda)
 &=\prod_{i=1}^{n}
-[f(y_i|\lambda)]^{\nu_i}
-[S(y_i|\lambda)]^{1-\nu_i}\\
-&=\prod_{i=1}^{n}
-[\lambda \exp(-\lambda y_i)]^{\nu_i}
-[\exp(-\lambda y_i)]^{1-\nu_i}, \quad   y_i \ge 0 \\
+\big[\lambda \exp(-\lambda y_i)\big]^{\delta_i}
+\big[\exp(-\lambda y_i)\big]^{1-\delta_i}, \quad y_i \ge 0 \\
 &=
 \prod_{i=1}^{n}
-\lambda^{\nu_i}
+\lambda^{\delta_i}
 \exp\left(
-- \lambda y_i (\nu_i + 1 - \nu_i)
+-\lambda y_i (\delta_i + 1 - \delta_i)
 \right) \\
 &=
 \left(
 \prod_{i=1}^{n}
-\lambda^{\nu_i}
+\lambda^{\delta_i}
 \right)
-\exp\left(
-- \lambda \sum_{i=1}^{n} y_i
+\exp!\left(
+-\lambda \sum_{i=1}^{n} y_i
 \right)\\
 &=
-\lambda^{\sum_{i=1}^{n} \nu_i}
+-\lambda^{\sum_{i=1}^{n} \delta_i}
 \exp\left(
-- \lambda \sum_{i=1}^{n} y_i
+\lambda \sum_{i=1}^{n} y_i
 \right)\\
 &\propto
 \text{Gamma}
 \left(
-\sum_{i=1}^{n} \nu_i + 1,
-\sum_{i=1}^{n} y_i
+\sum_{i=1}^{n} \delta_i + 1,\ \sum_{i=1}^{n} y_i
 \right).
-\end{align*}
+\end{align}
 In Bayesian inference, we need to choose a prior distribution $\pi(\theta)$ for the parameter $\theta$. This can be a weakly informative prior, such as $\pi(\theta) \propto 1$, indicating no strong preference for the parameter, or an informative prior, for example $\boldsymbol{\beta} \sim N(\boldsymbol{\mu}_0, \Sigma_0)$, which incorporates prior knowledge or findings from previous studies. The role of the prior is to provide stable estimates and prevent overfitting, especially when the data sample is small or information is limited.
 
 Overall, Bayesian inference proceeds by specifying the model and prior, computing the (unnormalized) posterior
-$$
-\pi(\theta | D)
+\begin{equation}
+\pi(\theta \mid D)
 \propto
-L(D | \theta) \times \pi(\theta),
-$$
+L(D \mid \theta)\times \pi(\theta),
+\end{equation}
 then summarizing it via means, medians, credible intervals, or posterior predictive distributions.
 
 For the exponential model, using a weakly informative prior $\text{Gamma}(\alpha, \beta)$ for $\lambda \ge 0$ gives an unnormalized posterior of 
-\begin{align*}
-p(\lambda|D)
+\begin{align}
+p(\lambda\mid D)
 &\propto
-\lambda^{\sum \nu_i}
-\exp(-\lambda \sum y_i)
+\lambda^{\sum \delta_i}
+\exp\Big(-\lambda \sum y_i\Big)
 \times
 \lambda^{\alpha - 1}
 \exp(-\beta \lambda)\\
-&=\lambda^{\sum \nu_i + \alpha - 1}
-\exp \left( - \lambda (\sum y_i + \beta) \right)\\
+&=\lambda^{\sum \delta_i + \alpha - 1}
+\exp \left( - \lambda \big(\sum y_i + \beta\big) \right) \\
 &\sim
 \text{Gamma}
 \left(
-\sum_{i=1}^{n} \nu_i + \alpha,
-\sum_{i=1}^{n} y_i + \beta
+\sum_{i=1}^{n} \delta_i + \alpha,\ \sum_{i=1}^{n} y_i + \beta
 \right)
-\end{align*}
-For instance, applying custom Stan code to fit the veteran dataset in R provides the posterior distribution of $\lambda$ (Figure ~\ref{fig:exp veteran}).
-
+\label{eq:17}
+\end{align}
+For instance, Bayesian inference using custom Stan code produces a posterior distribution of the hazard rate $\lambda$ for the veteran dataset, capturing both estimation and uncertainty (Figure ~\ref{fig:exp veteran}).
 \begin{figure}[H]
     \centering
-    \includegraphics[height=8cm, width=0.7\textwidth]{MSc_Statistics_Research_Report_paper/images/直方图.png}
-    \caption{An example posterior density}
+    \includegraphics[height=8cm, width=0.5\textwidth]{MSc_Statistics_Research_Report_paper/images/直方图.png}
+    \caption{Posterior distribution of $\lambda$ from MCMC samples (histogram) and analytic Gamma posterior (red curve)}
     \label{fig:exp veteran}
 \end{figure}
-Posterior density plot shows the distribution and uncertainty of $\boldsymbol{\lambda}$; Trace plot shows four MCMC chains with good mixing and convergence.
-
-
-
-
-
-
-
-%%%%%%%%%%%%%%%%%%%
-%下面是指数回归模型的贝叶斯推断
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-If introducing covariates $\mathbf{x}_i$, it is common to link the parameters and covariates through a linear regression (\cite{ibrahim2013bayesian}),
-$$
-\lambda_i = \exp(\mathbf{x}_i^\top \boldsymbol{\beta}),
-\quad i = 1, \ldots, n,
-$$
-Without covariates, the hazard reduces to (\cite{chen2025survival})
-$$
-\lambda_i = \exp(\beta_0),
-$$
-representing a single baseline hazard rate for all individuals. With covariates, $\lambda_i$ varies with individual characteristics.
-
-Here $\boldsymbol{\beta}$ are regression coefficients, and the likelihood becomes
-\begin{align*}
-L(D | \boldsymbol{\beta})
-&= \prod_{i=1}^n 
-\big[ f(y_i | \boldsymbol{\beta}) \big]^{\nu_i}
-\big[ S(y_i | \boldsymbol{\beta}) \big]^{1 - \nu_i} \\
-&= \prod_{i=1}^n 
-\big[ \lambda_i \exp(-\lambda_i y_i) \big]^{\nu_i}
-\big[ \exp(-\lambda_i y_i) \big]^{1 - \nu_i} \\
-&= \prod_{i=1}^n 
-\lambda_i^{\nu_i} 
-\exp(-\lambda_i y_i) \\
-&= \prod_{i=1}^n 
-\exp\big( \nu_i \mathbf{x}_i^\top \boldsymbol{\beta} \big)
-\exp\big( - y_i \exp(\mathbf{x}_i^\top \boldsymbol{\beta}) \big).
-\end{align*}
-In Bayesian inference, we assign priors $\pi(\theta)$, either weakly informative (e.g. $\pi(\theta)\propto1$) or informative (e.g. $\boldsymbol{\beta} \sim N(\boldsymbol{\mu}_0, \Sigma_0)$). Priors stabilize estimation, especially with small samples.
-
-Overall, Bayesian inference proceeds by specifying the model and prior, computing the posterior
-$$
-\pi(\theta | D)
-\propto
-L(D | \theta) \times \pi(\theta),
-$$
-then summarizing it via means, medians, credible intervals, or posterior predictive distributions.
-
-For example, with a normal prior, the (unnormalized) posterior is
-$$
-\pi(\boldsymbol{\beta} | D)
-\propto
-L(D | \boldsymbol{\beta})
-\times
-\pi(\boldsymbol{\beta}).
-$$
-With log posterior
-$$
-\log \pi(\boldsymbol{\beta} | D)
-\propto \sum_{i=1}^n
-\big[ \nu_i \mathbf{x}_i^\top \boldsymbol{\beta}
-- y_i \exp(\mathbf{x}_i^\top \boldsymbol{\beta}) \big]
-- \frac{1}{2}
-(\boldsymbol{\beta} - \boldsymbol{\mu}_0)^\top
-\Sigma_0^{-1}
-(\boldsymbol{\beta} - \boldsymbol{\mu}_0).
-$$
-As this posterior lacks a closed form, MCMC methods are used for sampling (\cite{stats5010006}). Here, we implement it via \texttt{brms} in R.
+After obtaining the posterior distribution of model parameters $p(\theta \mid D)$, we are often interested in making predictions about future observations. This leads naturally to the posterior predictive distribution, defined as
+\begin{equation}
+    p(\tilde{y} \mid D) = \int p(\tilde{y} \mid \theta)\, p(\theta \mid D)\, d\theta
+    \label{eq:18}
+\end{equation}
+where $\tilde{y}$ is a new (unseen) observation, $\theta$ denotes the model parameters, and $D$ is the observed dataset. In practice, this integral is often intractable and is therefore approximated using Monte Carlo methods. Specifically, we draw samples $\theta^{(1)}, \theta^{(2)}, \dots, \theta^{(M)}$ from the posterior $p(\theta \mid D)$, and estimate the posterior predictive distribution as
+\begin{equation}
+p(\tilde{y} \mid D) \approx \frac{1}{M} \sum_{m=1}^{M} p(\tilde{y} \mid \theta^{(m)}).
+\end{equation}
 
 
 
@@ -298,6 +244,79 @@ $$
 + \log \pi(\boldsymbol{\beta}) + \log \pi(\alpha) + \text{const}.
 $$
 As in the exponential regression case, this posterior distribution does not have a closed form and must be sampled numerically. It can be shown that, given the normal prior for $\boldsymbol{\beta}$ and Gamma prior for $\alpha$, the log-posterior is concave with respect to each parameter, satisfying the log-concavity condition and making ARS or Gibbs sampling applicable for efficient inference.
+
+
+
+
+
+\subsubsection{Regression exponential}
+%%%%%%%%%%%%%%%%%%%
+%下面是指数回归模型的贝叶斯推断
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+If introducing covariates $\mathbf{x}_i$, it is common to link the parameters and covariates through a linear regression (\cite{ibrahim2013bayesian}),
+$$
+\lambda_i = \exp(\mathbf{x}_i^\top \boldsymbol{\beta}),
+\quad i = 1, \ldots, n,
+$$
+Without covariates, the hazard reduces to (\cite{chen2025survival})
+$$
+\lambda_i = \exp(\beta_0),
+$$
+representing a single baseline hazard rate for all individuals. With covariates, $\lambda_i$ varies with individual characteristics.
+
+Here $\boldsymbol{\beta}$ are regression coefficients, and the likelihood becomes
+\begin{align*}
+L(D | \boldsymbol{\beta})
+&= \prod_{i=1}^n 
+\big[ f(y_i | \boldsymbol{\beta}) \big]^{\nu_i}
+\big[ S(y_i | \boldsymbol{\beta}) \big]^{1 - \nu_i} \\
+&= \prod_{i=1}^n 
+\big[ \lambda_i \exp(-\lambda_i y_i) \big]^{\nu_i}
+\big[ \exp(-\lambda_i y_i) \big]^{1 - \nu_i} \\
+&= \prod_{i=1}^n 
+\lambda_i^{\nu_i} 
+\exp(-\lambda_i y_i) \\
+&= \prod_{i=1}^n 
+\exp\big( \nu_i \mathbf{x}_i^\top \boldsymbol{\beta} \big)
+\exp\big( - y_i \exp(\mathbf{x}_i^\top \boldsymbol{\beta}) \big).
+\end{align*}
+In Bayesian inference, we assign priors $\pi(\theta)$, either weakly informative (e.g. $\pi(\theta)\propto1$) or informative (e.g. $\boldsymbol{\beta} \sim N(\boldsymbol{\mu}_0, \Sigma_0)$). Priors stabilize estimation, especially with small samples.
+
+Overall, Bayesian inference proceeds by specifying the model and prior, computing the posterior
+$$
+\pi(\theta | D)
+\propto
+L(D | \theta) \times \pi(\theta),
+$$
+then summarizing it via means, medians, credible intervals, or posterior predictive distributions.
+
+For example, with a normal prior, the (unnormalized) posterior is
+$$
+\pi(\boldsymbol{\beta} | D)
+\propto
+L(D | \boldsymbol{\beta})
+\times
+\pi(\boldsymbol{\beta}).
+$$
+With log posterior
+$$
+\log \pi(\boldsymbol{\beta} | D)
+\propto \sum_{i=1}^n
+\big[ \nu_i \mathbf{x}_i^\top \boldsymbol{\beta}
+- y_i \exp(\mathbf{x}_i^\top \boldsymbol{\beta}) \big]
+- \frac{1}{2}
+(\boldsymbol{\beta} - \boldsymbol{\mu}_0)^\top
+\Sigma_0^{-1}
+(\boldsymbol{\beta} - \boldsymbol{\mu}_0).
+$$
+As this posterior lacks a closed form, MCMC methods are used for sampling (\cite{stats5010006}). Here, we implement it via \texttt{brms} in R.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsubsection{Extreme Value Model}
 The Extreme Value (EV) model can be viewed as a reparameterization of the Weibull model in the log-time domain, which reformulates the hazard function as an exponential-linear form in log time, facilitating direct integration of covariates.

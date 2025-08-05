@@ -16,7 +16,6 @@
 \newcommand{\X}{X}
 \newcommand{\EE}[1]{ \mathrm{E} [ #1 ] }
 \newcommand{\inparenth}[1]{\left( #1 \right)}
-
 \usepackage{xcolor}
 \usepackage{hyperref}
 \hypersetup{
@@ -25,6 +24,11 @@
     citecolor={blue!50!black},
     urlcolor={blue!50!black}
 }
+\usepackage{tikz}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric}
+
+\usepackage{tcolorbox}            % nice framed boxes
+\tcbuselibrary{listings, breakable}
 
 
 \begin{document}
@@ -33,8 +37,8 @@
 \maketitle
 
 % Generates plagiarism declaration
-\declarationname{STUDENT'S NAME}
-\declarationdate{DATE}
+\declarationname{Jing Zhang}
+%\declarationdate{DATE}if you choose to use footnotes, do so sparingly.
 \declaration 
 
 \begin{acknowledgements}
@@ -73,14 +77,10 @@ Note the report submission deadline is a very hard deadline since the assessment
 
 \section{Introduction}
 \input{MSc_Statistics_Research_Report_paper/section/Introduction}
-
-
-
-
-
 \section{Methods}\label{sec:methods}
 \input{MSc_Statistics_Research_Report_paper/section/Methods}
-
+\section{Implement}\label{sec:Implement}
+\input{MSc_Statistics_Research_Report_paper/section/Implement}
 \section{Results}
 \input{MSc_Statistics_Research_Report_paper/section/Results}
 
