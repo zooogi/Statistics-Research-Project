@@ -47,7 +47,7 @@
 \end{figure}
 
 \begin{tcolorbox}[
-  title  = Algorithm: Simulating a Fake Survival Dataset (e.g.Posterior predictive model checking),
+  title  = Algorithm 1: Simulating a Fake Survival Dataset (e.g.Posterior predictive model checking),
    fonttitle  = \small, 
   colback = white,
   colframe=black]
@@ -66,8 +66,7 @@
             \item Draw latent duration: $y_i \sim \operatorname{Exp}(\lambda^\ast)$
             \item Draw start time: $T_i \sim \operatorname{Uniform}(a,0)$
             \item Compute leaving time: $t_i = T_i + y_i$
-            \item Observed pair $(\text{time}_i,\text{event}_i)$
-                  \[\begin{aligned}
+            \item Observed pair $(\text{time}_i,\text{event}_i)$ \[\begin{aligned}
 \text{if } \quad t_i &< 0: &&&\text{(event occurred before now)}\\
   &&\quad  \text{event}_i=1, &&\text{(uncensored)}\\ 
   &&\quad \text{time}_i=y_i
@@ -82,6 +81,7 @@
         \end{enumerate}
   \item Combine $(\text{time}_i,\text{event}_i)$ into a fake data set of size $n$.
 \end{enumerate}
+\label{fake data}
 \end{tcolorbox}
 
 \subsubsection{Model Checking via ECDF under Independent Censoring}
@@ -91,7 +91,7 @@ In survival data, the observed duration is determined jointly by the latent even
 $$
 Y=\min(T,C),\qquad \delta=\mathbf 1\{T\le C\}.
 $$
-That is, we observe the event time only when it is uncensored; otherwise we observe the censoring time. Consequently, we split the data into two subsamples—an “event subsample’’ with $\delta=1$ and a “censored subsample’’ with $\delta=0$—and compute ECDFs for each subsample separately.
+That is, we observe the event time only when it is uncensored; otherwise, we observe the censoring time. Consequently, we split the data into two subsamples—an “event subsample’’ with $\delta=1$ and a “censored subsample’’ with $\delta=0$—and compute ECDFs for each subsample separately.
 
 Under independent (non-informative) censoring, i.e., $T\perp C$, the two subsamples may be viewed as arising from two conditional distributions
 \begin{itemize}
@@ -111,6 +111,35 @@ By the Glivenko–Cantelli theorem (\cite{tucker1959generalization}), as sample 
 \widehat H_{\text{cens}}(t) &\xrightarrow{\text{uniformly in } t} H_{\text{cens}}(t) := \Pr(C \le t \mid C < T)
 \end{align}
 In summary, by splitting the data into event and censored subsamples and plotting their empirical distribution functions $\widehat H_{\text{event}}$ and $\widehat H_{\text{cens}}$, we can evaluate model fit within a unified framework along both dimensions.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Choosing and Interpreting the Survey-Length Parameter $A$}
+
+In the posterior predictive model checking of this study, we generate simulated data from the model and compare it with the observed data. This simulation relies on sampling given known quantities; a key quantity is the \textbf{maximum survey duration $A$ }in Algorithm 1 (\ref{fake data}), which is controlled by the user-specified parameter $a$, with the reparameterization $A = -a$, governing the censoring mechanism in the simulated data. In other words, $A$ sets the observation window in simulation and thereby affects both the censoring rate and the distribution of event times.
+
+This quantity is not a parameter to be estimated by the model; it is an external input required to generate fake data. Although it may appear auxiliary, it is tightly coupled with model checking—different choices of $A$ change the censoring structure of the simulated data and therefore influence the credibility of posterior predictive results.
+
+Does the observed data carry information about $A$? Yes. In any survival dataset, the “shadow” of the survey window is reflected in the censoring proportion and the shape of the observed durations. If the survey is short (small $A$), many subjects are censored before the event occurs, leading to a high right-censoring rate and “compressed” event times. Conversely, with a long survey (large $A$), more events are observed, censoring decreases, and event times spread out.
+
+This can be seen in Figure~\ref{fig:离职数据分开的直方图} (histograms of event and censored durations in the employee turnover data). The number of events and censors is roughly balanced, suggesting that the survey was long enough to capture about half of the departures. Since the maximum observed duration exceeds 170 months, it is reasonable to infer that the underlying survey duration $A$ should be at least greater than 170; this directly informs how the censoring mechanism should be set in simulation.
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=6.5cm, width=0.7\textwidth]{images/separate_hist.png}
+    \caption{Histograms of censored and event durations in the employee turnover data}
+    \label{fig:离职数据分开的直方图}
+\end{figure}
+
+To substantiate this point, we simulate under two settings, $A=30$ and $A=1000$, and plot both the empirical CDFs (ECDFs) for the event subsample ($\delta=1$) and the censored subsample ($\delta=0$), as well as the histograms of simulated durations:
+
+* **$A=30$.** The simulated data are almost entirely concentrated within 30 months. The histograms show a clear left-skew, indicating that both events and censorings occur very early. Consequently, the ECDFs rise steeply at short times (Figure 1, red curves), yielding a pronounced mismatch with the observed data.
+
+* **$A=1000$.** The model allows events and censorings to occur over a much wider time span; the duration distribution shifts to the right, and the ECDF shapes align more closely with the observed data (Figure 2, red curves). The histograms become sparser, reflecting that events and censorings can happen much later. However, this setting imposes an unrealistic premise for an employer: a maximum tenure close to 83 years (1000 months). Thus, although the simulated curves look closer to the data, the apparent “match” rests on an implausible assumption and cannot be regarded as a reliable model-checking configuration.
+
+These two examples reinforce a key lesson: **when using posterior predictive checks, goodness of visual fit alone is not sufficient; the simulation settings must also be judged for realism in light of the data-generating context.**
+
+*(Figures referenced here.)*
 
 
 
