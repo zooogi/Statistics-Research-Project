@@ -11,8 +11,7 @@ library(ggplot2)
 ggplot(df, aes(x = stag)) +
   geom_histogram(binwidth = 3, fill = "steelblue", alpha = 0.7) +
   facet_wrap(~ event, labeller = labeller(event = c("0" = "Censored", "1" = "Event Occurred"))) +
-  labs(title = "Duration Histogram by Event Status",
-       x = "Duration",
+  labs(x = "Duration",
        y = "Count") +
   theme_minimal()
 
@@ -128,8 +127,7 @@ ggplot() +
   geom_line(data = data.frame(t = y_grid, cdf = cdf_vals),
             aes(x = t, y = cdf),
             color = "blue", size = 1.2) +
-  labs(title = "Posterior Predictive CDF vs Observed ECDF",
-       x = "Time", y = "Cumulative Probability") +
+  labs(x = "Time", y = "Cumulative Probability") +
   theme_minimal()
 ggsave("images/turnover_post_predic_event_ecdf.png", width = 6, height = 4)
 
