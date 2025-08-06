@@ -1,0 +1,161 @@
+\begin{figure}[H]
+\centering
+\resizebox{0.52\linewidth}{!}{
+\begin{tikzpicture}[
+ scale=0.50,
+  every node/.style={transform shape}, 
+  node distance=11mm,
+  box/.style      ={rectangle, draw, rounded corners, align=center,
+                    minimum width=44mm, minimum height=9mm},
+  decision/.style ={diamond, aspect=2.2, draw, align=center, inner sep=1.4pt},
+  ->, >=Latex
+]
+
+%--- 主流程节点 ------------------------------------------------------
+\node[box]      (model)   {\textbf{Define/Revise a model}};
+
+\node[box]      (checking1)  [below=of model] {\textbf{Model checking} \\
+(Simulate with $\lambda_0$; fit model; recover $\lambda_0$?)};
+
+\node[decision] (pass1)   [below=10mm of checking1] {\textbf{Plausible?}};
+
+\node[box]      (fit)     [below=of pass1]  {\textbf{Fit to real data}\\
+(Compute posterior)};
+
+\node[box]      (gen)     [below=of fit]    {\textbf{Posterior predictive model checking}\\
+(Generate fake data from Posterior)\\
+(Compare fake vs real)};
+
+\node[decision] (pass2)   [below=of gen] {\textbf{Adequate?}};
+
+\node[box]     (report)  [below=of pass2] {\textbf{Report/Interpret}};
+
+%--- 连线 ------------------------------------------------------------
+\draw (model)   -- (checking1)
+      (checking1)  -- (pass1)
+      (pass1)   -- node[right]{Yes}(fit)
+      (fit)     -- (gen)
+      (gen) -- (pass2)
+      (pass2) -- node[right]{Yes}(report);
+
+%--- 回环：不合格则返回模型阶段 ------------------------------------
+\draw[->] (pass1.west) -- ++(-30mm,0) |- (model.west) node[pos=0.23, left]{No};
+%\draw[->] (pass1.west) to[out=180,in=180,looseness=1.3] node[left]{No} (model.west);
+\draw[->] (pass2.east) -- ++ (30mm,0 )|- (model.east) node[pos=0.23,right]{No};
+\end{tikzpicture}}
+\caption{General Bayesian workflow}
+\end{figure}
+
+\begin{tcolorbox}[
+  title  = Algorithm: Simulating a Fake Survival Dataset (e.g.Posterior predictive model checking),
+   fonttitle  = \small, 
+  colback = white,
+  colframe=black]
+\textbf{Input}\\
+\quad$\bullet$ posterior samples $\{\lambda^{(s)}\}$ \hfill (obtained by fitting real data)\\
+\quad$\bullet$ sample size $n$ \hfill (same size as the real data set)\\
+\quad$\bullet$ start‑time range $[a,0]$ with $a<0$ \\[6pt]
+\textbf{Algorithm}\par
+\begin{enumerate}
+  \item Choose a single $\lambda^\ast$ from posterior samples \hfill (e.g.\ posterior mean)
+  \item For $i = 1,\dots,n$
+        \begin{enumerate}
+          \item[] \hspace*{-10pt}%
+          \begin{minipage}[t]{\linewidth}
+          \begin{enumerate}
+            \item Draw latent duration: $y_i \sim \operatorname{Exp}(\lambda^\ast)$
+            \item Draw start time: $T_i \sim \operatorname{Uniform}(a,0)$
+            \item Compute leaving time: $t_i = T_i + y_i$
+            \item Observed pair $(\text{time}_i,\text{event}_i)$
+                  \[\begin{aligned}
+\text{if } \quad t_i &< 0: &&&\text{(event occurred before now)}\\
+  &&\quad  \text{event}_i=1, &&\text{(uncensored)}\\ 
+  &&\quad \text{time}_i=y_i
+   &\quad \\
+&\text{else}: &&&\text{(event in the future)}\\
+   &&\quad \text{event}_i=0, &&\text{(right censored)}\\ 
+   &&\quad \text{time}_i=-T_i &&\text{(time already spent)}
+   &\quad 
+\end{aligned}\]
+          \end{enumerate}
+          \end{minipage}
+        \end{enumerate}
+  \item Combine $(\text{time}_i,\text{event}_i)$ into a fake data set of size $n$.
+\end{enumerate}
+\end{tcolorbox}
+
+\subsubsection{Model Checking via ECDF under Independent Censoring}
+In model checking, to compare the overall distributional shapes of the real data and the simulated data, we use the empirical cumulative distribution function (ECDF) rather than histograms. Unlike histograms, ECDFs do not depend on subjective choices of bin widths and break points, thereby avoiding visual biases. Moreover, an ECDF is a monotone right-continuous step function defined on $[0,\infty)$, which stably displays differences between samples over the entire time axis. Importantly, ECDFs can be plugged directly into distance statistics such as the Kolmogorov–Smirnov or Cramér–von Mises metrics, facilitating quantitative assessment of model fit.
+
+In survival data, the observed duration is determined jointly by the latent event time $T\ge 0$ and the censoring time $C\ge 0$. The observed quantity is
+$$
+Y=\min(T,C),\qquad \delta=\mathbf 1\{T\le C\}.
+$$
+That is, we observe the event time only when it is uncensored; otherwise we observe the censoring time. Consequently, we split the data into two subsamples—an “event subsample’’ with $\delta=1$ and a “censored subsample’’ with $\delta=0$—and compute ECDFs for each subsample separately.
+
+Under independent (non-informative) censoring, i.e., $T\perp C$, the two subsamples may be viewed as arising from two conditional distributions
+\begin{itemize}
+    \item for the event subsample ($\delta=1$), the observed values $Y=T$ follow the conditional distribution $T\mid(T\le C)$;
+    \item for the censored subsample ($\delta=0$), the observed values $Y=C$ follow the conditional distribution $C\mid(C<T)$.
+\end{itemize}
+Let the event-subsample size be $n_1=\sum_i \delta_i$ and the censored-subsample size be $n_0=\sum_i (1-\delta_i)$. The corresponding empirical distribution functions are
+\begin{equation}
+    \widehat H_{\text{event}}(t)
+=\frac{1}{n_1}\sum_{i:\,\delta_i=1}\mathbf 1\{Y_i\le t\},\qquad
+\widehat H_{\text{cens}}(t)
+=\frac{1}{n_0}\sum_{i:\,\delta_i=0}\mathbf 1\{Y_i\le t\},\qquad t\ge 0.
+\end{equation}
+By the Glivenko–Cantelli theorem (\cite{tucker1959generalization}), as sample sizes grow, these ECDFs converge uniformly to their respective target distribution functions
+\begin{align}
+\widehat H_{\text{event}}(t) &\xrightarrow{\text{uniformly in } t} H_{\text{event}}(t) := \Pr(T \le t \mid T \le C) \\
+\widehat H_{\text{cens}}(t) &\xrightarrow{\text{uniformly in } t} H_{\text{cens}}(t) := \Pr(C \le t \mid C < T)
+\end{align}
+In summary, by splitting the data into event and censored subsamples and plotting their empirical distribution functions $\widehat H_{\text{event}}$ and $\widehat H_{\text{cens}}$, we can evaluate model fit within a unified framework along both dimensions.
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+To evaluate how well the model captures the distribution of event times, a common approach is to compare the posterior predictive density with the histogram of observed events. While intuitive, histogram-based comparisons suffer from several drawbacks: they depend on arbitrary binning, are sensitive to sample size and distribution, and reflect local density rather than cumulative structure, potentially leading to misleading conclusions.
+
+To overcome these limitations, we use the empirical cumulative distribution function (ECDF) of observed events, which avoids binning, retains full order information, and remains stable under small sample sizes. We then compare this ECDF to the model’s posterior predictive cumulative distribution function (CDF) to assess overall fit.
+
+The posterior predictive density is defined as
+\begin{equation}
+    p(\tilde{y} \mid D) = \int p(\tilde{y} \mid \theta) \, p(\theta \mid D) \, d\theta,
+\end{equation}
+When defining the posterior predictive cumulative distribution function (CDF), we start from the definition
+\begin{equation}
+F_{\text{post}}(t)
+= P(\tilde{y} \le t \mid D)
+= \int_0^{t} p_{\text{post}}(s) ds, \quad t\ge 0
+\end{equation}
+where $p_{\text{post}}(s)$ is the posterior predictive probability density function (PDF)
+\begin{equation}
+p_{\text{post}}(s)
+= \int f_T(s\mid\theta)\,p(\theta \mid D) d\theta
+\end{equation}
+By substituting $p_{\text{post}}(s)$ into the expression for $F_{\text{post}}(t)$ and exchanging the order of integration (by Fubini's theorem), we obtain
+\begin{align}
+F_{\text{post}}(t)
+&= \int_0^{t} 
+\left[ \int f_T(s\mid\theta)\,p(\theta \mid D) d\theta \right] ds \\[6pt]
+&= \int \left[ \int_0^{t} f_T(s\mid\theta)\, ds \right] p(\theta \mid D) d\theta \\[6pt]
+&= \int F_T(t\mid\theta)\, p(\theta \mid D) d\theta,
+\label{eq:25}
+\end{align}
+where $F_T(t\mid\theta)$ denotes the theoretical CDF given parameter $\theta$.
+
+Since the integral in Equation~\eqref{eq:25} is usually intractable in practice, it can be approximated using Monte Carlo sampling $\theta^{(1)}, \dots, \theta^{(M)}$
+\begin{equation}
+    F_{\text{post}}(t) \approx \frac{1}{M} \sum_{m=1}^M F(t \mid \theta^{(m)}).
+\end{equation}
+For the exponential model, this can be implemented as \texttt{mean(pexp(t, rate = post\_lam))}, where \texttt{post\_lam} are posterior samples. We then plot the predictive CDF against the ECDF of observed events for visual comparison.
+
+
+
+
+
+
