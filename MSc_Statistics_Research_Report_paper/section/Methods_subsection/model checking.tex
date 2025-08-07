@@ -11,7 +11,7 @@
   ->, >=Latex
 ]
 
-%--- 主流程节点 ------------------------------------------------------
+%--- Main process node ------------------------------------------------------
 \node[box]      (model)   {\textbf{Define/Revise a model}};
 
 \node[box]      (checking1)  [below=of model] {\textbf{Model checking} \\
@@ -38,7 +38,7 @@
       (gen) -- (pass2)
       (pass2) -- node[right]{Yes}(report);
 
-%--- 回环：不合格则返回模型阶段 ------------------------------------
+%--- Loopback ------------------------------------
 \draw[->] (pass1.west) -- ++(-30mm,0) |- (model.west) node[pos=0.23, left]{No};
 %\draw[->] (pass1.west) to[out=180,in=180,looseness=1.3] node[left]{No} (model.west);
 \draw[->] (pass2.east) -- ++ (30mm,0 )|- (model.east) node[pos=0.23,right]{No};
@@ -130,78 +130,64 @@ This can be seen in Figure~\ref{fig:离职数据分开的直方图} (histograms 
     \caption{Histograms of censored and event durations in the employee turnover data}
     \label{fig:离职数据分开的直方图}
 \end{figure}
-To substantiate this point, we simulate under two settings, $A=30$ and $A=1000$, and plot both the empirical CDFs (ECDFs) for the event subsample ($\delta=1$) and the censored subsample ($\delta=0$), as well as the histograms of simulated durations
+To further support this point, we simulate under two settings, $A = 30$ and $A = 1000$, and plot the empirical cumulative distribution functions (ECDFs) for both the event subsample ($\delta = 1$) and the censored subsample ($\delta = 0$), along with the histograms of simulated durations.
 \begin{itemize}
-    \item $A=30$. The simulated data are almost entirely concentrated within 30 months. The histograms show a clear left-skew, indicating that both events and censorings occur very early. Consequently, the ECDFs rise steeply at short times (Figure 1, red curves), yielding a pronounced mismatch with the observed data.
-    \item $A=1000$. The model allows events and censorings to occur over a much wider period; the duration distribution shifts to the right, and the ECDF shapes align more closely with the observed data (Figure 2, red curves). The histograms become sparser, reflecting that events and censoring can happen much later. However, this setting imposes an unrealistic premise for an employer: a maximum tenure close to 83 years (1000 months). Thus, although the simulated curves look closer to the data, the apparent “match” rests on an implausible assumption and cannot be regarded as a reliable model-checking configuration.
+    \item $A = 30$ (Figure~\ref{fig:ppc-A30}). Compared to the real-data histogram (Figure~\ref{fig:离职数据分开的直方图}), the simulated durations in Figure~\ref{fig:fake-hist_a30} are heavily compressed within 0–30 months, indicating that both events and censorings occur unusually early. Correspondingly, the ECDFs for events and censorings (Figure~\ref{fig:ecdf-cens_a30}~\ref{fig:ecdf-event_a30}, red lines) rise too steeply at short durations, deviating noticeably from the observed curves. This mismatch is primarily driven by an unrealistic observation window $A$, rather than a misfit of the event-time distribution (e.g., the parameter $\lambda$) itself.
+    \item $A = 1000$ (Figure~\ref{fig:ppc-A1000})
+  In contrast, Figure~\ref{fig:fake-hist_a1000} shows a histogram with a much wider and sparser spread of durations, and the ECDF curves (Figure~\ref{fig:ecdf-event_a1000}~\ref{fig:ecdf-cens_a1000}, red lines) align more closely with the observed data. However, when compared to the real-data histogram in Figure~\ref{fig:离职数据分开的直方图}, this setting exceeds any realistic survey length—implying a maximum tenure close to 83 years—which is implausible in practical employment contexts. Thus, although the simulated curves fit better visually, this apparent “match” relies on an unrealistic assumption about $A$, and should not be accepted as a reliable model-checking result.
 \end{itemize}
-These two examples reinforce a key lesson: when using posterior predictive checks, goodness of visual fit alone is not sufficient; the simulation settings must also be judged for realism in light of the data-generating context.
+These two examples reinforce a key point: when performing posterior predictive checks, fit quality must be evaluated alongside the realism of the data-generating assumptions in simulation.
 \begin{figure}[htbp]
 \centering
-\begin{subfigure}[t]{0.32\textwidth}
+\begin{subfigure}[t]{0.3\textwidth}
   \centering
   \includegraphics[width=\linewidth]{images/ppc_event_ecdf_A30.png}  % 图1路径
   \caption{ECDF of $Y \mid \delta=1$}
-  \label{fig:ecdf-event}
+  \label{fig:ecdf-event_a30}
 \end{subfigure}\hfill
-\begin{subfigure}[t]{0.32\textwidth}
+\begin{subfigure}[t]{0.3\textwidth}
   \centering
   \includegraphics[width=\linewidth]{images/ppc_censored_ecdf_A30.png}   
   \caption{ECDF of $Y \mid \delta=0$}
-  \label{fig:ecdf-cens}
+  \label{fig:ecdf-cens_a30}
 \end{subfigure}\hfill
-\begin{subfigure}[t]{0.35\textwidth}
+\begin{subfigure}[t]{0.37\textwidth}
   \centering
   \includegraphics[width=\linewidth]{images/fake_duration_hist_a30.png}   % 图3路径
   \caption{Fake-data histogram}
-  \label{fig:fake-hist}
+  \label{fig:fake-hist_a30}
 \end{subfigure}
 \caption{Posterior predictive checking ($A=30$).}
-\label{fig:ppc-3in1}
+\label{fig:ppc-A30}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htbp]
+\centering
+\begin{subfigure}[t]{0.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{images/ppc_event_ecdf_A1000.png}  % 图1路径
+  \caption{ECDF of $Y \mid \delta=1$}
+  \label{fig:ecdf-event_a1000}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.3\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{images/ppc_censored_ecdf_A1000.png} 
+  \caption{ECDF of $Y \mid \delta=0$}
+  \label{fig:ecdf-cens_a1000}
+\end{subfigure}\hfill
+\begin{subfigure}[t]{0.37\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{images/fake_duration_hist_a1000.png}   % 图3路径
+  \caption{Fake-data histogram}
+  \label{fig:fake-hist_a1000}
+\end{subfigure}
+\caption{Posterior predictive checking ($A=1000$).}
+\label{fig:ppc-A1000}
 \end{figure}
 
 
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-To evaluate how well the model captures the distribution of event times, a common approach is to compare the posterior predictive density with the histogram of observed events. While intuitive, histogram-based comparisons suffer from several drawbacks: they depend on arbitrary binning, are sensitive to sample size and distribution, and reflect local density rather than cumulative structure, potentially leading to misleading conclusions.
-
-To overcome these limitations, we use the empirical cumulative distribution function (ECDF) of observed events, which avoids binning, retains full order information, and remains stable under small sample sizes. We then compare this ECDF to the model’s posterior predictive cumulative distribution function (CDF) to assess overall fit.
-
-The posterior predictive density is defined as
-\begin{equation}
-    p(\tilde{y} \mid D) = \int p(\tilde{y} \mid \theta) \, p(\theta \mid D) \, d\theta,
-\end{equation}
-When defining the posterior predictive cumulative distribution function (CDF), we start from the definition
-\begin{equation}
-F_{\text{post}}(t)
-= P(\tilde{y} \le t \mid D)
-= \int_0^{t} p_{\text{post}}(s) ds, \quad t\ge 0
-\end{equation}
-where $p_{\text{post}}(s)$ is the posterior predictive probability density function (PDF)
-\begin{equation}
-p_{\text{post}}(s)
-= \int f_T(s\mid\theta)\,p(\theta \mid D) d\theta
-\end{equation}
-By substituting $p_{\text{post}}(s)$ into the expression for $F_{\text{post}}(t)$ and exchanging the order of integration (by Fubini's theorem), we obtain
-\begin{align}
-F_{\text{post}}(t)
-&= \int_0^{t} 
-\left[ \int f_T(s\mid\theta)\,p(\theta \mid D) d\theta \right] ds \\[6pt]
-&= \int \left[ \int_0^{t} f_T(s\mid\theta)\, ds \right] p(\theta \mid D) d\theta \\[6pt]
-&= \int F_T(t\mid\theta)\, p(\theta \mid D) d\theta,
-\label{eq:25}
-\end{align}
-where $F_T(t\mid\theta)$ denotes the theoretical CDF given parameter $\theta$.
-
-Since the integral in Equation~\eqref{eq:25} is usually intractable in practice, it can be approximated using Monte Carlo sampling $\theta^{(1)}, \dots, \theta^{(M)}$
-\begin{equation}
-    F_{\text{post}}(t) \approx \frac{1}{M} \sum_{m=1}^M F(t \mid \theta^{(m)}).
-\end{equation}
-For the exponential model, this can be implemented as \texttt{mean(pexp(t, rate = post\_lam))}, where \texttt{post\_lam} are posterior samples. We then plot the predictive CDF against the ECDF of observed events for visual comparison.
-
-
+%\subsection{Posterior predictive CDF}
+%\input{MSc_Statistics_Research_Report_paper/section/Methods_subsection/posterior predictive cdf }
 
 
 
