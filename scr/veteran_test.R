@@ -71,7 +71,6 @@ hist(post_lambda_stan,
      prob   = TRUE,         
      col    = "#A0CBE8",   
      border = "white",
-     main   = expression("Posterior of " * lambda),
      xlab   = expression(lambda),
      ylab   = "Density",
      ylim   = c(0, max(density(post_lambda_stan)$y, analytic_density))

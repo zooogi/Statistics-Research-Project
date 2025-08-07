@@ -95,7 +95,6 @@ ggplot(filter(dat_a30, delta == 1),
   stat_ecdf(size = 1) +
   labs(x = "Y | delta = 1 (event times)",
        y = "ECDF",
-       title =  "ECDF of Y | delta = 1 (A = 30)",
        colour = "source"
   ) +
   theme_bw()
@@ -107,8 +106,8 @@ ggplot(filter(dat_a30, delta == 0),
        aes(x = Y, colour = source)) +
   stat_ecdf(size = 1) +
   labs(x="Y | delta = 0 (censored durations)",
-       y = "ECDF",
-       title = "ECDF of Y | delta = 0 (A = 30)") +
+       y = "ECDF"
+       ) +
   theme_bw()
 #save
 ggsave("images/ppc_censored_ecdf_A30.png", width = 6, height = 4, dpi = 300)
@@ -117,7 +116,7 @@ ggsave("images/ppc_censored_ecdf_A30.png", width = 6, height = 4, dpi = 300)
 ggplot(fake_ppc_a30_exp, aes(x = time)) +
   geom_histogram(binwidth = 3, fill = "#D55E00", alpha = 0.7) +
   facet_wrap(~ event, labeller = labeller(event = c("0" = "Censored", "1" = "Event Occurred"))) +
-  labs(title = "Fake Data Duration by Event Status (A = 30)",
+  labs(
        x = "Duration",
        y = "Count") +
   theme_minimal()
@@ -130,8 +129,7 @@ ggplot(filter(dat_a1000, delta == 1),
        aes(x = Y, colour = source)) +
   stat_ecdf(size = 1) +
   labs(x = "Y | delta = 1 (event times)",
-       y = "ECDF",
-       title = "ECDF of Y | delta = 1 (A = 1000)") +
+       y = "ECDF") +
   theme_bw()
 #save
 ggsave("images/ppc_event_ecdf_A1000.png", width = 6, height = 4, dpi = 300)
@@ -142,8 +140,7 @@ ggplot(filter(dat_a1000, delta == 0),
        aes(x = Y, colour = source)) +
   stat_ecdf(size = 1) +
   labs(x="Y | delta = 0 (censored durations)",
-       y = "ECDF",
-       title = "ECDF of Y | delta = 0 (A = 1000)") +
+       y = "ECDF") +
   theme_bw()
 #save
 ggsave("images/ppc_censored_ecdf_A1000.png", width = 6, height = 4, dpi = 300)
@@ -151,8 +148,7 @@ ggsave("images/ppc_censored_ecdf_A1000.png", width = 6, height = 4, dpi = 300)
 ggplot(fake_ppc_a1000_exp, aes(x = time)) +
   geom_histogram(binwidth = 3, fill = "#D55E00", alpha = 0.7) +
   facet_wrap(~ event, labeller = labeller(event = c("0" = "Censored", "1" = "Event Occurred"))) +
-  labs(title = "Fake Data Duration by Event Status (A = 1000)",
-       x = "Duration",
+  labs(x = "Duration",
        y = "Count") +
   theme_minimal()
 ggsave("images/fake_duration_hist_a1000.png", width = 6, height = 4)
