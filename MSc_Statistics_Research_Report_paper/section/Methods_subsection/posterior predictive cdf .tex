@@ -1,0 +1,37 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+To evaluate how well the model captures the distribution of event times, a common approach is to compare the posterior predictive density with the histogram of observed events. While intuitive, histogram-based comparisons suffer from several drawbacks: they depend on arbitrary binning, are sensitive to sample size and distribution, and reflect local density rather than cumulative structure, potentially leading to misleading conclusions.
+
+To overcome these limitations, we use the empirical cumulative distribution function (ECDF) of observed events, which avoids binning, retains full order information, and remains stable under small sample sizes. We then compare this ECDF to the model’s posterior predictive cumulative distribution function (CDF) to assess overall fit.
+
+The posterior predictive density is defined as
+\begin{equation}
+    p(\tilde{y} \mid D) = \int p(\tilde{y} \mid \theta) \, p(\theta \mid D) \, d\theta,
+\end{equation}
+When defining the posterior predictive cumulative distribution function (CDF), we start from the definition
+\begin{equation}
+F_{\text{post}}(t)
+= P(\tilde{y} \le t \mid D)
+= \int_0^{t} p_{\text{post}}(s) ds, \quad t\ge 0
+\end{equation}
+where $p_{\text{post}}(s)$ is the posterior predictive probability density function (PDF)
+\begin{equation}
+p_{\text{post}}(s)
+= \int f_T(s\mid\theta)\,p(\theta \mid D) d\theta
+\end{equation}
+By substituting $p_{\text{post}}(s)$ into the expression for $F_{\text{post}}(t)$ and exchanging the order of integration (by Fubini's theorem), we obtain
+\begin{align}
+F_{\text{post}}(t)
+&= \int_0^{t} 
+\left[ \int f_T(s\mid\theta)\,p(\theta \mid D) d\theta \right] ds \\[6pt]
+&= \int \left[ \int_0^{t} f_T(s\mid\theta)\, ds \right] p(\theta \mid D) d\theta \\[6pt]
+&= \int F_T(t\mid\theta)\, p(\theta \mid D) d\theta,
+\label{eq:25}
+\end{align}
+where $F_T(t\mid\theta)$ denotes the theoretical CDF given parameter $\theta$.
+
+Since the integral in Equation~\eqref{eq:25} is usually intractable in practice, it can be approximated using Monte Carlo sampling $\theta^{(1)}, \dots, \theta^{(M)}$
+\begin{equation}
+    F_{\text{post}}(t) \approx \frac{1}{M} \sum_{m=1}^M F(t \mid \theta^{(m)}).
+\end{equation}
+For the exponential model, this can be implemented as \texttt{mean(pexp(t, rate = post\_lam))}, where \texttt{post\_lam} are posterior samples. We then plot the predictive CDF against the ECDF of observed events for visual comparison.
