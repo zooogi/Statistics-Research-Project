@@ -82,13 +82,16 @@ lambda_grid  <- seq(min(post_lam_turnover_stan), max(post_lam_turnover_stan), le
 analytic_dens <- dgamma(lambda_grid, shape =  d + alpha, rate = sum_y+beta)
 
 #画出后验采样的lambda直方图
+png("images/turnover post lambda.png", width = 6, height = 4, units = "in", res = 300)
 hist(post_lam_turnover_stan,
      breaks = 30,           
      prob   = TRUE,       
      col    = "#1f77b4",    
      border = "white",
      xlab   = expression(lambda),
-     main   = "posterior of lambda",
+     main   = "",
+     cex.lab = 1.5,  
+     cex.axis = 1.2,
      ylab   = "Density",
      ylim   = c(0, max(density(post_lam_turnover_stan)$y, analytic_dens)))
 lines(lambda_grid, analytic_dens,
@@ -100,9 +103,9 @@ legend("topright",
        pt.cex = c(2.5, NA),
        col    = c("#1f77b4","red"),
        bty    = "n",
-       inset  = c(-0.07, 0)
+       inset  = c(0.05, 0)
 )
-ggsave("images/turnover post lambda.png", width = 6, height = 4)
+dev.off()
 
 
 

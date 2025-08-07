@@ -66,11 +66,15 @@ bayesplot::mcmc_trace(
 )
 ggsave("images/veteran_traceplot.png", width = 6, height = 4)
 
+png("images/veteran_post_lam.png", width = 6, height = 4, units = "in", res = 300)
 hist(post_lambda_stan,
      breaks = 30,          
      prob   = TRUE,         
      col    = "#A0CBE8",   
      border = "white",
+     main = "",
+     cex.lab = 1.5, 
+     cex.axis = 1.2, 
      xlab   = expression(lambda),
      ylab   = "Density",
      ylim   = c(0, max(density(post_lambda_stan)$y, analytic_density))
@@ -85,6 +89,6 @@ legend("topright",
        pt.cex = c(2.5, NA),
        col    = c("#A0CBE8","red"),
        bty    = "n",
-       inset  = c(-0.1, 0)
+       inset  = c(0.1, 0)
 )
-ggsave("images/veteran_post_lam.png", width = 6, height = 4)
+dev.off()
