@@ -97,7 +97,7 @@ ggplot(filter(dat_a30, delta == 1),
        y = "ECDF",
        colour = "source"
   ) +
-  theme_bw()
+  theme_bw(base_size = 19)
 #save
 ggsave("images/ppc_event_ecdf_A30.png", width = 6, height = 4, dpi = 300)
 
@@ -108,7 +108,7 @@ ggplot(filter(dat_a30, delta == 0),
   labs(x="Y | delta = 0 (censored durations)",
        y = "ECDF"
        ) +
-  theme_bw()
+  theme_bw(base_size = 19)
 #save
 ggsave("images/ppc_censored_ecdf_A30.png", width = 6, height = 4, dpi = 300)
 
@@ -119,7 +119,7 @@ ggplot(fake_ppc_a30_exp, aes(x = time)) +
   labs(
        x = "Duration",
        y = "Count") +
-  theme_minimal()
+  theme_minimal(base_size = 20)
 ggsave("images/fake_duration_hist_a30.png", width = 6, height = 4)
 
 
@@ -130,7 +130,7 @@ ggplot(filter(dat_a1000, delta == 1),
   stat_ecdf(size = 1) +
   labs(x = "Y | delta = 1 (event times)",
        y = "ECDF") +
-  theme_bw()
+  theme_bw(base_size = 19)
 #save
 ggsave("images/ppc_event_ecdf_A1000.png", width = 6, height = 4, dpi = 300)
 
@@ -141,7 +141,7 @@ ggplot(filter(dat_a1000, delta == 0),
   stat_ecdf(size = 1) +
   labs(x="Y | delta = 0 (censored durations)",
        y = "ECDF") +
-  theme_bw()
+  theme_bw(base_size = 19)
 #save
 ggsave("images/ppc_censored_ecdf_A1000.png", width = 6, height = 4, dpi = 300)
 
@@ -150,5 +150,5 @@ ggplot(fake_ppc_a1000_exp, aes(x = time)) +
   facet_wrap(~ event, labeller = labeller(event = c("0" = "Censored", "1" = "Event Occurred"))) +
   labs(x = "Duration",
        y = "Count") +
-  theme_minimal()
+  theme_minimal(base_size = 20)
 ggsave("images/fake_duration_hist_a1000.png", width = 6, height = 4)

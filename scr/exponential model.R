@@ -13,7 +13,7 @@ ggplot(df, aes(x = stag)) +
   facet_wrap(~ event, labeller = labeller(event = c("0" = "Censored", "1" = "Event Occurred"))) +
   labs(x = "Duration",
        y = "Count") +
-  theme_minimal()
+  theme_minimal(base_size = 19)
 
 #save
 ggsave("images/separate_hist.png", width = 6, height = 4)
