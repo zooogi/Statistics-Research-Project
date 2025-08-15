@@ -11,7 +11,7 @@ library(ggplot2)
 ggplot(df, aes(x = stag)) +
   geom_histogram(binwidth = 3, fill = "steelblue", alpha = 0.7) +
   facet_wrap(~ event, labeller = labeller(event = c("0" = "Censored", "1" = "Event Occurred"))) +
-  labs(x = "Duration",
+  labs(x = "Months",
        y = "Count") +
   theme_minimal(base_size = 19)
 
@@ -107,31 +107,5 @@ legend("topright",
 )
 dev.off()
 
-
-
-
-######下面可以删了，因为下面是事件数据的后验预测cdf
-
-#计算后验预测
-
-#------------ecdf vs cdf 事件数据event------------------
-set.seed(123)
-# 使用Monte Carlo近似
-y_grid <- seq(0, 400, length.out = 500)
-cdf_vals <- sapply(y_grid, function(t) {
-  mean(pexp(t, rate = post_lam_turnover_stan))  # pexp 是 CDF
-})
-
-# 画图：event 数据的 ECDF + 后验预测的 CDF
-ggplot() +
-  stat_ecdf(data = df[df$event == 1, ],
-            aes(x = stag), 
-            color = "black", size = 1, geom = "step") +
-  geom_line(data = data.frame(t = y_grid, cdf = cdf_vals),
-            aes(x = t, y = cdf),
-            color = "blue", size = 1.2) +
-  labs(x = "Time", y = "Cumulative Probability") +
-  theme_minimal()
-ggsave("images/turnover_post_predic_event_ecdf.png", width = 6, height = 4)
 
 

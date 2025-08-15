@@ -11,7 +11,7 @@ post_mean_lam_turnover <- sum_post_lam_turnover["lambda", "mean"]
 #---------------- generate_data (via post mean)-------
 N<- length(df$event)
 fake_postpred_modelcheck_exp<- generate_data_fixed_lambda(n = N, lambda = post_mean_lam_turnover,
-                                                          a = -150, seed = 25)
+                                                          a = -200, seed = 25)
 #----------------summary------------------
 summary(fake_postpred_modelcheck_exp)
 
@@ -50,6 +50,17 @@ ggplot(filter(dat_all, delta == 0),
   theme_bw()
 #save
 ggsave("images/ppc_censored_ecdf_exp.png", width = 6, height = 4)
+
+
+ggplot(fake_postpred_modelcheck_exp, aes(x = time)) +
+  geom_histogram(binwidth = 3, fill = "#D55E00", alpha = 0.7) +
+  facet_wrap(~ event, labeller = labeller(event = c("0" = "Censored", "1" = "Event Occurred"))) +
+  labs(
+    x = "Months",
+    y = "Count") +
+  theme_minimal(base_size = 20)
+ggsave("images/fake_duration_hist_a200.png", width = 6, height = 4)
+
 
 
 
@@ -117,7 +128,7 @@ ggplot(fake_ppc_a30_exp, aes(x = time)) +
   geom_histogram(binwidth = 3, fill = "#D55E00", alpha = 0.7) +
   facet_wrap(~ event, labeller = labeller(event = c("0" = "Censored", "1" = "Event Occurred"))) +
   labs(
-       x = "Duration",
+       x = "Months",
        y = "Count") +
   theme_minimal(base_size = 20)
 ggsave("images/fake_duration_hist_a30.png", width = 6, height = 4)
@@ -148,7 +159,7 @@ ggsave("images/ppc_censored_ecdf_A1000.png", width = 6, height = 4, dpi = 300)
 ggplot(fake_ppc_a1000_exp, aes(x = time)) +
   geom_histogram(binwidth = 3, fill = "#D55E00", alpha = 0.7) +
   facet_wrap(~ event, labeller = labeller(event = c("0" = "Censored", "1" = "Event Occurred"))) +
-  labs(x = "Duration",
+  labs(x = "Months",
        y = "Count") +
   theme_minimal(base_size = 20)
 ggsave("images/fake_duration_hist_a1000.png", width = 6, height = 4)
