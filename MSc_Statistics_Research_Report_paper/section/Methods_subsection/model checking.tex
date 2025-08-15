@@ -1,3 +1,11 @@
+\subsubsection{Why Are Two Layers of Model Checking Necessary}
+In the previous section, we introduced the modeling assumptions and formal structure of the exponential survival model. Before fitting the model to real data, it is necessary to systematically examine both the structural validity and the adequacy of fit. In Bayesian modeling, the primary purpose of model checking is to assess whether the proposed model is grounded in solid assumptions—both in terms of its structure and its fitting ability—before drawing inferences or making interpretations. Unlike traditional approaches that rely solely on goodness-of-fit metrics (such as the likelihood value or information criteria like WAIC or LOO), model checking shifts the focus away from mere “score performance” on observed data and toward verifying whether the model captures key structural features from a generative perspective. As shown in Figure~\ref{flowchart}, this process reflects two fundamental validation tasks in Bayesian modeling.
+\begin{enumerate}
+    \item Is the model structure adequate to explain the observed data?
+    \item To what extent can the model reproduce reality after inference?
+\end{enumerate}
+%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%流程图workflow%%%%%%%%%%
 \begin{figure}[H]
 \centering
 \resizebox{0.52\linewidth}{!}{
@@ -14,7 +22,7 @@
 %--- Main process node ------------------------------------------------------
 \node[box]      (model)   {\textbf{Define/Revise a model}};
 
-\node[box]      (checking1)  [below=of model] {\textbf{Model checking} \\
+\node[box]      (checking1)  [below=of model] {\textbf{Simulation-based Model Checking} \\
 (Simulate with $\lambda_0$; fit model; recover $\lambda_0$?)};
 
 \node[decision] (pass1)   [below=10mm of checking1] {\textbf{Plausible?}};
@@ -22,7 +30,7 @@
 \node[box]      (fit)     [below=of pass1]  {\textbf{Fit to real data}\\
 (Compute posterior)};
 
-\node[box]      (gen)     [below=of fit]    {\textbf{Posterior predictive model checking}\\
+\node[box]      (gen)     [below=of fit]    {\textbf{Posterior Predictive Model Checking}\\
 (Generate fake data from Posterior)\\
 (Compare fake vs real)};
 
@@ -30,7 +38,7 @@
 
 \node[box]     (report)  [below=of pass2] {\textbf{Report/Interpret}};
 
-%--- 连线 ------------------------------------------------------------
+%--- connection ------------------------------------------------------------
 \draw (model)   -- (checking1)
       (checking1)  -- (pass1)
       (pass1)   -- node[right]{Yes}(fit)
@@ -44,13 +52,26 @@
 \draw[->] (pass2.east) -- ++ (30mm,0 )|- (model.east) node[pos=0.23,right]{No};
 \end{tikzpicture}}
 \caption{General Bayesian workflow}
+\label{flowchart}
 \end{figure}
 
+This workflow clearly distinguishes two levels of model checking.
+
+First is the \textbf{Simulation-based Model Checking}, which evaluates structural identifiability based on known parameters. Before fitting any real data, we can simulate pseudo-datasets using a fixed value $\lambda_0$, and then re-fit the model using the same procedure. If we successfully “recover” $\lambda_0$, this suggests that the model structure is sound; failure to do so implies structural flaws in the model, rendering downstream inferences on real data invalid.
+
+Second is the \textbf{Posterior Predictive Checking}, which assesses posterior adequacy after fitting the model to real data. We draw samples from the posterior distribution and generate “fake data” to check whether the model can reproduce the statistical features of the observed data. The key idea is that if data generated under the posterior distribution differ significantly from real data in terms of censoring structure and event-time distribution, this suggests that the model fails to capture the true underlying process. Bayesian methods naturally account for this uncertainty by incorporating the full posterior distribution.
+
+To implement this, we design a simulation procedure to generate synthetic survival datasets that preserve the censoring mechanism of the real data (see Algorithm 1 (\ref{fake data})). The algorithm proceeds by drawing a posterior sample $\lambda^*$ and defining a suitable time window $[a, 0]$ to simulate individuals' entry times and latent event durations. This allows us to generate a “virtual dataset” that matches the sample size and censoring structure of the original data, thereby enabling a rigorous comparison for posterior predictive model checking.
+%%%%%%算法--------------
 \begin{tcolorbox}[
   title  = Algorithm 1: Simulating a Fake Survival Dataset (e.g.Posterior predictive model checking),
-   fonttitle  = \small, 
+   fonttitle  = \footnotesize,
+   fontupper = \footnotesize,
+    %width = 0.9\textwidth,   
+  box align = center, 
   colback = white,
-  colframe=black]
+  colframe=black,
+  breakable]
 \textbf{Input}\\
 \quad$\bullet$ posterior samples $\{\lambda^{(s)}\}$ \hfill (obtained by fitting real data)\\
 \quad$\bullet$ sample size $n$ \hfill (same size as the real data set)\\
@@ -59,9 +80,9 @@
 \begin{enumerate}
   \item Choose a single $\lambda^\ast$ from posterior samples \hfill (e.g.\ posterior mean)
   \item For $i = 1,\dots,n$
-        \begin{enumerate}
+         \begin{enumerate}
           \item[] \hspace*{-10pt}%
-          \begin{minipage}[t]{\linewidth}
+          %\begin{minipage}[t]{\linewidth}
           \begin{enumerate}
             \item Draw latent duration: $y_i \sim \operatorname{Exp}(\lambda^\ast)$
             \item Draw start time: $T_i \sim \operatorname{Uniform}(a,0)$
@@ -77,15 +98,14 @@
    &\quad 
 \end{aligned}\]
           \end{enumerate}
-          \end{minipage}
+          %\end{minipage}
         \end{enumerate}
   \item Combine $(\text{time}_i,\text{event}_i)$ into a fake data set of size $n$.
 \end{enumerate}
 \label{fake data}
 \end{tcolorbox}
-
 \subsubsection{Model Checking via ECDF under Independent Censoring}
-In model checking, to compare the overall distributional shapes of the real data and the simulated data, we use the empirical cumulative distribution function (ECDF) rather than histograms. Unlike histograms, ECDFs do not depend on subjective choices of bin widths and break points, thereby avoiding visual biases. Moreover, an ECDF is a monotone right-continuous step function defined on $[0,\infty)$, which stably displays differences between samples over the entire time axis. Importantly, ECDFs can be plugged directly into distance statistics such as the Kolmogorov–Smirnov or Cramér–von Mises metrics, facilitating quantitative assessment of model fit.
+In model checking, to compare the overall distributional shapes of the real data and the simulated data, we use the empirical cumulative distribution function (ECDF) rather than histograms. Unlike histograms, ECDFs do not depend on subjective choices of bin widths and break points, thereby avoiding visual biases (\cite{berg2008data}). Moreover, an ECDF is a monotone right-continuous step function defined on $[0,\infty)$, which stably displays differences between samples over the entire time axis. Importantly, ECDFs can be plugged directly into distance statistics such as the Kolmogorov–Smirnov or Cramér–von Mises metrics, facilitating quantitative assessment of model fit.
 
 In survival data, the observed duration is determined jointly by the latent event time $T\ge 0$ and the censoring time $C\ge 0$. The observed quantity is
 $$

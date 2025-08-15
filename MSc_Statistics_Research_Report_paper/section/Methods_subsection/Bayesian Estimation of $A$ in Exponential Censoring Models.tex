@@ -1,0 +1,72 @@
+Based on the analysis of the two extreme examples discussed earlier, we find that the structural information in the censoring mechanism—such as a fixed observation window—can significantly affect model estimation. This structure, however, is often overlooked in standard survival analysis. Introducing a global parameter $A$, which defines the upper bound of the censoring time $C_i \sim \text{Unif}(0, A)$, allows us to more realistically recover the data-generating process. It also facilitates objective simulation and model checking, while capturing latent structures that are not directly observed but implicitly present. Although $A$ is unobserved in the data, it is identifiable under a Bayesian framework, and its posterior distribution can reflect the underlying data collection mechanism.
+
+Below, we formulate a Bayesian inference framework under an exponential survival model with censoring window parameter $A$, and derive the corresponding full-sample likelihood. The model is defined as follows,
+\begin{enumerate}
+    \item Event time (latent variable): $
+    T_i \mid \lambda \sim \mathrm{Exp}(\lambda), 
+    \qquad f_T(t \mid \lambda)=\lambda e^{-\lambda t},\; t\ge0.
+    $
+   \item Censoring time: $
+   C_i \mid A \sim \mathrm{Unif}(0,A), 
+   \qquad g_A(c)=\tfrac1A \mathbf 1\{0\le c\le A\}.
+   $
+   \item Independent censoring: $T_i \perp C_i \mid (\lambda, A).$
+   \item Observed variables: $ Y_i=\min(T_i,C_i), \qquad 
+   \delta_i=\mathbf 1\{T_i\le C_i\}.
+   $
+\end{enumerate}
+Based on this setup, we derive the sample likelihood for each observation $(Y_i, \delta_i)$ under parameters $(\lambda, A)$, considering two possible observation types.
+
+For event samples ($\delta_i=1,\, Y_i=y_i$), where the event occurs before censoring, i.e., $T_i = y_i,\; C_i \ge y_i$, the likelihood is
+\begin{align}
+p(y_i,\delta_i=1\mid\theta)
+ &= \Pr\bigl(T_i=y_i,\,C_i\ge y_i \mid \theta\bigr) \\[3pt]
+ &= \int_{c=y_i}^{A} \underbrace{p(T_i=y_i,\,C_i=c \mid \theta)}_{\text{joint density}}\,dc 
+    &&\text{(marginalizing over unknown }C_i)\\[0pt]
+ &= \int_{y_i}^{A} f_T(y_i\mid\lambda)\,g_A(c)\,dc 
+    &&\text{(by independence }T_i\perp C_i)\\[0pt]
+ &= f_T(y_i\mid\lambda)\,
+    \bigl[\tfrac1A(A-y_i)\bigr]\,
+    \mathbf 1\{0\le y_i\le A\}\\[3pt]
+ &= \lambda e^{-\lambda y_i}\Bigl(1-\tfrac{y_i}{A}\Bigr)
+    \mathbf 1\{0\le y_i\le A\}.
+\end{align}
+For censored samples ($\delta_i=0,\, Y_i=y_i$), where censoring occurs before the event, i.e., $C_i = y_i,\; T_i > y_i$, the likelihood is
+\begin{align}
+p(y_i,\delta_i=0\mid\theta)
+ &= \Pr\bigl(C_i=y_i,\,T_i>y_i \mid \theta\bigr) \\[0pt]
+ &= \int_{t=y_i}^{\infty} 
+    \underbrace{p(T_i=t,\,C_i=y_i \mid \theta)}_{\text{joint density}}\,dt
+    &&\text{(marginalizing over unknown }T_i)\\[0pt]
+ &= \int_{y_i}^{\infty} f_T(t\mid\lambda)\,g_A(y_i)\,dt
+    &&\text{(factorized by independence)}\\[0pt]
+ &= \frac{1}{A} \cdot \int_{y_i}^{\infty} f_T(t \mid \lambda) \, dt \cdot \mathbf{1}\{0 \le y_i \le A\} \\
+ &= \frac{1}{A}\cdot \,S_T(y_i\mid\lambda)\,
+    \mathbf 1\{0\le y_i\le A\}\\[3pt]
+ &= \tfrac1A e^{-\lambda y_i}\mathbf 1\{0\le y_i\le A\},
+\end{align}
+where $S_T(y\mid\lambda)=e^{-\lambda y}$ is the survival function of the exponential distribution.
+
+Combining the two types of contributions, the full likelihood for the dataset $\mathcal{D} = \{(y_i, \delta_i)\}_{i=1}^n$ is
+\begin{equation}
+L(\mathcal{D}\mid\lambda,A)=
+\prod_{i=1}^n
+\bigl[\lambda e^{-\lambda y_i}(1-\tfrac{y_i}{A})\bigr]^{\delta_i}
+\cdot \bigl[\tfrac{e^{-\lambda y_i}}{A}\bigr]^{1-\delta_i}
+\cdot \mathbf 1\{0\le y_i \le A\}.
+\end{equation}
+To ensure the likelihood is non-zero, the constraint
+$$
+A \ge \max_i y_i
+$$
+must be satisfied; otherwise $L=0$.
+
+Under the Bayesian framework, assuming independent priors $\pi_\lambda(\lambda)$ and $\pi_A(A)$, the joint posterior becomes
+\begin{equation}
+p(\lambda, A \mid \mathcal{D}) \propto 
+L(\mathcal{D} \mid \lambda, A)\cdot
+\pi_\lambda(\lambda)\cdot
+\pi_A(A),
+\qquad \text{with } A \ge \max_i y_i.
+\end{equation}
+This likelihood formulation explicitly incorporates the observation window as a structural parameter, improving transparency in the data-generating process and providing a foundation for subsequent posterior inference, prediction, and model checking.
