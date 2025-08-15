@@ -6,23 +6,54 @@
   publisher={Springer Science \& Business Media}
 }
 
-%%贝叶斯生存模型里的，logcave使用AFS
-@article{gilks1992adaptive,
-  title={Adaptive rejection sampling for Gibbs sampling},
-  author={Gilks, Walter R and Wild, Pascal},
-  journal={Journal of the Royal Statistical Society: Series C (Applied Statistics)},
-  volume={41},
-  number={2},
-  pages={337--348},
-  year={1992},
+
+
+
+%%第 1–2 章清晰给出 T_i 和 C_i 的定义，并假设 T_i 独立 C_i（独立删失）以确保似然函数有效。
+@book{kalbfleisch2002statistical,
+  title={The statistical analysis of failure time data},
+  author={Kalbfleisch, John D and Prentice, Ross L},
+  year={2002},
+  publisher={John Wiley \& Sons}
+}
+
+
+
+
+%%数学化地推导了后验公式和非规范化形式，并说明其在任意模型中的适用性。
+@book{bernardo1994bayesian,
+  title={Bayesian theory},
+  author={Bernardo, Jos{\'e} M and Smith, Adrian FM and Berliner, Mark},
+  volume={586},
+  year={1994},
   publisher={Wiley Online Library}
 }
+
+
+%%%解释了为什么用解析可解的分布（尤其是指数分布）可以清晰展示删失机制对参数估计和推断的作用。
+@book{lawless2011statistical,
+  title={Statistical models and methods for lifetime data},
+  author={Lawless, Jerald F},
+  year={2011},
+  publisher={John Wiley \& Sons}
+}
+
+
 
 %%贝叶斯模型基础
 @book{kleinbaum1996survival,
   title={Survival analysis a self-learning text},
   author={Kleinbaum, David G and Klein, Mitchel},
   year={1996},
+  publisher={Springer}
+}
+
+
+%%%提供了贝叶斯推断中解析解与数值方法（尤其是 MCMC）的系统对比。
+@book{robert2007bayesian,
+  title={The Bayesian choice: from decision-theoretic foundations to computational implementation},
+  author={Robert, Christian P},
+  year={2007},
   publisher={Springer}
 }
 
@@ -100,4 +131,223 @@ DOI = {10.3390/stats5010006}
   pages={828--830},
   year={1959},
   publisher={JSTOR}
+}
+
+%%贝叶斯统计的权威教材，强调“点估计不是终点”，完整推断需要估计参数分布与不确定性
+@book{gelman1995bayesian,
+  title={Bayesian data analysis},
+  author={Gelman, Andrew and Carlin, John B and Stern, Hal S and Rubin, Donald B},
+  year={1995},
+  publisher={Chapman and Hall/CRC}
+}
+
+
+
+
+%%经典 MLE 的原始提出，奠定了点估计思想。
+@article{fisher1922mathematical,
+  title={On the mathematical foundations of theoretical statistics},
+  author={Fisher, Ronald A},
+  journal={Philosophical transactions of the Royal Society of London. Series A, containing papers of a mathematical or physical character},
+  volume={222},
+  number={594-604},
+  pages={309--368},
+  year={1922},
+  publisher={The Royal Society London}
+}
+
+%%%%经典论文，指出在删失率高的生存分析中，基于最大似然的 Cox 模型估计可能效率低下，尤其是样本量有限时。
+@article{Efron01091977,
+author = {Bradley Efron},
+title = {The Efficiency of Cox's Likelihood Function for Censored Data},
+journal = {Journal of the American Statistical Association},
+volume = {72},
+number = {359},
+pages = {557--565},
+year = {1977},
+publisher = {ASA Website},
+doi = {10.1080/01621459.1977.10480613},
+URL = { https://www.tandfonline.com/doi/abs/10.1080/01621459.1977.10480613},
+eprint = { 
+https://www.tandfonline.com/doi/pdf/10.1080/01621459.1977.10480613}}
+
+
+%%%详细讨论了层次建模、稀疏数据分析，以及高删失率生存分析中的贝叶斯先验稳定化作用。
+@misc{carlin1997bayes,
+  title={Bayes and empirical Bayes methods for data analysis},
+  author={Carlin, Bradley P and Louis, Thomas A},
+  year={1997},
+  publisher={Springer}
+}
+
+%%%veteran数据包
+@Manual{survival-package,
+    title = {A Package for Survival Analysis in R},
+    author = {Terry M Therneau},
+    year = {2024},
+    note = {R package version 3.8-3},
+    url = {https://CRAN.R-project.org/package=survival},
+  }
+
+%%经典的 Stan 介绍文献，详细说明了 HMC 和 NUTS 在后验抽样中的原理与收敛特性。
+@article{JSSv076i01,
+ title={Stan: A Probabilistic Programming Language},
+ volume={76},
+ url={https://www.jstatsoft.org/index.php/jss/article/view/v076i01},
+ doi={10.18637/jss.v076.i01},
+ abstract={Stan is a probabilistic programming language for specifying statistical models. A Stan program imperatively defines a log probability function over parameters conditioned on specified data and constants. As of version 2.14.0, Stan provides full Bayesian inference for continuous-variable models through Markov chain Monte Carlo methods such as the No-U-Turn sampler, an adaptive form of Hamiltonian Monte Carlo sampling. Penalized maximum likelihood estimates are calculated using optimization methods such as the limited memory Broyden-Fletcher-Goldfarb-Shanno algorithm. Stan is also a platform for computing log densities and their gradients and Hessians, which can be used in alternative algorithms such as variational Bayes, expectation propagation, and marginal inference using approximate integration. To this end, Stan is set up so that the densities, gradients, and Hessians, along with intermediate quantities of the algorithm such as acceptance probabilities, are easily accessible. Stan can be called from the command line using the cmdstan package, through R using the rstan package, and through Python using the pystan package. All three interfaces support sampling and optimization-based inference with diagnostics and posterior analysis. rstan and pystan also provide access to log probabilities, gradients, Hessians, parameter transforms, and specialized plotting.},
+ number={1},
+ journal={Journal of Statistical Software},
+ author={Carpenter, Bob and Gelman, Andrew and Hoffman, Matthew D. and Lee, Daniel and Goodrich, Ben and Betancourt, Michael and Brubaker, Marcus and Guo, Jiqiang and Li, Peter and Riddell, Allen},
+ year={2017},
+ pages={1–32}
+}
+
+%%%%对比 HMC 与传统 MCMC，在复杂模型中展示了收敛速度和后验精度的提升。
+@article{https://doi.org/10.1111/2041-210X.12681,
+author = {Monnahan, Cole C. and Thorson, James T. and Branch, Trevor A.},
+title = {Faster estimation of Bayesian models in ecology using Hamiltonian Monte Carlo},
+journal = {Methods in Ecology and Evolution},
+volume = {8},
+number = {3},
+pages = {339-348},
+keywords = {Bayesian inference, hierarchical modelling, Markov chain Monte Carlo, no-U-turn sampler, Stan},
+doi = {https://doi.org/10.1111/2041-210X.12681},
+url = {https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/2041-210X.12681},
+eprint = {https://besjournals.onlinelibrary.wiley.com/doi/pdf/10.1111/2041-210X.12681},
+abstract = {Summary Bayesian inference is a powerful tool to better understand ecological processes across varied subfields in ecology, and is often implemented in generic and flexible software packages such as the widely used BUGS family (BUGS, WinBUGS, OpenBUGS and JAGS). However, some models have prohibitively long run times when implemented in BUGS. A relatively new software platform called Stan uses Hamiltonian Monte Carlo (HMC), a family of Markov chain Monte Carlo (MCMC) algorithms which promise improved efficiency and faster inference relative to those used by BUGS. Stan is gaining traction in many fields as an alternative to BUGS, but adoption has been slow in ecology, likely due in part to the complex nature of HMC. Here, we provide an intuitive illustration of the principles of HMC on a set of simple models. We then compared the relative efficiency of BUGS and Stan using population ecology models that vary in size and complexity. For hierarchical models, we also investigated the effect of an alternative parameterization of random effects, known as non-centering. For small, simple models there is little practical difference between the two platforms, but Stan outperforms BUGS as model size and complexity grows. Stan also performs well for hierarchical models, but is more sensitive to model parameterization than BUGS. Stan may also be more robust to biased inference caused by pathologies, because it produces diagnostic warnings where BUGS provides none. Disadvantages of Stan include an inability to use discrete parameters, more complex diagnostics and a greater requirement for hands-on tuning. Given these results, Stan is a valuable tool for many ecologists utilizing Bayesian inference, particularly for problems where BUGS is prohibitively slow. As such, Stan can extend the boundaries of feasible models for applied problems, leading to better understanding of ecological processes. Fields that would likely benefit include estimation of individual and population growth rates, meta-analyses and cross-system comparisons and spatiotemporal models.},
+year = {2017}
+}
+
+
+
+
+
+%%%经典论文，系统提出了 Posterior Predictive Checking (PPC) 的概念与实施方法。
+@article{62bfc978-09b1-3997-9776-380d0b45e9c2,
+ ISSN = {10170405, 19968507},
+ URL = {http://www.jstor.org/stable/24306036},
+ abstract = {This paper considers Bayesian counterparts of the classical tests for goodness of fit and their use in judging the fit of a single Bayesian model to the observed data. We focus on posterior predictive assessment, in a framework that also includes conditioning on auxiliary statistics. The Bayesian formulation facilitates the construction and calculation of a meaningful reference distribution not only for any (classical) statistic, but also for any parameter-dependent "statistic" or discrepancy. The latter allows us to propose the realized discrepancy assessment of model fitness, which directly measures the true discrepancy between data and the posited model, for any aspect of the model which we want to explore. The computation required for the realized discrepancy assessment is a straightforward byproduct of the posterior simulation used for the original Bayesian analysis. We illustrate with three applied examples. The first example, which serves mainly to motivate the work, illustrates the difficulty of classical tests in assessing the fitness of a Poisson model to a positron emission tomography image that is constrained to be nonnegative. The second and third examples illustrate the details of the posterior predictive approach in two problems: estimation in a model with inequality constraints on the parameters, and estimation in a mixture model. In all three examples, standard test statistics (either a χ2 or a likelihood ratio) are not pivotal: the difficulty is not just how to compute the reference distribution for the test, but that in the classical framework no such distribution exists, independent of the unknown model parameters.},
+ author = {Andrew Gelman and Xiao-Li Meng and Hal Stern},
+ journal = {Statistica Sinica},
+ number = {4},
+ pages = {733--760},
+ publisher = {Institute of Statistical Science, Academia Sinica},
+ title = {POSTERIOR PREDICTIVE ASSESSMENT OF MODEL FITNESS VIA REALIZED DISCREPANCIES},
+ urldate = {2025-08-14},
+ volume = {6},
+ year = {1996}
+}
+
+
+
+
+%%%%生存删失假数据，但这里说的是插补的方法
+@Article{stats5010006,
+AUTHOR = {Moghaddam, Shirin and Newell, John and Hinde, John},
+TITLE = {A Bayesian Approach for Imputation of Censored Survival Data},
+JOURNAL = {Stats},
+VOLUME = {5},
+YEAR = {2022},
+NUMBER = {1},
+PAGES = {89--107},
+URL = {https://www.mdpi.com/2571-905X/5/1/6},
+ISSN = {2571-905X},
+ABSTRACT = {A common feature of much survival data is censoring due to incompletely observed lifetimes. Survival analysis methods and models have been designed to take account of this and provide appropriate relevant summaries, such as the Kaplan–Meier plot and the commonly quoted median survival time of the group under consideration. However, a single summary is not really a relevant quantity for communication to an individual patient, as it conveys no notion of variability and uncertainty, and the Kaplan–Meier plot can be difficult for the patient to understand and also is often mis-interpreted, even by some physicians. This paper considers an alternative approach of treating the censored data as a form of missing, incomplete data and proposes an imputation scheme to construct a completed dataset. This allows the use of standard descriptive statistics and graphical displays to convey both typical outcomes and the associated variability. We propose a Bayesian approach to impute any censored observations, making use of other information in the dataset, and provide a completed dataset. This can then be used for standard displays, summaries, and even, in theory, analysis and model fitting. We particularly focus on the data visualisation advantages of the completed data, allowing displays such as density plots, boxplots, etc, to complement the usual Kaplan–Meier display of the original dataset. We study the performance of this approach through a simulation study and consider its application to two clinical examples.},
+DOI = {10.3390/stats5010006}
+}
+
+%%生态学建模中 贝叶斯 PPC 的实用指南（包含生存数据的删失处理）
+@article{https://doi.org/10.1002/ecm.1314,
+author = {Conn, Paul B. and Johnson, Devin S. and Williams, Perry J. and Melin, Sharon R. and Hooten, Mevin B.},
+title = {A guide to Bayesian model checking for ecologists},
+journal = {Ecological Monographs},
+volume = {88},
+number = {4},
+pages = {526-542},
+keywords = {Bayesian model checking, Bayesian P value, goodness-of-fit, hierarchical model, model diagnostics, posterior checks},
+doi = {https://doi.org/10.1002/ecm.1314},
+url = {https://esajournals.onlinelibrary.wiley.com/doi/abs/10.1002/ecm.1314},
+eprint = {https://esajournals.onlinelibrary.wiley.com/doi/pdf/10.1002/ecm.1314},
+abstract = {Abstract Checking that models adequately represent data is an essential component of applied statistical inference. Ecologists increasingly use hierarchical Bayesian statistical models in their research. The appeal of this modeling paradigm is undeniable, as researchers can build and fit models that embody complex ecological processes while simultaneously accounting for observation error. However, ecologists tend to be less focused on checking model assumptions and assessing potential lack of fit when applying Bayesian methods than when applying more traditional modes of inference such as maximum likelihood. There are also multiple ways of assessing the fit of Bayesian models, each of which has strengths and weaknesses. For instance, Bayesian P values are relatively easy to compute, but are well known to be conservative, producing P values biased toward 0.5. Alternatively, lesser known approaches to model checking, such as prior predictive checks, cross-validation probability integral transforms, and pivot discrepancy measures may produce more accurate characterizations of goodness-of-fit but are not as well known to ecologists. In addition, a suite of visual and targeted diagnostics can be used to examine violations of different model assumptions and lack of fit at different levels of the modeling hierarchy, and to check for residual temporal or spatial autocorrelation. In this review, we synthesize existing literature to guide ecologists through the many available options for Bayesian model checking. We illustrate methods and procedures with several ecological case studies including (1) analysis of simulated spatiotemporal count data, (2) N-mixture models for estimating abundance of sea otters from an aircraft, and (3) hidden Markov modeling to describe attendance patterns of California sea lion mothers on a rookery. We find that commonly used procedures based on posterior predictive P values detect extreme model inadequacy, but often do not detect more subtle cases of lack of fit. Tests based on cross-validation and pivot discrepancy measures (including the “sampled predictive P value”) appear to be better suited to model checking and to have better overall statistical performance. We conclude that model checking is necessary to ensure that scientific inference is well founded. As an essential component of scientific discovery, it should accompany most Bayesian analyses presented in the literature.},
+year = {2018}
+}
+
+%%同时提到 WAIC、LOO 和 Posterior Predictive Check（PPC）并对比使用的文献
+@article{cho2025nonlinear,
+  title={Nonlinear Bayesian Approaches to Modeling Glaucoma Progression with Device Calibration},
+  author={Cho, Junsang and Lee, Lok and Xu, Yanyiran and Joos, Karen M and Brown, Eric N},
+  journal={Investigative Ophthalmology \& Visual Science},
+  volume={66},
+  number={8},
+  pages={412--412},
+  year={2025},
+  publisher={The Association for Research in Vision and Ophthalmology}
+}
+
+
+%%%对黑箱的解释信！！
+@article{10.1093/bioinformatics/btp358,
+    author = {Raue, A. and Kreutz, C. and Maiwald, T. and Bachmann, J. and Schilling, M. and Klingmüller, U. and Timmer, J.},
+    title = {Structural and practical identifiability analysis of partially observed dynamical models by exploiting the profile likelihood},
+    journal = {Bioinformatics},
+    volume = {25},
+    number = {15},
+    pages = {1923-1929},
+    year = {2009},
+    month = {06},
+    abstract = {Motivation: Mathematical description of biological reaction networks by differential equations leads to large models whose parameters are calibrated in order to optimally explain experimental data. Often only parts of the model can be observed directly. Given a model that sufficiently describes the measured data, it is important to infer how well model parameters are determined by the amount and quality of experimental data. This knowledge is essential for further investigation of model predictions. For this reason a major topic in modeling is identifiability analysis.Results: We suggest an approach that exploits the profile likelihood. It enables to detect structural non-identifiabilities, which manifest in functionally related model parameters. Furthermore, practical non-identifiabilities are detected, that might arise due to limited amount and quality of experimental data. Last but not least confidence intervals can be derived. The results are easy to interpret and can be used for experimental planning and for model reduction.Availability: An implementation is freely available for MATLAB and the PottersWheel modeling toolbox at http://web.me.com/andreas.raue/profile/software.html.Contact:  andreas.raue@me.comSupplementary information:  Supplementary data are available at Bioinformatics online.},
+    issn = {1367-4803},
+    doi = {10.1093/bioinformatics/btp358},
+    url = {https://doi.org/10.1093/bioinformatics/btp358},
+    eprint = {https://academic.oup.com/bioinformatics/article-pdf/25/15/1923/48992533/bioinformatics\_25\_15\_1923.pdf},
+}
+
+
+%%%仿真。探讨参数不可识别性（sloppiness），使用仿真检验是否能“恢复”模型参数。
+@article{pub.1044073403,
+ abstract = {Quantitative computational models play an increasingly important role in modern biology. Such models typically involve many free parameters, and assigning their values is often a substantial obstacle to model development. Directly measuring in vivo biochemical parameters is difficult, and collectively fitting them to other experimental data often yields large parameter uncertainties. Nevertheless, in earlier work we showed in a growth-factor-signaling model that collective fitting could yield well-constrained predictions, even when it left individual parameters very poorly constrained. We also showed that the model had a "sloppy" spectrum of parameter sensitivities, with eigenvalues roughly evenly distributed over many decades. Here we use a collection of models from the literature to test whether such sloppy spectra are common in systems biology. Strikingly, we find that every model we examine has a sloppy spectrum of sensitivities. We also test several consequences of this sloppiness for building predictive models. In particular, sloppiness suggests that collective fits to even large amounts of ideal time-series data will often leave many parameters poorly constrained. Tests over our model collection are consistent with this suggestion. This difficulty with collective fits may seem to argue for direct parameter measurements, but sloppiness also implies that such measurements must be formidably precise and complete to usefully constrain many model predictions. We confirm this implication in our growth-factor-signaling model. Our results suggest that sloppy sensitivity spectra are universal in systems biology models. The prevalence of sloppiness highlights the power of collective fits and suggests that modelers should focus on predictions rather than on parameters.},
+ author = {Gutenkunst, Ryan N and Waterfall, Joshua J and Casey, Fergal P and Brown, Kevin S and Myers, Christopher R and Sethna, James P},
+ doi = {10.1371/journal.pcbi.0030189},
+ journal = {PLOS Computational Biology},
+ keywords = {},
+ note = {https://journals.plos.org/ploscompbiol/article/file?id=10.1371/journal.pcbi.0030189&type=printable},
+ number = {10},
+ pages = {e189},
+ title = {Universally Sloppy Parameter Sensitivities in Systems Biology Models},
+ url = {https://app.dimensions.ai/details/publication/pub.1044073403},
+ volume = {3},
+ year = {2007}
+}
+
+
+
+
+
+%%%生成删失数据假数据，但这里用的是条件分布！
+@misc{ashhad2025generatingaccuratesyntheticsurvival,
+      title={Generating Accurate Synthetic Survival Data by Conditioning on Outcomes}, 
+      author={Mohd Ashhad and Ricardo Henao},
+      year={2025},
+      eprint={2405.17333},
+      archivePrefix={arXiv},
+      primaryClass={stat.ML},
+      url={https://arxiv.org/abs/2405.17333}, 
+}
+
+
+%全文深入探讨了 ECDF,介绍了 ECDF 如何用于 Kolmogorov–Smirnov（KS）与 Cramér–von Mises（CvM）等拟合优度检验
+@article{arnold2011nonparametric,
+  title={Nonparametric goodness-of-fit tests for discrete null distributions},
+  author={Arnold, Taylor B and Emerson, John W},
+  year={2011}
+}
+
+
+%%详细讨论了在独立删失（independent censoring）假设下，事件子样本服从 T∣(T≤C) 的条件分布，而删失子样本服从C∣(C<T) 的条件分布，并且可以分别计算其经验分布函数用于模型检验。
+@book{fleming2013counting,
+  title={Counting processes and survival analysis},
+  author={Fleming, Thomas R and Harrington, David P},
+  year={2013},
+  publisher={John Wiley \& Sons}
 }

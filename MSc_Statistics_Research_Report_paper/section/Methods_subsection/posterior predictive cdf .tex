@@ -1,3 +1,20 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%这后面说的是后验预测
+After obtaining the posterior distribution of model parameters $p(\theta \mid D)$, we are often interested in making predictions about future observations. This leads naturally to the posterior predictive distribution, defined as
+\begin{equation}
+    p(\tilde{y} \mid D) = \int p(\tilde{y} \mid \theta)\, p(\theta \mid D)\, d\theta
+    \label{eq:18}
+\end{equation}
+where $\tilde{y}$ is a new (unseen) observation, $\theta$ denotes the model parameters, and $D$ is the observed dataset. In practice, this integral is often intractable and is therefore approximated using Monte Carlo methods. Specifically, we draw samples $\theta^{(1)}, \theta^{(2)}, \dots, \theta^{(M)}$ from the posterior $p(\theta \mid D)$, and estimate the posterior predictive distribution as
+\begin{equation}
+p(\tilde{y} \mid D) \approx \frac{1}{M} \sum_{m=1}^{M} p(\tilde{y} \mid \theta^{(m)}).
+\end{equation}
+
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 To evaluate how well the model captures the distribution of event times, a common approach is to compare the posterior predictive density with the histogram of observed events. While intuitive, histogram-based comparisons suffer from several drawbacks: they depend on arbitrary binning, are sensitive to sample size and distribution, and reflect local density rather than cumulative structure, potentially leading to misleading conclusions.
