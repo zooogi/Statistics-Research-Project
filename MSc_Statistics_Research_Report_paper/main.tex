@@ -4,12 +4,11 @@
   includefoot
 ]{geometry}
 \title{Statistics Research Project Title}
-\author{FIRSTNAME LASTNAME}
-\CID{01234567}
-\supervisor{SUPERVISORNAME and COSUPERVISORNAME}
-\date{1 May 2025}
+\author{Jing Zhang}
+\CID{06014353}
+\supervisor{Daniel Mortlock}
 %For today's date, use:
-%\date{\today}
+\date{\today}
 \logoimg{}
 
 % THIS IS WHERE NEW COMMANDS CAN BE DEFINED
@@ -29,10 +28,13 @@
 }
 \usepackage{tikz}
 \usetikzlibrary{positioning, arrows.meta, shapes.geometric}
+\usepackage{enumitem}
 \usepackage[most]{tcolorbox}
 \tcbuselibrary{listings, breakable}
 \usepackage{graphicx}
 \usepackage{subcaption}
+
+
 
 
 \begin{document}
@@ -42,8 +44,9 @@
 
 % Generates plagiarism declaration
 \declarationname{Jing Zhang}
-%\declarationdate{DATE}if you choose to use footnotes, do so sparingly.
+\declarationdate{\today}%if you choose to use footnotes, do so sparingly.
 \declaration 
+
 
 \begin{acknowledgements}
     In the acknowledgments, you should account for anyone who supported you during your research. This could include family, your research peer group, other students, research group members, your supervisor, data providers, external partners, any computing service used, any financial support. 
@@ -51,6 +54,9 @@
     If your research peer group, other students, research group members, or your supervisors made substantive contributions towards your report -- e.g. they identified suitable methods, provided code or contributed a sub-analysis -- you must acknowledge their precise contribution here.
 \end{acknowledgements}
 
+\setcounter{tocdepth}{3} 
+\tableofcontents
+\clearpage
 %=================================================================
 % VERY IMPORTANT
 % This command switches from Roman to Arabic numbering for main part of report. Do not modify.
@@ -113,8 +119,9 @@ Note the report submission deadline is a very hard deadline since the assessment
 
 %%References part of the main text
 % References: modify the file refs.bib
-\bibliographystyle{apalike}
+\bibliographystyle{plainnat} 
 \bibliography{refs}
+
 
 \clearpage
 

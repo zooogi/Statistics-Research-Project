@@ -43,7 +43,7 @@
 \RequirePackage[absolute]{textpos}
 
 % for bibtex
-\RequirePackage[round,authoryear,sort]{natbib}
+\RequirePackage[square,numbers,sort&compress]{natbib}
 \setlength{\bibsep}{0em}
 %\usepackage[authoryear]{natbib}
 %\usepackage[numbers]{natbib}

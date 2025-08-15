@@ -1,5 +1,12 @@
 \subsubsection{Why Are Two Layers of Model Checking Necessary}
-In the previous section, we introduced the modeling assumptions and formal structure of the exponential survival model. Before fitting the model to real data, it is necessary to systematically examine both the structural validity and the adequacy of fit. In Bayesian modeling, the primary purpose of model checking is to assess whether the proposed model is grounded in solid assumptions—both in terms of its structure and its fitting ability—before drawing inferences or making interpretations. Unlike traditional approaches that rely solely on goodness-of-fit metrics (such as the likelihood value or information criteria like WAIC or LOO), model checking shifts the focus away from mere “score performance” on observed data and toward verifying whether the model captures key structural features from a generative perspective. As shown in Figure~\ref{flowchart}, this process reflects two fundamental validation tasks in Bayesian modeling.
+\label{subsec:wo Layers of Model Checking}
+In the previous section, we derived the exponential survival model under a Gamma prior, demonstrated its closed-form posterior, and confirmed the agreement between analytical and MCMC-based computation. While this validates parameter estimation under the model’s assumptions, it does not guarantee that the model itself captures the key structural features of the observed data~\cite{62bfc978-09b1-3997-9776-380d0b45e9c2, gelman1995bayesian}.
+
+In practice, the actual data-generating process may involve additional unobserved mechanisms~\cite{kalbfleisch2002statistical}. For example, there may be a fixed observation window applied to all individuals, shaping the censoring pattern in ways the current model does not explicitly represent. Ignoring such mechanisms can lead to systematic bias in parameter estimates and distort model predictions~\cite{stats5010006}.
+
+Before drawing inferences or making interpretations, it is therefore necessary to examine both structural validity and adequacy of fit~\cite{62bfc978-09b1-3997-9776-380d0b45e9c2}. In Bayesian modelling, the primary purpose of model checking is to assess whether the proposed model is grounded in solid assumptions, both in terms of its structure and its fitting ability~\cite{https://doi.org/10.1002/ecm.1314}. Unlike traditional approaches that rely solely on goodness-of-fit metrics (such as the likelihood value or information criteria like WAIC or LOO)~\cite{cho2025nonlinear, https://doi.org/10.1002/ecm.1314}, model checking shifts the focus away from mere “score performance” on observed data and toward verifying whether the model captures key structural features from a generative perspective. 
+
+As shown in Figure~\ref{flowchart}, this process reflects two fundamental validation tasks in Bayesian modelling.
 \begin{enumerate}
     \item Is the model structure adequate to explain the observed data?
     \item To what extent can the model reproduce reality after inference?
@@ -57,31 +64,34 @@ In the previous section, we introduced the modeling assumptions and formal struc
 
 This workflow clearly distinguishes two levels of model checking.
 
-First is the \textbf{Simulation-based Model Checking}, which evaluates structural identifiability based on known parameters. Before fitting any real data, we can simulate pseudo-datasets using a fixed value $\lambda_0$, and then re-fit the model using the same procedure. If we successfully “recover” $\lambda_0$, this suggests that the model structure is sound; failure to do so implies structural flaws in the model, rendering downstream inferences on real data invalid.
+First is the \textbf{Simulation-based Model Checking}, which evaluates structural identifiability based on known parameters~\cite{10.1093/bioinformatics/btp358}. Before fitting any real data, we can simulate pseudo-datasets using a fixed value $\lambda_0$, and then re-fit the model using the same procedure. If we successfully “recover” $\lambda_0$, this suggests that the model structure is sound; failure to do so implies structural flaws in the model, rendering downstream inferences on real data invalid~\cite{10.1093/bioinformatics/btp358, pub.1044073403}.
 
-Second is the \textbf{Posterior Predictive Checking}, which assesses posterior adequacy after fitting the model to real data. We draw samples from the posterior distribution and generate “fake data” to check whether the model can reproduce the statistical features of the observed data. The key idea is that if data generated under the posterior distribution differ significantly from real data in terms of censoring structure and event-time distribution, this suggests that the model fails to capture the true underlying process. Bayesian methods naturally account for this uncertainty by incorporating the full posterior distribution.
+Second is the \textbf{Posterior Predictive Checking}, which assesses posterior adequacy after fitting the model to real data~\cite{https://doi.org/10.1002/ecm.1314}. We draw samples from the posterior distribution and generate “fake data” to check whether the model can reproduce the statistical features of the observed data. The key idea is that if data generated under the posterior distribution differ significantly from real data in terms of censoring structure and event-time distribution, this suggests that the model fails to capture the true underlying process~\cite{62bfc978-09b1-3997-9776-380d0b45e9c2}. Bayesian methods naturally account for this uncertainty by incorporating the full posterior distribution.
 
-To implement this, we design a simulation procedure to generate synthetic survival datasets that preserve the censoring mechanism of the real data (see Algorithm 1 (\ref{fake data})). The algorithm proceeds by drawing a posterior sample $\lambda^*$ and defining a suitable time window $[a, 0]$ to simulate individuals' entry times and latent event durations. This allows us to generate a “virtual dataset” that matches the sample size and censoring structure of the original data, thereby enabling a rigorous comparison for posterior predictive model checking.
+To implement this, we design a simulation procedure to generate synthetic survival datasets that preserve the censoring mechanism of the real data (see Algorithm 1)~\cite{ashhad2025generatingaccuratesyntheticsurvival}. The algorithm proceeds by drawing a posterior sample $\lambda^*$ and defining a suitable time window $[a, 0]$ to simulate individuals' entry times and latent event durations. This allows us to generate a “virtual dataset” that matches the sample size and censoring structure of the original data, thereby enabling a rigorous comparison for posterior predictive model checking.
 %%%%%%算法--------------
 \begin{tcolorbox}[
-  title  = Algorithm 1: Simulating a Fake Survival Dataset (e.g.Posterior predictive model checking),
-   fonttitle  = \footnotesize,
+  title  = Algorithm 1: Simulating a Fake Survival Dataset (e.g.Posterior predictive model checking),label={fake data},
+   fonttitle  = \bfseries\footnotesize,
    fontupper = \footnotesize,
     %width = 0.9\textwidth,   
   box align = center, 
   colback = white,
   colframe=black,
-  breakable]
-\textbf{Input}\\
-\quad$\bullet$ posterior samples $\{\lambda^{(s)}\}$ \hfill (obtained by fitting real data)\\
-\quad$\bullet$ sample size $n$ \hfill (same size as the real data set)\\
-\quad$\bullet$ start‑time range $[a,0]$ with $a<0$ \\[6pt]
-\textbf{Algorithm}\par
-\begin{enumerate}
+   boxsep  = 3pt,
+ left=4pt,right=4pt,top=5pt,bottom=4pt,
+ breakable]
+\textbf{Input}
+\begin{itemize}[itemsep=1pt,parsep=0pt,topsep=2pt]
+\item posterior samples $\{\lambda^{(s)}\}$ \hfill (obtained by fitting real data)
+\item sample size $n$ \hfill (same size as the real data set)
+\item start‑time range $[a,0]$ with $a<0$
+\end{itemize}
+
+\textbf{Algorithm}
+\begin{enumerate}[itemsep=2pt,parsep=0pt,topsep=2pt]
   \item Choose a single $\lambda^\ast$ from posterior samples \hfill (e.g.\ posterior mean)
   \item For $i = 1,\dots,n$
-         \begin{enumerate}
-          \item[] \hspace*{-10pt}%
           %\begin{minipage}[t]{\linewidth}
           \begin{enumerate}
             \item Draw latent duration: $y_i \sim \operatorname{Exp}(\lambda^\ast)$
@@ -98,113 +108,47 @@ To implement this, we design a simulation procedure to generate synthetic surviv
    &\quad 
 \end{aligned}\]
           \end{enumerate}
-          %\end{minipage}
-        \end{enumerate}
   \item Combine $(\text{time}_i,\text{event}_i)$ into a fake data set of size $n$.
 \end{enumerate}
-\label{fake data}
 \end{tcolorbox}
+
+
+
+
+
 \subsubsection{Model Checking via ECDF under Independent Censoring}
-In model checking, to compare the overall distributional shapes of the real data and the simulated data, we use the empirical cumulative distribution function (ECDF) rather than histograms. Unlike histograms, ECDFs do not depend on subjective choices of bin widths and break points, thereby avoiding visual biases (\cite{berg2008data}). Moreover, an ECDF is a monotone right-continuous step function defined on $[0,\infty)$, which stably displays differences between samples over the entire time axis. Importantly, ECDFs can be plugged directly into distance statistics such as the Kolmogorov–Smirnov or Cramér–von Mises metrics, facilitating quantitative assessment of model fit.
+In model checking, to compare the overall distributional shapes of the real data and the simulated data, we use the empirical cumulative distribution function (ECDF) rather than histograms. Unlike histograms, ECDFs do not depend on subjective choices of bin widths and break points, thereby avoiding visual biases~\cite{berg2008data}. Moreover, an ECDF is a monotone right-continuous step function defined on $[0,\infty)$, which stably displays differences between samples over the entire time axis~\cite{arnold2011nonparametric, berg2008data}. Importantly, ECDFs can be plugged directly into distance statistics such as the Kolmogorov–Smirnov or Cramér–von Mises metrics~\cite{arnold2011nonparametric}, facilitating quantitative assessment of model fit.
+
+
+%%%%%%%%%今天到这了，下面还没有添加文献！！！然后后面对应的需要修改的内容还没改。明天要改完他了！！！然后周六要跑那个高等线图！！！然后先写那个章节！！！周日要写intro！！！加标题
+%%%或者周六先写个intro然后加上跑出来那个高等线图！！！
+%%%周二才写那个似然函数的A那个可识别性。
+%%%周二再继续改吧。然后我想在把结果写完之前发给他看看，然后让他给点建议。然后剩下最后一周要写完结果和conclusion了！！！
 
 In survival data, the observed duration is determined jointly by the latent event time $T\ge 0$ and the censoring time $C\ge 0$. The observed quantity is
 $$
 Y=\min(T,C),\qquad \delta=\mathbf 1\{T\le C\}.
 $$
-That is, we observe the event time only when it is uncensored; otherwise, we observe the censoring time. Consequently, we split the data into two subsamples—an “event subsample’’ with $\delta=1$ and a “censored subsample’’ with $\delta=0$—and compute ECDFs for each subsample separately.
+That is, we observe the event time only when it is uncensored; otherwise, we observe the censoring time. Consequently, we split the data into two subsamples, an “event subsample’’ with $\delta=1$ and a “censored subsample’’ with $\delta=0$, and compute ECDFs for each subsample separately.
 
-Under independent (non-informative) censoring, i.e., $T\perp C$, the two subsamples may be viewed as arising from two conditional distributions
+Under independent (non-informative) censoring, i.e., $T\perp C$, the two subsamples may be viewed as arising from two conditional distributions~\cite{fleming2013counting}
 \begin{itemize}
     \item for the event subsample ($\delta=1$), the observed values $Y=T$ follow the conditional distribution $T\mid(T\le C)$;
     \item for the censored subsample ($\delta=0$), the observed values $Y=C$ follow the conditional distribution $C\mid(C<T)$.
 \end{itemize}
-Let the event-subsample size be $n_1=\sum_i \delta_i$ and the censored-subsample size be $n_0=\sum_i (1-\delta_i)$. The corresponding empirical distribution functions are
+Let the event-subsample size be $n_1=\sum_i \delta_i$ and the censored-subsample size be $n_0=\sum_i (1-\delta_i)$. The corresponding empirical distribution functions are~\cite{fleming2013counting, arnold2011nonparametric}
 \begin{equation}
     \widehat H_{\text{event}}(t)
 =\frac{1}{n_1}\sum_{i:\,\delta_i=1}\mathbf 1\{Y_i\le t\},\qquad
 \widehat H_{\text{cens}}(t)
 =\frac{1}{n_0}\sum_{i:\,\delta_i=0}\mathbf 1\{Y_i\le t\},\qquad t\ge 0.
 \end{equation}
-By the Glivenko–Cantelli theorem (\cite{tucker1959generalization}), as sample sizes grow, these ECDFs converge uniformly to their respective target distribution functions
+By the Glivenko–Cantelli theorem~\cite{tucker1959generalization}, as sample sizes grow, these ECDFs converge uniformly to their respective target distribution functions
 \begin{align}
 \widehat H_{\text{event}}(t) &\xrightarrow{\text{uniformly in } t} H_{\text{event}}(t) := \Pr(T \le t \mid T \le C) \\
 \widehat H_{\text{cens}}(t) &\xrightarrow{\text{uniformly in } t} H_{\text{cens}}(t) := \Pr(C \le t \mid C < T)
 \end{align}
 In summary, by splitting the data into event and censored subsamples and plotting their empirical distribution functions $\widehat H_{\text{event}}$ and $\widehat H_{\text{cens}}$, we can evaluate model fit within a unified framework along both dimensions.
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Choosing and Interpreting the Survey-Length Parameter $A$}
-
-In the posterior predictive model checking of this study, we generate simulated data from the model and compare it with the observed data. This simulation relies on sampling given known quantities; a key quantity is the \textbf{maximum survey duration $A$ }in Algorithm 1 (\ref{fake data}), which is controlled by the user-specified parameter $a$, with the reparameterization $A = -a$, governing the censoring mechanism in the simulated data. In other words, $A$ sets the observation window in simulation and thereby affects both the censoring rate and the distribution of event times.
-
-This quantity is not a parameter to be estimated by the model; it is an external input required to generate fake data. Although it may appear auxiliary, it is tightly coupled with model checking—different choices of $A$ change the censoring structure of the simulated data and therefore influence the credibility of posterior predictive results.
-
-Does the observed data carry information about $A$? Yes. In any survival dataset, the “shadow” of the survey window is reflected in the censoring proportion and the shape of the observed durations. If the survey is short (small $A$), many subjects are censored before the event occurs, leading to a high right-censoring rate and “compressed” event times. Conversely, with a long survey (large $A$), more events are observed, censoring decreases, and event times spread out.
-
-This can be seen in Figure~\ref{fig:离职数据分开的直方图} (histograms of event and censored durations in the employee turnover data). The number of events and censors is roughly balanced, suggesting that the survey was long enough to capture about half of the departures. Since the maximum observed duration exceeds 170 months, it is reasonable to infer that the underlying survey duration $A$ should be at least greater than 170; this directly informs how the censoring mechanism should be set in simulation.
-\begin{figure}[H]
-    \centering
-    \includegraphics[height=5.5cm, width=0.6\textwidth]{images/separate_hist.png}
-    \caption{Histograms of censored and event durations in the employee turnover data}
-    \label{fig:离职数据分开的直方图}
-\end{figure}
-To further support this point, we simulate under two settings, $A = 30$ and $A = 1000$, and plot the empirical cumulative distribution functions (ECDFs) for both the event subsample ($\delta = 1$) and the censored subsample ($\delta = 0$), along with the histograms of simulated durations.
-\begin{itemize}
-    \item $A = 30$ (Figure~\ref{fig:ppc-A30}). Compared to the real-data histogram (Figure~\ref{fig:离职数据分开的直方图}), the simulated durations in Figure~\ref{fig:fake-hist_a30} are heavily compressed within 0–30 months, indicating that both events and censorings occur unusually early. Correspondingly, the ECDFs for events and censorings (Figure~\ref{fig:ecdf-cens_a30}~\ref{fig:ecdf-event_a30}, red lines) rise too steeply at short durations, deviating noticeably from the observed curves. This mismatch is primarily driven by an unrealistic observation window $A$, rather than a misfit of the event-time distribution (e.g., the parameter $\lambda$) itself.
-    \item $A = 1000$ (Figure~\ref{fig:ppc-A1000})
-  In contrast, Figure~\ref{fig:fake-hist_a1000} shows a histogram with a much wider and sparser spread of durations, and the ECDF curves (Figure~\ref{fig:ecdf-event_a1000}~\ref{fig:ecdf-cens_a1000}, red lines) align more closely with the observed data. However, when compared to the real-data histogram in Figure~\ref{fig:离职数据分开的直方图}, this setting exceeds any realistic survey length—implying a maximum tenure close to 83 years—which is implausible in practical employment contexts. Thus, although the simulated curves fit better visually, this apparent “match” relies on an unrealistic assumption about $A$, and should not be accepted as a reliable model-checking result.
-\end{itemize}
-These two examples reinforce a key point: when performing posterior predictive checks, fit quality must be evaluated alongside the realism of the data-generating assumptions in simulation.
-\begin{figure}[htbp]
-\centering
-\begin{subfigure}[t]{0.32\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{images/ppc_event_ecdf_A30.png}  % 图1路径
-  \caption{ECDF of $Y \mid \delta=1$}
-  \label{fig:ecdf-event_a30}
-\end{subfigure}\hfill
-\begin{subfigure}[t]{0.32\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{images/ppc_censored_ecdf_A30.png}   
-  \caption{ECDF of $Y \mid \delta=0$}
-  \label{fig:ecdf-cens_a30}
-\end{subfigure}\hfill
-\begin{subfigure}[t]{0.35\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{images/fake_duration_hist_a30.png}   % 图3路径
-  \caption{Fake-data histogram}
-  \label{fig:fake-hist_a30}
-\end{subfigure}
-\caption{Posterior predictive checking ($A=30$).}
-\label{fig:ppc-A30}
-\end{figure}
-%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[htbp]
-\centering
-\begin{subfigure}[t]{0.3\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{images/ppc_event_ecdf_A1000.png}  % 图1路径
-  \caption{ECDF of $Y \mid \delta=1$}
-  \label{fig:ecdf-event_a1000}
-\end{subfigure}\hfill
-\begin{subfigure}[t]{0.3\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{images/ppc_censored_ecdf_A1000.png} 
-  \caption{ECDF of $Y \mid \delta=0$}
-  \label{fig:ecdf-cens_a1000}
-\end{subfigure}\hfill
-\begin{subfigure}[t]{0.37\textwidth}
-  \centering
-  \includegraphics[width=\linewidth]{images/fake_duration_hist_a1000.png}   % 图3路径
-  \caption{Fake-data histogram}
-  \label{fig:fake-hist_a1000}
-\end{subfigure}
-\caption{Posterior predictive checking ($A=1000$).}
-\label{fig:ppc-A1000}
-\end{figure}
-
 
 %\subsection{Posterior predictive CDF}
 %\input{MSc_Statistics_Research_Report_paper/section/Methods_subsection/posterior predictive cdf }
