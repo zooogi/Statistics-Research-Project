@@ -2,7 +2,7 @@ In the posterior predictive model checking of this study (Section~\ref{subsec:wo
 
 Does the observed data carry information about $A$? Yes. In any survival dataset, the “shadow” of the survey window is reflected in the censoring proportion and the shape of the observed durations. If $A$ is small, many subjects are censored before the event occurs, leading to a high right-censoring rate and “compressed” event times. Conversely, a large $A$ yields more observed events, lower censoring, and more dispersed event times.
 
-Figure~\ref{fig:离职数据分开的直方图} separates event and censored durations in the employee turnover data. The roughly balanced counts suggest the survey captured about half of the departures. Since the maximum observed duration exceeds 170 months, $A$ should be at least above this threshold. While this alone does not pinpoint $A$, exploratory simulations show that around 200 months yields censoring patterns most consistent with the observed data. This insight guides realistic simulation design and helps to rule out implausibly small (e.g., $A=30$) or excessively large (e.g., $A=1000$) settings. In a Bayesian framework, when $A$ is included in the likelihood, such information will be reflected in its posterior distribution—this is the focus of the next section.
+Figure~\ref{fig:离职数据分开的直方图} separates event and censored durations in the employee turnover data. The roughly balanced counts suggest the survey captured about half of the departures. Since the maximum observed duration exceeds 179 months, the survey-length parameter $A$ should be at least above this threshold. While this alone does not pinpoint $A$, exploratory simulations provide heuristic guidance: settings around $A \approx 200$ tend to generate censoring patterns that align more closely with the observed data (). This observation is intended only as an intuition check, helping to rule out implausibly small (e.g., $A=30$) or excessively large (e.g., $A=1000$) settings. In a Bayesian framework, when $A$ is included in the likelihood, such information will be reflected in its posterior distribution—this is the focus of the next section.
 \begin{figure}[H]
     \centering
     \includegraphics[height=5.5cm, width=0.6\textwidth]{images/separate_hist.png}
@@ -18,13 +18,13 @@ To illustrate the effect of unrealistic observation windows, we simulate under t
 \centering
 \begin{subfigure}[t]{0.64\textwidth}
   \centering
-  \includegraphics[width=\textwidth]{images/ppc_two_a30.pdf}  % 图1路径
+  \includegraphics[height=4.5cm, width=\textwidth]{images/ppc_two_a30.pdf}  % 图1路径
   \caption{{\small ECDFs}}
   \label{fig:ecdf-event_a30}
 \end{subfigure}
-\begin{subfigure}[t]{0.35\textwidth}
+\begin{subfigure}[t]{0.351\textwidth}
   \centering
-  \includegraphics[width=\linewidth]{images/fake_duration_hist_a30.pdf}   % 图3路径
+  \includegraphics[height=4.5cm,width=\linewidth]{images/fake_duration_hist_a30.pdf}   % 图3路径
   \caption{{\small Fake-data histogram}}
   \label{fig:fake-hist_a30}
 \end{subfigure}
@@ -36,13 +36,13 @@ To illustrate the effect of unrealistic observation windows, we simulate under t
 \centering
 \begin{subfigure}[t]{0.64\textwidth}
   \centering
-  \includegraphics[width=\textwidth]{images/ppc_two_a1000.pdf}  % 图1路径
+  \includegraphics[height=4.5cm,width=\textwidth]{images/ppc_two_a1000.pdf}  % 图1路径
   \caption{{\small ECDFs}}
   \label{fig:ecdf-event_a1000}
 \end{subfigure}
-\begin{subfigure}[t]{0.35\textwidth}
+\begin{subfigure}[t]{0.351\textwidth}
   \centering
-  \includegraphics[width=\linewidth]{images/fake_duration_hist_a1000.pdf}   % 图3路径
+  \includegraphics[height=4.5cm,width=\linewidth]{images/fake_duration_hist_a1000.pdf}   % 图3路径
   \caption{{\small Fake-data histogram}}
   \label{fig:fake-hist_a1000}
 \end{subfigure}
