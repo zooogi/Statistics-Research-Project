@@ -1,3 +1,6 @@
+
+
+
 \subsection{Why be Bayesian?}\label{Why Bayesian}
 When we first encounter statistical modelling, we often focus on finding the “best parameter estimate,” such as using Maximum Likelihood Estimation (MLE), the Method of Moments, or Least Squares regression as common non-Bayesian approaches to fit the model to the data~\cite{van2021bayesian}. This works well in many tasks, but in practice, we also need to know how uncertain that estimate is~\cite{gelman1995bayesian}. 
 
@@ -103,7 +106,7 @@ h_T(t)=\lambda,\qquad t\ge 0,\ \ \lambda>0 .
 \end{equation}
 This implies that the instantaneous event risk remains unchanged regardless of how long the subject has survived~\cite{lawless2011statistical, ibrahim2013bayesian}. For instance, a light bulb with a constant failure risk at any moment can be described by a single parameter $\lambda$, without modelling time-varying risks, which greatly simplifies both inference and computation~\cite{lawless2011statistical}.
 
-Using Equation~\eqref{eq:4} from the section~\ref{Fundamentals of Survival Analysis}, and assuming $h_T(t) = \lambda$, the survival and density functions of the exponential model~\cite{kleinbaum1996survival} are given by
+Using Equation~\eqref{eq:4} from the Section~\ref{Fundamentals of Survival Analysis}, and assuming $h_T(t) = \lambda$, the survival and density functions of the exponential model~\cite{kleinbaum1996survival} are given by
 \begin{equation}
     S_T(t) = \exp\Big( -\displaystyle\int_0^t h_T(u), du \Big)=\exp(-\lambda t), \quad t \ge 0
     \label{St_exp}
@@ -166,7 +169,7 @@ p(\lambda\mid D)
 \end{align}
 
 \subsubsection{Example: Posterior Computation via MCMC}
-Although the posterior for the exponential model with a Gamma$(\alpha,\beta)$ prior can be obtained analytically (Eq.~\ref{eq:17}), numerical methods such as Markov Chain Monte Carlo (MCMC) are often preferred for more complex models~\cite{robert2007bayesian,ibrahim2013bayesian}. As a demonstration, we apply a weakly informative yet conjugate Gamma$(0.001,0.001)$ prior to the Veteran dataset~\cite{survival-package}.
+Although the posterior for the exponential model with a Gamma$(\alpha,\beta)$ prior can be obtained analytically (Eq.~\ref{eq:17}), numerical methods such as Markov Chain Monte Carlo (MCMC) are often preferred for more complex models~\cite{robert2007bayesian,ibrahim2013bayesian}. As a demonstration, we use the Veteran dataset from the \texttt{survival} package in R~\cite{survival-package}, which contains survival times from a clinical trial of lung cancer patients. Here, we apply a weakly informative yet conjugate Gamma$(0.001,0.001)$ prior to illustrate the computation.
 
 The computation is implemented in Stan, a probabilistic programming language for Bayesian inference that uses efficient algorithms such as Hamiltonian Monte Carlo to sample from complex posteriors~\cite{JSSv076i01}. MCMC produces draws from the posterior distribution; when the chains converge and mix well, the empirical distribution of these draws approximates the true posterior arbitrarily closely~\cite{https://doi.org/10.1111/2041-210X.12681}.
 
@@ -192,6 +195,7 @@ Figure~\ref{fig:exp veteran} compares the posterior samples for $\lambda$ (histo
 \input{MSc_Statistics_Research_Report_paper/section/Methods_subsection/model checking}
 
 \subsection{Impact of the Survey-Length Parameter \texorpdfstring{$A$}{A} on Censoring and Model Fit}
+\label{Impact of A}
 \input{MSc_Statistics_Research_Report_paper/section/Methods_subsection/Choosing and Interpreting A}
 
 

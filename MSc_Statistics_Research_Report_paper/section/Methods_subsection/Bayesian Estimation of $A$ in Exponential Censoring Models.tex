@@ -1,4 +1,4 @@
-Based on the analysis of the two extreme examples discussed earlier, we find that the structural information in the censoring mechanism—such as a fixed observation window—can significantly affect model estimation. This structure, however, is often overlooked in standard survival analysis. Introducing a global parameter $A$, which defines the upper bound of the censoring time $C_i \sim \text{Unif}(0, A)$, allows us to more realistically recover the data-generating process. It also facilitates objective simulation and model checking, while capturing latent structures that are not directly observed but implicitly present. Although $A$ is unobserved in the data, it is identifiable under a Bayesian framework, and its posterior distribution can reflect the underlying data collection mechanism.
+Building on the insights from the two extreme examples in Section~\ref{Impact of A}, we note that structural features of the censoring mechanism, such as a fixed observation window, can substantially influence parameter estimation. Such a structure is often overlooked in standard survival models, even though ignoring it may distort inference. To address this, and while retaining the exponential event-time model introduced in Section~\ref{Exponential Model}, we introduce a global parameter $A$, defining the upper bound of the censoring time $C_i \sim \mathrm{Unif}(0, A)$. This formulation more faithfully represents the data-generating process, facilitates objective simulation and model checking, and captures latent structures that are not directly observed but implicitly present. Although $A$ is unobserved in the data, it is identifiable under a Bayesian framework, and its posterior distribution can reflect the underlying data collection mechanism.
 
 Below, we formulate a Bayesian inference framework under an exponential survival model with censoring window parameter $A$, and derive the corresponding full-sample likelihood. The model is defined as follows,
 \begin{enumerate}
@@ -18,20 +18,22 @@ Below, we formulate a Bayesian inference framework under an exponential survival
 Based on this setup, we derive the sample likelihood for each observation $(Y_i, \delta_i)$ under parameters $(\lambda, A)$, considering two possible observation types.
 
 For event samples ($\delta_i=1,\, Y_i=y_i$), where the event occurs before censoring, i.e., $T_i = y_i,\; C_i \ge y_i$, the likelihood is
+{\footnotesize
 \begin{align}
 p(y_i,\delta_i=1\mid\theta)
  &= \Pr\bigl(T_i=y_i,\,C_i\ge y_i \mid \theta\bigr) \\[3pt]
  &= \int_{c=y_i}^{A} \underbrace{p(T_i=y_i,\,C_i=c \mid \theta)}_{\text{joint density}}\,dc 
-    &&\text{(marginalizing over unknown }C_i)\\[0pt]
+    &&\text{(marginalizing over unknown $C_i$)}\\
  &= \int_{y_i}^{A} f_T(y_i\mid\lambda)\,g_A(c)\,dc 
-    &&\text{(by independence }T_i\perp C_i)\\[0pt]
+    && \text{ (by independence }T_i\perp C_i)\\
  &= f_T(y_i\mid\lambda)\,
     \bigl[\tfrac1A(A-y_i)\bigr]\,
     \mathbf 1\{0\le y_i\le A\}\\[3pt]
  &= \lambda e^{-\lambda y_i}\Bigl(1-\tfrac{y_i}{A}\Bigr)
     \mathbf 1\{0\le y_i\le A\}.
-\end{align}
+\end{align}}
 For censored samples ($\delta_i=0,\, Y_i=y_i$), where censoring occurs before the event, i.e., $C_i = y_i,\; T_i > y_i$, the likelihood is
+{\footnotesize
 \begin{align}
 p(y_i,\delta_i=0\mid\theta)
  &= \Pr\bigl(C_i=y_i,\,T_i>y_i \mid \theta\bigr) \\[0pt]
@@ -44,7 +46,7 @@ p(y_i,\delta_i=0\mid\theta)
  &= \frac{1}{A}\cdot \,S_T(y_i\mid\lambda)\,
     \mathbf 1\{0\le y_i\le A\}\\[3pt]
  &= \tfrac1A e^{-\lambda y_i}\mathbf 1\{0\le y_i\le A\},
-\end{align}
+\end{align}}
 where $S_T(y\mid\lambda)=e^{-\lambda y}$ is the survival function of the exponential distribution.
 
 Combining the two types of contributions, the full likelihood for the dataset $\mathcal{D} = \{(y_i, \delta_i)\}_{i=1}^n$ is
@@ -55,11 +57,6 @@ L(\mathcal{D}\mid\lambda,A)=
 \cdot \bigl[\tfrac{e^{-\lambda y_i}}{A}\bigr]^{1-\delta_i}
 \cdot \mathbf 1\{0\le y_i \le A\}.
 \end{equation}
-To ensure the likelihood is non-zero, the constraint
-$$
-A \ge \max_i y_i
-$$
-must be satisfied; otherwise $L=0$.
 
 Under the Bayesian framework, assuming independent priors $\pi_\lambda(\lambda)$ and $\pi_A(A)$, the joint posterior becomes
 \begin{equation}
