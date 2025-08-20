@@ -71,7 +71,7 @@ bayesplot::mcmc_trace(
 ggsave("images/turnover_exp_model_traceplot.png", width = 6, height = 4)
 
 #取后验采样的lambda
-post_lam_turnover_stan <- extract(fit_stan_turnover,"lambda")$lambda
+post_lam_turnover_stan <- rstan::extract(fit_stan_turnover,"lambda")$lambda
 
 d <- sum(df$event == 1)
 alpha<-0.001

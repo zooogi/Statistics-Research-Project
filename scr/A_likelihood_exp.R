@@ -26,9 +26,6 @@ loglik_exp_uniform <- function(lambda, A, y, delta) {
 }
 
 
-
-
-
 #--------给等高线图准备数据---------
 
 
@@ -162,6 +159,3 @@ plot(lam_seq, profile_lam, type = "l",
      xlab = expression(lambda), ylab = "profile log-likelihood (rel.)",
      main = "Profile for lambda")
 par(oldpar)
-
-
-

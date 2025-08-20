@@ -30,28 +30,26 @@ dat_all <- bind_rows(real, fake)
 
 #----------plot----------------
 # ECDF（事件子样本）
-ggplot(filter(dat_all, delta == 1),
+p2b1<- ggplot(filter(dat_all, delta == 1),
        aes(x = Y, colour = source)) +
   stat_ecdf(size = 1) +
   labs(x = "Y | delta = 1 (event times)",
-       y = "ECDF",
-       title = "ECDF of event times (conditional on being uncensored)") +
-  theme_bw()
+       y = "ECDF")+
+  theme_bw(14)
 #save
 
 
 #ECDF（删失子样本）
-ggplot(filter(dat_all, delta == 0),
+p2b2<- ggplot(filter(dat_all, delta == 0),
         aes(x = Y, colour = source)) +
   stat_ecdf(size = 1) +
   labs(x="Y | delta = 0 (censored durations)",
-       y = "ECDF",
-       title = "ECDF of censored durations (conditional on censoring)") +
-  theme_bw()
+       y = "ECDF") +
+  theme_bw(14)
 #save
 
 
-ggplot(fake_postpred_modelcheck_exp, aes(x = time)) +
+p2b3<- ggplot(fake_postpred_modelcheck_exp, aes(x = time)) +
   geom_histogram(binwidth = 3, fill = "#D55E00", alpha = 0.7) +
   facet_wrap(~ event, labeller = labeller(event = c("0" = "Censored", "1" = "Event Occurred"))) +
   labs(
@@ -59,6 +57,18 @@ ggplot(fake_postpred_modelcheck_exp, aes(x = time)) +
     y = "Count") +
   theme_minimal(base_size = 20)
 
+ggsave("images/fake_duration_hist_a200.pdf",plot = p2b3,device = "pdf", 
+       width = 6, height = 4)
+
+combo2b <- (p2b1 + p2b2 ) +
+  plot_layout(guides = "collect", widths = c(1,1)) &
+  theme(legend.position = "right")
+combo2b
+ggsave("images/ppc_two_a200.pdf",
+       plot   = combo2b,
+       width  = 7,   # 目标在论文中的实际宽度（英寸）
+       height = 2.8,   # 合理高度，别太矮
+       device = "pdf") 
 
 ######################################
 ###### try different a----------------
@@ -186,3 +196,4 @@ ggsave("images/ppc_two_a1000.pdf",
        width  = 7,   # 目标在论文中的实际宽度（英寸）
        height = 2.8,   # 合理高度，别太矮
        device = "pdf") 
+
