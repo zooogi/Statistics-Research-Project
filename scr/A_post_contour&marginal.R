@@ -161,16 +161,16 @@ analytic_dens <- dgamma(lam_grid, shape =  d + alpha, rate = sum_y+beta)
 
 
 ## ==== 数值边际：沿 A 方向求和 ====
-p_lambda <- rowSums(post_mat) * dA                   # Riemann 求和
+p_lambda_uni <- rowSums(post_mat) * dA                   # Riemann 求和
 # 规范化检查（应接近 1）
-sum_lambda <- sum(p_lambda) * dlam
-cat("Integral of p_lambda ≈", sum_lambda, "\n")
+sum_lambda <- sum(p_lambda_uni) * dlam
+cat("Integral of p_lambda_uni ≈", sum_lambda, "\n")
 
 
 #变成数据框用于画图
 lambda_df <- tibble(
   lambda        = lam_grid,
-  `Grid posterior (with A)` = p_lambda,
+  `Grid posterior (with A)` = p_lambda_uni,
   `Analytic posterior (no A)` = analytic_dens
 ) |>
   pivot_longer(cols = c(`Grid posterior (with A)`, `Analytic posterior (no A)`),
