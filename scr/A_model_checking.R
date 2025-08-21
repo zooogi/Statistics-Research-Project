@@ -1,10 +1,13 @@
-source("scr/A_post_exp.R")
+source("scr/A_post_contour&marginal.R")
 source("scr/generate_fake_data_exp.R") 
 N<- length(df$event)
-fake_A_post<- generate_data_fixed_lambda(n = N, lambda = lam_mean,
-                                                     a = -A_mean, seed = 25)
+lambda_map <- map_point[[1]] 
+A_map <- map_point[[2]]
+fake_A_post<- generate_data_fixed_lambda(n = N, lambda = lambda_map,
+                                                     a = -A_map, seed = 25)
 #----------------summary------------------
 summary(fake_A_post)
+table(fake_A_post$event)
 
 #----------------变成数据框合并
 real_A <- df %>%
@@ -27,8 +30,8 @@ pA1<- ggplot(filter(dat_all_A, delta == 1),
   labs(x = "Y | delta = 1 (event times)",
        y = "ECDF")+
   theme_bw(14)
-#save
 
+pA1
 
 #ECDF（删失子样本）
 pA2<- ggplot(filter(dat_all_A, delta == 0),
@@ -37,7 +40,7 @@ pA2<- ggplot(filter(dat_all_A, delta == 0),
   labs(x="Y | delta = 0 (censored durations)",
        y = "ECDF") +
   theme_bw(14)
-#save
+pA2
 
 
 pA3<- ggplot(fake_A_post, aes(x = time)) +
@@ -47,7 +50,7 @@ pA3<- ggplot(fake_A_post, aes(x = time)) +
     x = "Months",
     y = "Count") +
   theme_minimal(base_size = 20)
-
+pA3
 ggsave("images/fake_duration_hist_Apost.pdf",plot =pA3,device = "pdf", 
        width = 6, height = 4)
 ggsave("images/ecdf_event_Apost.pdf",plot =pA1,device = "pdf", 

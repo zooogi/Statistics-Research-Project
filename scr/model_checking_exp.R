@@ -14,6 +14,7 @@ fake_postpred_modelcheck_exp<- generate_data_fixed_lambda(n = N, lambda = post_m
                                                           a = -200, seed = 25)
 #----------------summary------------------
 summary(fake_postpred_modelcheck_exp)
+table(fake_postpred_modelcheck_exp$event)# A=200的数据分布
 
 #----------------变成数据框合并
 real <- df %>%

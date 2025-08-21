@@ -72,13 +72,14 @@ post_sanity_exp <- extract(fit_exp_sanity,"lambda")$lambda
 
 
 #画出后验采样的lambda直方图
+png("images/simulation-based_model_check.png", width = 6, height = 4, units = "in", res = 300)
 hist(post_sanity_exp,
      breaks = 100,           
      prob   = TRUE,       
      col    = "#1f77b4",    
      border = "white",
      xlab   = expression(lambda),
-     main   = "posterior of lambda",
+     main   = "",
      ylab   = "Density",
      ylim   = c(0, max(density(post_sanity_exp)$y)))
-ggsave("images/sanitycheck_exp_post_lambda.png", width = 6, height = 4)
+dev.off()
