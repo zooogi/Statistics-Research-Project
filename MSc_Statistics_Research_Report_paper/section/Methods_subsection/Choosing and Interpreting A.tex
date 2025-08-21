@@ -12,11 +12,10 @@ Figure~\ref{fig:离职数据分开的直方图} separates event and censored dur
 \end{figure}
 To illustrate the effect of unrealistic observation windows, we simulate under three settings, $A = 30$, $A = 200$, and $A = 1000$, and plot the corresponding histograms of event times ($\delta = 1$) and censored times ($\delta = 0$). These examples serve as a motivating illustration of how the choice of $A$ shapes the distribution of observed durations.
 \begin{itemize}
-    \item $A = 30$ (Figure~\ref{fig:fake-hist_a30}): produces durations tightly compressed within a short window, 
-    with both events and censorings occurring unusually early.
+    \item $A = 30$ (Figure~\ref{fig:fake-hist_a30}): produces a disproportionately large amount of censoring relative to the observed data, with durations tightly compressed within a short window, and both events and censorings occurring unusually early.
     \item $A = 200$ (Figure~\ref{fig:fake-hist_a200}): yields a distribution that roughly matches the observed data range 
     (Figure~\ref{fig:离职数据分开的直方图}), providing a plausible intermediate benchmark.
-    \item $A = 1000$ (Figure~\ref{fig:fake-hist_a1000}): generates unrealistically dispersed durations extending over several decades, well beyond typical employment spans.
+    \item $A = 1000$ (Figure~\ref{fig:fake-hist_a1000}): produces a disproportionately large number of events relative to the observed data, generating unrealistically dispersed durations extending over several decades and approaching a maximum tenure of 83 years—far beyond any realistic employment scenario.
 \end{itemize}
 
 \begin{figure}[H]

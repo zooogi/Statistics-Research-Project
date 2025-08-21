@@ -31,14 +31,69 @@ This empirical agreement is exactly what the factorization of the likelihood pre
     \caption{{\small Marginal posterior of $\lambda$ under the extended model (blue, obtained by integrating out $A$) versus the analytic posterior under the baseline exponential model (red).}}
     \label{fig:marginal}
 \end{figure}
+To further examine the stability of the marginal posterior for $\lambda$, we compared two sharply different priors for $A$: a weakly informative uniform prior $[y_{\max}, y_{\max}+500]$ and a truncated normal prior centered around $y_{\max}+50$. As shown in Figure~\ref{fig:diff_A_marginal}, despite the substantial difference in prior shapes, the resulting marginal posteriors for $\lambda$ are virtually identical.
+
+This robustness is fully consistent with the theoretical result in equation~\eqref{eq:47} in Section~\ref{边际化章节}. As long as the prior for $A$ is independent of $\lambda$, integrating out $A$ contributes only a constant factor. Consequently, the marginal posterior of $\lambda$ is determined entirely by its likelihood and remains unaffected by the specific form of the prior on $A$.
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=6cm, width=0.75\textwidth]{images/diff_A_prior_marginal_compare.pdf}
+    \caption{{\small Marginal posterior of $\lambda$ under two priors for $A$: uniform $[y_{\max}, y_{\max}+500]$ (blue) and truncated normal near $y_{\max}+50$ (green).}}
+    \label{fig:diff_A_marginal}
+\end{figure}
+
+\subsection{Baseline Model Fit and Limitations}
+\label{res:baseline_ecdf}
+While Section~\ref{res:marginal} showed that marginalizing out $A$ preserves the baseline inference on $\lambda$, such consistency does not guarantee that the baseline model itself adequately reflects the data. To further assess its validity, we first perform a simulation-based model check. Specifically, we generated pseudo-data with a fixed value $\lambda=0.05$ and refitted the exponential model. As shown in Table~\ref{tab:post-ci}, the posterior mean (0.053) and 95\% CrI [0.0496, 0.0567] successfully recover the true value, indicating that the model is structurally sound. For completeness, the full posterior histogram is provided in Supplementary Figure S1.
+\begin{table}[H]
+\centering
+\caption{{\small Posterior summaries and 95\% credible intervals (simulation-based model check)}}
+\label{tab:post-ci}
+\small
+\begin{tabular}{lccccc}
+\toprule
+{Parameter} & {Mean} & {2.5\%} & {97.5\%} & {$n_{\text{eff}}$} & {Rhat} \\
+\midrule
+$\lambda$   & 0.0531 & 0.0496 & 0.0567 & 1113 & 1.000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Having established that the baseline model is structurally coherent, we next examine its adequacy when applied to real data. In the posterior predictive model checking of the baseline specification, the true value of the observation-window parameter $A$ is unknown. Section~\ref{Impact of A} illustrated the distributional consequences of three candidate values, $A=30, \,200,$ and $1000$ months. Here, we concentrate on the two extremes, $A=30$ and $A=1000$, to examine how the baseline model behaves under contrasting window lengths. Posterior predictive checks under these settings yield the empirical cumulative distribution functions (ECDFs) shown in Figures~\ref{fig:ppc_a30}~\ref{fig:ppc_a1000}, which are compared against the real data.
+
+\textbf{Case $A=30$ (Figure~\ref{fig:ppc_a30}):} For both event times and censored durations, the predictive ECDFs rise sharply in the early period and deviate strongly from the observed curves. The simulated curves are nearly linear, approximating a uniform distribution, which implies that the model expects most individuals to either fail or be censored within a short window. This eliminates the exponential decay pattern visible in the real data. The corresponding counts are events = 184 and censored = 945 (Table~\ref{tab:modelcheck_counts}), which differ drastically from the real data (events = 571, censored = 558), with the censored proportion being far too high. The histograms (Figure~\ref{fig:fake-hist_a30} in Section~\ref{Impact of A}) likewise show that durations are artificially compressed into the 0–30 month range. This indicates that when $A$ is too small, the model mechanically forces most individuals into “premature censoring,” leading to a breakdown of the fit.
+
+\textbf{Case $A=1000$ (Figure~\ref{fig:ppc_a1000}):} The predictive ECDFs appear superficially closer to the real curves, particularly in the tail, where the discrepancy is less obvious. However, the corresponding counts (events = 1055, censored = 74) are highly imbalanced, with almost all individuals predicted to experience the event. The histograms (Figure~\ref{fig:fake-hist_a1000}) confirm that durations are stretched into implausibly long tails. This explains why the ECDFs look deceptively close to the observed data: with almost no censored individuals, nearly all samples are forced onto the “event curve,” which smooths the overall shape. Yet this apparent fit is spurious, as it distorts the censoring mechanism and fails to capture the structural properties of the data.
+
+\begin{table}[H]
+\centering
+\caption{{\small Event and censoring counts in real and simulated datasets (model checking)}}
+\label{tab:modelcheck_counts}
+\small  
+\begin{tabular}{lcc}
+\toprule
+\textbf{Dataset} & \textbf{Censoring ($0$)} & \textbf{Events ($1$)} \\
+\midrule
+Real data        & 558  & 571  \\
+Simulated ($A=30$)   & 945  & 184  \\
+Simulated ($A=1000$) & 74   & 1055 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=4cm, width=0.8\textwidth]{images/ppc_two_a30.pdf}
+    \caption{{\small Posterior predictive ECDFs under fixed $A=30$.}}
+    \label{fig:ppc_a30}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=4cm, width=0.8\textwidth]{images/ppc_two_a1000.pdf}
+    \caption{{\small Posterior predictive ECDFs under fixed $A=1000$}}
+    \label{fig:ppc_a1000}
+\end{figure}
+These results highlight a structural mismatch: the baseline exponential model cannot reproduce the censoring pattern observed in the data. To address this, we turn to the extended model with the observation-window parameter $A$ and evaluate its performance through posterior predictive model checking.
 
 
-
-
-\subsection{Baseline Exponential Model Fit}
-\label{ecdf的分析}
-
-
-
-
-\subsection{Posterior Predictive Model Checking}
+\subsection{Posterior Predictive Model Checking (Extended Model)}
