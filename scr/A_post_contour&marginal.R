@@ -204,26 +204,3 @@ ggsave("images/lambda_marginal_compare.pdf",
 
 
 
-
-
-###计算95%CrI-------------------
-
-wquantile <- function(grid, pmass, probs){
-  o <- order(grid) #将x轴范围升序排序
-  g <- grid[o];  #升序后的网格点
-  w <- pmass[o] / sum(pmass) #对应的归一化权重
-  cdf <- cumsum(w) #累积分布函数（CDF）
-  approx(x = cdf, y = g, xout = probs, ties = "ordered", rule = 2)$y
-}
-
-
-## 4) 计算等尾 95% CrI 与中位数
-lambda_ci   <- wquantile(lam_seq, post_lambda, c(0.025, 0.975))
-lambda_medi <- wquantile(lam_seq, post_lambda, 0.5)
-A_ci        <- wquantile(A_seq,   post_A,      c(0.025, 0.975))
-A_medi      <- wquantile(A_seq,   post_A,      0.5)
-
-lambda_ci
-lambda_medi
-
-

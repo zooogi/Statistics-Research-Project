@@ -1,5 +1,7 @@
 source("scr/A_post_contour&marginal.R")
 source("scr/generate_fake_data_exp.R") 
+library(ggplot2)
+library(patchwork)
 N<- length(df$event)
 lambda_map <- map_point[[1]] 
 A_map <- map_point[[2]]
@@ -60,12 +62,12 @@ ggsave("images/ecdf_censored_Apost.pdf",plot =pA2,device = "pdf",
 
 
 #---------------------------------------------
-combo2b <- (p2b1 + p2b2 ) +
+comb_map <- (pA1 + pA2 ) +
   plot_layout(guides = "collect", widths = c(1,1)) &
   theme(legend.position = "right")
-combo2b
-ggsave("images/ppc_two_a200.pdf",
-       plot   = combo2b,
-       width  = 7,   # 目标在论文中的实际宽度（英寸）
-       height = 2.8,   # 合理高度，别太矮
+comb_map
+ggsave("images/ppc_two_map.pdf",
+       plot   = comb_map,
+       width  = 7,   
+       height = 2.8,   
        device = "pdf") 
