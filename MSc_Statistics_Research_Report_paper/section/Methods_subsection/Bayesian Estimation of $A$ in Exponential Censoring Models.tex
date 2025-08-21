@@ -1,6 +1,6 @@
-Building on the insights from the two extreme examples in Section~\ref{Impact of A}, we note that structural features of the censoring mechanism, such as a fixed observation window, can substantially influence parameter estimation. Such a structure is often overlooked in standard survival models, even though ignoring it may distort inference. To address this, and while retaining the exponential event-time model introduced in Section~\ref{Exponential Model}, we introduce a global parameter $A$, defining the upper bound of the censoring time $C_i \sim \mathrm{Unif}(0, A)$. This formulation more faithfully represents the data-generating process, facilitates objective simulation and model checking, and captures latent structures that are not directly observed but implicitly present. Although $A$ is unobserved in the data, it is identifiable under a Bayesian framework, and its posterior distribution can reflect the underlying data collection mechanism.
+Building on the insights from the two extreme examples in Section~\ref{Impact of A}, we note that structural features of the censoring mechanism, such as a fixed observation window, can substantially influence parameter estimation. Such a structure is often overlooked in standard survival models, even though ignoring it may distort inference~\cite{bartovs2022informed,barrajón2020effectrightcensoringbias}. To address this, and while retaining the exponential event-time model introduced in Section~\ref{Exponential Model}, we introduce a global parameter $A$, defining the upper bound of the censoring time $C_i \sim \mathrm{Unif}(0, A)$~\cite{ibrahim2013bayesian}. This formulation more faithfully represents the data-generating process, facilitates objective simulation and model checking, and captures latent structures that are not directly observed but implicitly present. Although $A$ is unobserved in the data, it is identifiable under a Bayesian framework, and its posterior distribution can reflect the underlying data collection mechanism.
 
-Below, we formulate a Bayesian inference framework under an exponential survival model with censoring window parameter $A$, and derive the corresponding full-sample likelihood. The model is defined as follows,
+Below, we formulate a Bayesian inference framework under an exponential survival model with censoring window parameter $A$, and derive the corresponding full-sample likelihood. The model is defined as follows~\cite{ibrahim2013bayesian, bartovs2022informed, gelman1995bayesian},
 \begin{enumerate}
     \item Event time (latent variable): $
     T_i \mid \lambda \sim \mathrm{Exp}(\lambda), 
@@ -23,9 +23,9 @@ For event samples ($\delta_i=1,\, Y_i=y_i$), where the event occurs before censo
 p(y_i,\delta_i=1\mid\theta)
  &= \Pr\bigl(T_i=y_i,\,C_i\ge y_i \mid \theta\bigr) \\[3pt]
  &= \int_{c=y_i}^{A} \underbrace{p(T_i=y_i,\,C_i=c \mid \theta)}_{\text{joint density}}\,dc 
-    &&\text{(marginalizing over unknown $C_i$)}\\
+    &&\text{(marginalizing over unknown $C_i$~\cite{berger1999integrated})}\\
  &= \int_{y_i}^{A} f_T(y_i\mid\lambda)\,g_A(c)\,dc 
-    && \text{ (by independence }T_i\perp C_i)\\
+    && \text{ (by independence }T_i\perp C_i~\cite{sebastiani2008tutorial})\\
  &= f_T(y_i\mid\lambda)\,
     \bigl[\tfrac1A(A-y_i)\bigr]\,
     \mathbf 1\{0\le y_i\le A\}\\[3pt]
@@ -39,9 +39,9 @@ p(y_i,\delta_i=0\mid\theta)
  &= \Pr\bigl(C_i=y_i,\,T_i>y_i \mid \theta\bigr) \\[0pt]
  &= \int_{t=y_i}^{\infty} 
     \underbrace{p(T_i=t,\,C_i=y_i \mid \theta)}_{\text{joint density}}\,dt
-    &&\text{(marginalizing over unknown }T_i)\\[0pt]
+    &&\text{(marginalizing over unknown }T_i~\cite{berger1999integrated})\\[0pt]
  &= \int_{y_i}^{\infty} f_T(t\mid\lambda)\,g_A(y_i)\,dt
-    &&\text{(factorized by independence)}\\[0pt]
+    &&\text{(factorized by independence~\cite{sebastiani2008tutorial})}\\[0pt]
  &= \frac{1}{A} \cdot \int_{y_i}^{\infty} f_T(t \mid \lambda) \, dt \cdot \mathbf{1}\{0 \le y_i \le A\} \\
  &= \frac{1}{A}\cdot \,S_T(y_i\mid\lambda)\,
     \mathbf 1\{0\le y_i\le A\}\\[3pt]
@@ -56,6 +56,7 @@ L(\mathcal{D}\mid\lambda,A)=
 \bigl[\lambda e^{-\lambda y_i}(1-\tfrac{y_i}{A})\bigr]^{\delta_i}
 \cdot \bigl[\tfrac{e^{-\lambda y_i}}{A}\bigr]^{1-\delta_i}
 \cdot \mathbf 1\{0\le y_i \le A\}.
+\label{A_likeli}
 \end{equation}
 
 Under the Bayesian framework, assuming independent priors $\pi_\lambda(\lambda)$ and $\pi_A(A)$, the joint posterior becomes
@@ -65,5 +66,6 @@ L(\mathcal{D} \mid \lambda, A)\cdot
 \pi_\lambda(\lambda)\cdot
 \pi_A(A),
 \qquad \text{with } A \ge \max_i y_i.
+\label{A_post}
 \end{equation}
-This likelihood formulation explicitly incorporates the observation window as a structural parameter, improving transparency in the data-generating process and providing a foundation for subsequent posterior inference, prediction, and model checking.
+This likelihood formulation explicitly incorporates the observation window as a structural parameter, improving transparency in the data-generating process and providing a foundation for subsequent posterior inference, prediction, and model checking~\cite{stats5010006}.

@@ -1,52 +1,46 @@
-In the posterior predictive model checking of this study (Section~\ref{subsec:wo Layers of Model Checking}), we found that the \textbf{maximum survey duration $A$}, controlling the censoring mechanism in Algorithm 1 through the reparameterization $A$, has a substantial influence on simulation outcomes and the credibility of posterior predictive results. In simulation, $A$ defines the observation window, thereby determining both the censoring rate and the distribution of event times. Although $A$ is not estimated by the baseline model, it is a key external setting when generating fake data. Different choices of $A$ alter the censoring structure and can change the conclusions drawn from posterior predictive checks, making $A$ tightly coupled with model checking.
+In the posterior predictive model checking of this study (Section~\ref{subsec:wo Layers of Model Checking}), we found that the \textbf{maximum survey duration $A$}, controlling the censoring mechanism in Algorithm 1 through the reparameterization $A$, has a substantial influence on simulation outcomes and the credibility of posterior predictive results. In simulation, $A$ defines the observation window, thereby determining both the censoring rate and the distribution of event times. Although $A$ is not estimated by the baseline model, it is a key external setting when generating fake data. Different choices of $A$ alter the censoring structure and can change the conclusions drawn from posterior predictive checks, making $A$ tightly coupled with model checking~\cite{stats5010006}.
 
-Does the observed data carry information about $A$? Yes. In any survival dataset, the “shadow” of the survey window is reflected in the censoring proportion and the shape of the observed durations. If $A$ is small, many subjects are censored before the event occurs, leading to a high right-censoring rate and “compressed” event times. Conversely, a large $A$ yields more observed events, lower censoring, and more dispersed event times.
+Does the observed data carry information about $A$? Yes. In any survival dataset, the “shadow” of the survey window is reflected in the censoring proportion and the shape of the observed durations~\cite{barrajón2020effectrightcensoringbias, stats5010006, bartovs2022informed}. If $A$ is small, many subjects are censored before the event occurs, leading to a high right-censoring rate and “compressed” event times. Conversely, a large $A$ yields more observed events, lower censoring, and more dispersed event times.
 
-Figure~\ref{fig:离职数据分开的直方图} separates event and censored durations in the employee turnover data. The roughly balanced counts suggest the survey captured about half of the departures. Since the maximum observed duration exceeds 179 months, the survey-length parameter $A$ should be at least above this threshold. While this alone does not pinpoint $A$, exploratory simulations provide heuristic guidance: settings around $A \approx 200$ tend to generate censoring patterns that align more closely with the observed data (). This observation is intended only as an intuition check, helping to rule out implausibly small (e.g., $A=30$) or excessively large (e.g., $A=1000$) settings. In a Bayesian framework, when $A$ is included in the likelihood, such information will be reflected in its posterior distribution—this is the focus of the next section.
+\begin{example}
+Figure~\ref{fig:离职数据分开的直方图} separates event and censored durations in the employee turnover data. The roughly balanced counts suggest the survey captured about half of the departures. Since the maximum observed duration exceeds 179 months, the survey-length parameter $A$ should be at least above this threshold. While this alone does not determine $A$, it provides a lower bound and motivates exploring its impact on model fit. Such heuristic information, although limited, points to the need for a Bayesian formulation~\cite{bartovs2022informed} in which $A$ can be explicitly incorporated into the likelihood and estimated jointly with event-time parameters. 
 \begin{figure}[H]
     \centering
     \includegraphics[height=5.5cm, width=0.6\textwidth]{images/separate_hist.png}
     \caption{{\small Histograms of censored and event durations in the employee turnover data}}
     \label{fig:离职数据分开的直方图}
 \end{figure}
-To illustrate the effect of unrealistic observation windows, we simulate under two settings, $A = 30$ and $A = 1000$, and plot the empirical cumulative distribution functions (ECDFs) for both the event subsample ($\delta = 1$) and the censored subsample ($\delta = 0$), along with the histograms of simulated durations.
+To illustrate the effect of unrealistic observation windows, we simulate under three settings, $A = 30$, $A = 200$, and $A = 1000$, and plot the corresponding histograms of event times ($\delta = 1$) and censored times ($\delta = 0$). These examples serve as a motivating illustration of how the choice of $A$ shapes the distribution of observed durations.
 \begin{itemize}
-    \item $A = 30$ (Figure~\ref{fig:ppc-A30}). Relative to the real-data histogram (Figure~\ref{fig:离职数据分开的直方图}), simulated durations are tightly compressed within 0–30 months, with both events and censorings occurring unusually early. The ECDFs (Figure~\ref{fig:ecdf-event_a30}, red lines) rise sharply at short durations and diverge from the observed curves, highlighting the impact of an unrealistically small $A$ rather than any misfit in the event-time parameter $\lambda$.
-    \item $A = 1000$ (Figure~\ref{fig:ppc-A1000}). The simulated histogram in Figure~\ref{fig:fake-hist_a1000} shows durations that are widely dispersed, and the ECDF curves (Figure~\ref{fig:ecdf-event_a1000}, red lines) align more closely with the observed data than in the $A=30$ case. However, when compared with the real-data histogram in Figure~\ref{fig:离职数据分开的直方图}, this setting implies a maximum tenure approaching 83 years—far beyond any realistic employment scenario. The apparent visual agreement is therefore driven by an implausible survey window rather than by an accurate recovery of the event-time distribution, making such a setting unsuitable for credible model checking.
+    \item $A = 30$ (Figure~\ref{fig:fake-hist_a30}): produces durations tightly compressed within a short window, 
+    with both events and censorings occurring unusually early.
+    \item $A = 200$ (Figure~\ref{fig:fake-hist_a200}): yields a distribution that roughly matches the observed data range 
+    (Figure~\ref{fig:离职数据分开的直方图}), providing a plausible intermediate benchmark.
+    \item $A = 1000$ (Figure~\ref{fig:fake-hist_a1000}): generates unrealistically dispersed durations extending over several decades, well beyond typical employment spans.
 \end{itemize}
+
 \begin{figure}[H]
 \centering
-\begin{subfigure}[t]{0.64\textwidth}
+\begin{subfigure}[t]{0.45\textwidth}
   \centering
-  \includegraphics[height=4.5cm, width=\textwidth]{images/ppc_two_a30.pdf}  % 图1路径
-  \caption{{\small ECDFs}}
-  \label{fig:ecdf-event_a30}
-\end{subfigure}
-\begin{subfigure}[t]{0.351\textwidth}
-  \centering
-  \includegraphics[height=4.5cm,width=\linewidth]{images/fake_duration_hist_a30.pdf}   % 图3路径
-  \caption{{\small Fake-data histogram}}
+  \includegraphics[height=5.5cm,width=\linewidth]{images/fake_duration_hist_a30.pdf}   % 图3路径
+  \caption{{\small $A=30$ months — compressed durations}}
   \label{fig:fake-hist_a30}
 \end{subfigure}
-\caption{{\small Posterior predictive checking ($A=30$).}}
-\label{fig:ppc-A30}
-\end{figure}
-%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
-\centering
-\begin{subfigure}[t]{0.64\textwidth}
+\begin{subfigure}[t]{0.45\textwidth}
   \centering
-  \includegraphics[height=4.5cm,width=\textwidth]{images/ppc_two_a1000.pdf}  % 图1路径
-  \caption{{\small ECDFs}}
-  \label{fig:ecdf-event_a1000}
+  \includegraphics[height=5.5cm,width=\linewidth]{images/fake_duration_hist_a200.pdf}   % 图3路径
+  \caption{{\small $A=200$ months — plausible spread}}
+  \label{fig:fake-hist_a200}
 \end{subfigure}
-\begin{subfigure}[t]{0.351\textwidth}
+\begin{subfigure}[t]{0.5\textwidth}
   \centering
-  \includegraphics[height=4.5cm,width=\linewidth]{images/fake_duration_hist_a1000.pdf}   % 图3路径
-  \caption{{\small Fake-data histogram}}
+  \includegraphics[height=5.5cm,width=\linewidth]{images/fake_duration_hist_a1000.pdf}   % 图3路径
+  \caption{{\small $A=1000$ months — implausibly long tails}}
   \label{fig:fake-hist_a1000}
 \end{subfigure}
-\caption{{\small Posterior predictive checking ($A=1000$).}}
-\label{fig:ppc-A1000}
+\caption{{\small \textbf{Motivating example:} Simulated histograms under $A=30,200,1000$ months. Full ECDF-based evaluation in Section~\ref{ecdf的分析}.}}
+\label{fig:ppc-A30}
 \end{figure}
 These examples underscore that posterior predictive fit must be interpreted in light of the plausibility of data-generating assumptions. Determining a realistic range for $A$ is essential for credible model checking, and this motivates the next step—explicitly incorporating $A$ into the likelihood and estimating it jointly with event-time parameters.
+\end{example}
