@@ -2,7 +2,7 @@ library(ggplot2)
 library(tidyr)
 library(ggnewscale)
 library(dplyr)
-source("scr/A_loglikeli_prior_function")
+source("scr/A_loglikeli_prior_function.R")
 
 #-----------------------选择网格法的网格范围！------------
 
@@ -105,41 +105,33 @@ map_point <- data.frame(lambda = lam_grid[i_map], A = A_grid[j_map])
 
 ## ====plot（ HPD 等高线 + MAP）==================
 
-#下面的这个是为A的画图范围好看点控制的！
-# A 的边际（对 lambda 求和）
-pA <- colSums(post_mat) * dlam        
-
-# 找 0.1% 到 99.9% 分位的 A 区间（自动“放大”到有质量的区域）
-cdfA <- cumsum(pA) * dA
-A_lo_zoom <- approx(cdfA, A_grid, xout = 0.001)$y
-A_hi_zoom <- approx(cdfA, A_grid, xout = 0.999)$y
-A_lo_zoom; A_hi_zoom
-#---------------------------------------
-
 ############# plot ##################
 
 post_hpd <- ggplot(grid_df, aes(x = lambda, y = A)) +
   new_scale_fill() +
   # 填充 HPD 区域
   geom_contour_filled(aes(z = p), breaks = c(sort(levs), Inf), alpha = 0.4) +
-  scale_fill_brewer(palette = "Greys", name = "HPD bands", direction = -1) +
   ## 只画 contour 线
   geom_contour(aes(z = p), breaks = sort(levs), colour = "black", linewidth = 0.6) +
-  #geom_hline(yintercept = ymax, linetype = "dashed", colour = "grey40") +
   # MAP 点
   geom_point(data = map_point, aes(x = lambda, y = A),
              inherit.aes = FALSE, colour = "white", fill = "black",
              shape = 21, size = 2.2, stroke = 0.4) +
   annotate("text", x = map_point$lambda, y = map_point$A,
            label = "MAP", vjust = 1.8, size = 3.2) +
+  geom_hline(yintercept = ymax, linetype = "dashed", colour = "grey40") +
   scale_fill_manual(
     name   = "HPD bands",
     values = c("grey75", "grey30"),          # 外圈浅、内圈深
     labels = c("86.5% HPD", "39.3% HPD")
   ) +
-  coord_cartesian(ylim = c(A_lo_zoom, A_hi_zoom)) +
+  coord_cartesian(ylim = c(179, 182)) +
   labs(x = expression(lambda), y = "A")+
-  theme_bw()
+  theme_bw(base_size = 16)+
+  theme(
+    legend.position = "top",       # 或者 "bottom"
+    legend.justification = "center"
+  )
 
 post_hpd
 ggsave("images/post_contour.pdf",
