@@ -1,4 +1,5 @@
 \subsection{Posterior Inference under the Extended Model}
+\label{res:post_contour}
 Figure~\ref{fig:contour} displays the joint posterior distribution of $(\lambda, A)$, together with the MAP estimate and the corresponding HPD regions. The posterior mode is located at $\lambda \approx 0.0138$ and $A = y_{\max} \approx 179.45$, indicating that the estimate of $A$ coincides exactly with the longest observed tenure in the data. This suggests that the posterior inference of $A$ is strongly driven by the boundary constraint rather than by additional evidence from the data.
 
 First, the posterior distribution of $\lambda$ is highly concentrated, with a relatively narrow range. This shows that the event rate parameter $\lambda$ is primarily determined by the observed event times and can therefore be estimated with high precision. By contrast, the uncertainty associated with $A$ is substantially larger.
@@ -11,12 +12,25 @@ This observation naturally motivates the marginalization analysis in the next se
 \begin{figure}[H]
     \centering
     \includegraphics[height=9cm, width=0.65\textwidth]{images/post_contour.pdf}
-    \caption{{\small Joint posterior $p(\lambda,A\mid\mathcal D)$ with 39.3\%/86.5\% HPD contours and MAP (black)}}
+    \caption{{\small Joint posterior $p(\lambda,A\mid\mathcal D)$ with 39.3\%/86.5\% HPD contours and MAP (black).}}
     \label{fig:contour}
 \end{figure}
 
 
 \subsection{Marginalization and Consistency Check}
+\label{res:marginal}
+Building on the boundary-driven geometry in Section~\ref{res:post_contour}, we now ask whether introducing $A$ changes inference on $\lambda$ once we focus on $\lambda$ alone. Figure~\ref{fig:marginal} compares the marginal posterior of $\lambda$ obtained from the extended model (blue; integrating out $A$ on the grid) with the analytic posterior from the baseline exponential model that does not include $A$ (red).
+
+The two curves are visually indistinguishable across the entire support: the peak location, peak height, and tail decay coincide to plotting precision, and the associated credible intervals match to numerical accuracy. This confirms a key point for practice: Inference on $\lambda$ is preserved after introducing $A$. In the extended model, $A$ behaves as a (predictive) nuisance parameter: it is crucial for generating realistic fake data and for describing the observation window, but it does not alter the posterior for the event-time rate $\lambda$.
+
+This empirical agreement is exactly what the factorization of the likelihood predicts (see Section~\ref{边际化章节}): the $\lambda$-dependent and $A$-dependent terms separate, so integrating over $A$ contributes only a normalizing constant that does not depend on $\lambda$. Consequently, the boundary-driven skewness seen along the $A$ direction in Section~\ref{res:post_contour} does not propagate into the marginal for $\lambda$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=6cm, width=0.7\textwidth]{images/lambda_marginal_compare.pdf}
+    \caption{{\small Marginal posterior of $\lambda$ under the extended model (blue, obtained by integrating out $A$) versus the analytic posterior under the baseline exponential model (red).}}
+    \label{fig:marginal}
+\end{figure}
 
 
 
