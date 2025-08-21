@@ -127,7 +127,7 @@ post_hpd <- ggplot(grid_df, aes(x = lambda, y = A)) +
   ) +
   coord_cartesian(ylim = c(179, 182)) +
   labs(x = expression(lambda), y = "A")+
-  theme_bw(base_size = 16)+
+  theme_bw(base_size = 18)+
   theme(
     legend.position = "top",       # 或者 "bottom"
     legend.justification = "center"
@@ -137,7 +137,7 @@ post_hpd
 ggsave("images/post_contour.pdf",
        plot   = post_hpd,
        width  = 6,   
-       height = 4,   
+       height = 6,   
        device = "pdf") 
 
 #——-------------——————————————————----——————————
