@@ -100,6 +100,7 @@ which can then be summarised through posterior means, medians, credible interval
 
 %%Exponential Model
 \subsubsection{Specialisation to the Exponential Model}
+\label{指数模型贝叶斯推断过程}
 The exponential model assumes a constant hazard rate
 \begin{equation}
 h_T(t)=\lambda,\qquad t\ge 0,\ \ \lambda>0 .
@@ -133,13 +134,13 @@ L(D \mid \lambda)
 \prod_{i=1}^{n}
 \lambda^{\delta_i}
 \right)
-\exp!\left(
+\exp\left(
 -\lambda \sum_{i=1}^{n} y_i
 \right)\\
 &=
--\lambda^{\sum_{i=1}^{n} \delta_i}
+\lambda^{\sum_{i=1}^{n} \delta_i}
 \exp\left(
-\lambda \sum_{i=1}^{n} y_i
+-\lambda \sum_{i=1}^{n} y_i
 \right)\\
 &\propto
 \text{Gamma}
@@ -152,6 +153,9 @@ For the exponential model, we first assume a Gamma($\alpha, \beta$) prior for th
 Under this assumption, the (unnormalized) posterior is
 \begin{align}
 p(\lambda\mid D)
+\label{eq:16}
+&\propto \lambda^{\sum \delta_i}
+\exp\Big(-\lambda \sum y_i\Big)\, \pi_\lambda(\lambda)\,\\
 &\propto
 \lambda^{\sum \delta_i}
 \exp\Big(-\lambda \sum y_i\Big)
@@ -173,6 +177,7 @@ Although the posterior for the exponential model with a Gamma$(\alpha,\beta)$ pr
 
 The computation is implemented in Stan, a probabilistic programming language for Bayesian inference that uses efficient algorithms such as Hamiltonian Monte Carlo to sample from complex posteriors~\cite{JSSv076i01}. MCMC produces draws from the posterior distribution; when the chains converge and mix well, the empirical distribution of these draws approximates the true posterior arbitrarily closely~\cite{https://doi.org/10.1111/2041-210X.12681}.
 
+\begin{example}
 Figure~\ref{fig:exp veteran} compares the posterior samples for $\lambda$ (histogram) with the analytic Gamma posterior (red curve), showing excellent agreement and confirming that histograms or density estimates of MCMC draws are valid representations of the underlying distribution.
 \begin{figure}[H]
     \centering
@@ -180,7 +185,7 @@ Figure~\ref{fig:exp veteran} compares the posterior samples for $\lambda$ (histo
     \caption{{\small Posterior distribution of $\lambda$ from MCMC samples (histogram) and analytic Gamma posterior (red curve) for the Veteran dataset.}}
     \label{fig:exp veteran}
 \end{figure}
-
+\end{example}
 
 
 
@@ -200,6 +205,7 @@ Figure~\ref{fig:exp veteran} compares the posterior samples for $\lambda$ (histo
 
 
 \subsection{Bayesian Estimation of \texorpdfstring{$A$}{A} in Exponential Censoring Models}
+\label{A_bayes}
 \input{MSc_Statistics_Research_Report_paper/section/Methods_subsection/Bayesian Estimation of $A$ in Exponential Censoring Models}
 
 

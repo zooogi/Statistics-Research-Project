@@ -1,6 +1,117 @@
-%%%%%%%%今天到这：
-%%%明天：1.choose开始就没有文献！还有就是没有对应更新到vscode里面
-%%%2.继续代码！！！虽然画出了等高线图，但是后面后验的也要写！还有边际化！！！
-%%%3.写3.7和result。
-%%%周五再发一次给他看，我觉得这样更好。
-%%%最后一周自己慢慢改。
+After completing the Bayesian estimation for parameter $A$, a natural question arises: 
+Does the extended model remain theoretically identifiable and consistent with the original exponential survival model? 
+To address this, we first establish the identifiability of $(\lambda, A)$, and then examine how the joint posterior structure and marginalization of $A$ reflect consistency with the baseline model. 
+
+\subsubsection{Identifiability}
+Once the new parameter $A$ is introduced, the first question is whether the model remains identifiable. 
+\begin{definition}
+If the observed random variables are $(Y, \delta)$ whose distribution depends on parameters $(\lambda, A)$, denoted by
+\begin{equation}
+    \mathcal{L}(Y,\delta \mid \lambda,A),
+\end{equation}
+then the parameter pair $(\lambda, A)$ is identifiable if and only if
+\begin{equation}
+    \mathcal{L}(Y,\delta \mid \lambda_1,A_1) = \mathcal{L}(Y,\delta \mid \lambda_2,A_2)
+\quad \Rightarrow \quad (\lambda_1,A_1) = (\lambda_2,A_2).
+\end{equation}
+In other words, no two distinct parameter pairs can induce the same distribution of the observations.
+\end{definition}
+\begin{proof}
+    \begin{enumerate}
+        \item \textbf{Identifiability of $A$}. The most direct approach is to examine the support of the observed data $Y$. For censored observations ($\delta=0$), the density is
+         \begin{equation}
+             f(Y=y,\delta=0 \mid \lambda,A) = \frac{1}{A} e^{-\lambda y}, \quad 0 \le y \le A.
+         \end{equation}
+         Its support is $[0, A]$, which is determined entirely by $A$ and independent of $\lambda$. Since the support is an intrinsic property of the distribution, two parameter pairs that generate the same distribution must share the same support, hence $A_1=A_2$. Thus, $A$ is identified from the support.
+         \item \textbf{Identifiability of $\lambda$.}
+         Once $A$ is fixed, all distributions share the same support $[0, A]$, so the support no longer distinguishes parameters. We then exploit the “shape’’ of the distribution via the ratio of event to censoring densities，
+         \begin{equation}
+             R(y) = \frac{f(Y=y,\delta=1 \mid \lambda,A)}{f(Y=y,\delta=0 \mid \lambda,A)} = \lambda (A-y), \quad 0<y<A.
+         \end{equation}
+         This ratio is linear in $y$, with slope $-\lambda$ and intercept $\lambda A$. Since $A$ has already been identified from the support, the slope uniquely determines $\lambda$.
+    \end{enumerate}
+    If two parameter pairs $(\lambda_1,A_1)$ and $(\lambda_2,A_2)$ induce the same observed distribution, then necessarily $A_1=A_2$, and hence $\lambda_1=\lambda_2$. Therefore, the parameter pair $(\lambda, A)$ is structurally identifiable in this model.
+\end{proof}
+
+\subsubsection{Grid-based Contour Analysis of the Joint Posterior}
+
+To further examine how identifiability appears in finite-sample settings, we characterize the shape of the joint posterior distribution and visualize its structure numerically.
+
+As shown in Equation~\eqref{A_post} of Section~\ref{A_bayes}, we adopt the same prior for $\lambda$ as in Section~\ref{指数模型贝叶斯推断过程} (the exponential model case), to ensure comparability and to facilitate the later marginalization check in Section~\ref{边际化章节}. For $A$, we use a uniform prior $\mathrm{Unif}(y_{\max}, y_{\max}+500)$, which is relatively broad but still consistent with the constraints discussed in Section~\ref{Impact of A}: the survey duration cannot extend indefinitely (e.g., 1000 months).
+
+Under this setting, the log-posterior is
+\begin{align}
+\log p(\lambda, A \mid \mathcal D)
+&= \text{const}
+   + \Big(\sum_{i=1}^n \delta_i\Big)\log \lambda
+   - \lambda \sum_{i=1}^n y_i \nonumber\\[6pt]
+&\quad + \sum_{i:\,\delta_i=1}\log(A-y_i)
+   - n \log A
+   + \log \pi_\lambda(\lambda) \nonumber \\[6pt]
+&\quad + \log \pi_A(A) + \log \mathbf 1\{A \ge \max_i y_i\}.
+\end{align}
+Since the model involves only two parameters $(\lambda, A)$, we approximate the posterior distribution by a regular two-dimensional grid. Specifically, we construct a grid of candidate points and evaluate the log-posterior $\log p(\lambda_i, A_j \mid \mathcal D)$ at each location. Exponentiating and normalizing then yields a discrete approximation of the posterior distribution
+\begin{equation}
+    w_{ij} \;\propto\; \exp\!\Bigl(\log p(\lambda_i, A_j \mid \mathcal D)\Bigr), \qquad \tilde w_{ij} \;=\; \frac{w_{ij}}{\sum_{i,j} w_{ij}} ,
+\end{equation}
+where $w_{ij}$ denotes the unnormalized posterior weight at $(\lambda_i,A_j)$, and $\tilde w_{ij}$ gives the normalized probability distribution.
+
+Based on these weights, the geometry of the posterior can be visualized directly using contour plots. Unlike MCMC, this grid-based approach avoids issues of convergence diagnostics, while the two-dimensional grid enables a complete visualization of the posterior structure (e.g., unimodality, multimodality, tail behaviour). This helps to reveal parameter dependencies and assess finite-sample identifiability.
+
+In addition to raw contour visualization, we compute highest posterior density (HPD) regions on the grid, corresponding to coverage levels analogous to one- and two-standard-deviation intervals under a Gaussian distribution (39.3\% and 86.5\%). These HPD contours provide a quantitative summary of posterior uncertainty and allow us to assess whether the joint posterior exhibits approximately normal behaviour or deviates substantially (e.g., skewness, heavy tails).
+
+After obtaining the discretised posterior distribution, a natural next step is to extract the maximum a posteriori (MAP) estimate. Within the grid framework, the MAP corresponds to the grid point $(\lambda^*, A^*)$ with the highest weight
+\begin{equation}
+    (\lambda^*, A^*) = \arg\max_{\lambda,A} \; p(\lambda,A \mid \mathcal D).
+\end{equation}
+This provides the most plausible parameter pair, which can serve as a reference point for pseudo-data generation and subsequent model checking.
+
+
+
+\subsubsection{Marginalization of \texorpdfstring{$A$}{A} and Consistency Check}
+\label{边际化章节}
+The joint posterior $p(\lambda, A \mid \mathcal D)$ captures the dependence between the two parameters. To verify theoretical consistency with the original exponential model, we consider the marginal posterior of $\lambda$ obtained by integrating out $A$.   
+
+The central question is: does the marginal posterior of $\lambda$ coincide with that of the original exponential model (Equation~\ref{eq:16})? If so, this confirms that the extended model remains compatible with the original formulation and does not alter inference on $\lambda$.
+
+Starting from Equation~\eqref{A_post}, we integrate out $A$
+\begin{equation}
+    p(\lambda \mid \mathcal D)
+= \int p(\lambda, A \mid \mathcal D)\,dA.
+\end{equation}
+Substituting, we obtain
+\begin{equation}
+    p(\lambda \mid \mathcal D)\;\propto\;\pi_\lambda(\lambda)\;\int L(\mathcal D \mid \lambda, A)\,\pi_A(A)\,dA.
+    \label{eq:45}
+\end{equation}
+Thus, the integral in~\eqref{eq:45} reduces to a constant term independent of $\lambda$. 
+Importantly, this constant absorbs both the $A$-dependent part of the likelihood and the prior $\pi_A(A)$, which means that the marginal posterior of $\lambda$ is independent of the prior choice for $A$. 
+Therefore,
+\begin{equation}
+    L(\mathcal D \mid \lambda, A)
+= \lambda^{\sum_i \delta_i}\;
+e^{-\lambda \sum_i y_i}\;
+\Bigg[
+A^{-n}\,\prod_{i:\,\delta_i=1}(A-y_i)
+\Bigg]\;\mathbf 1\{A \ge \max_i y_i\}.
+\end{equation}
+the integral in~\eqref{eq:45} separates into a constant term independent of $\lambda$. Thus,
+\begin{align}
+p(\lambda \mid \mathcal{D})
+&\propto \lambda^{\sum_i \delta_i}\,
+e^{-\lambda \sum_i y_i}\,
+\pi_\lambda(\lambda)\,
+\underbrace{\int_{A \ge \max_i y_i}
+A^{-n}\,\prod_{i:\,\delta_i=1}(A-y_i)\,\pi_A(A)\,dA}_{\text{constant, independent of }\lambda} \\[2pt]
+&\propto \lambda^{\sum_i \delta_i}\, e^{-\lambda \sum_i y_i}\, \pi_{\lambda}(\lambda), .\\
+&\propto
+\text{Gamma}
+\left(
+\sum_{i=1}^{n} \delta_i + \alpha,\ \sum_{i=1}^{n} y_i + \beta
+\right).
+\end{align}
+This is exactly the posterior distribution of the original exponential model (Equation~\ref{eq:16}).  
+
+Numerically, the same result can be recovered by marginalizing over $A$ in the grid-based posterior representation: summing the normalized weights $\tilde w_{ij}$ along the $A$ dimension for each fixed $\lambda$ yields the marginal posterior of $\lambda$. This numerical implementation matches the analytical derivation above, providing a computational-theoretical cross-check.
+
+In summary, marginalizing $A$ restores the same posterior distribution for $\lambda$ as in the original exponential model. This demonstrates that the extended model is fully consistent with the original formulation: introducing $A$ enriches the model by explicitly representing the censoring window, while preserving the fundamental inference on $\lambda$.
