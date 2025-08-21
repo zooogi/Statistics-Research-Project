@@ -58,6 +58,9 @@
 }
 
 %%贝叶斯在生存模型里的优势.why 贝叶斯 likelihood等
+%%探讨如何用先验信息和直观观察来指导时间窗口（如 
+��
+A）的选择，在后验中反映该信息。
 @article{bartovs2022informed,
   title={Informed Bayesian survival analysis},
   author={Barto{\v{s}}, Franti{\v{s}}ek and Aust, Frederik and Haaf, Julia M},
@@ -350,4 +353,51 @@ year = {2018}
   author={Fleming, Thomas R and Harrington, David P},
   year={2013},
   publisher={John Wiley \& Sons}
+}
+
+%深入探讨研究期限（相当于 A）对右删失偏差的影响，明确指出“短时间研究窗口”将导致事件压缩并高删失率。
+@misc{barrajón2020effectrightcensoringbias,
+      title={Effect of right censoring bias on survival analysis}, 
+      author={Enrique Barrajón and Laura Barrajón},
+      year={2020},
+      eprint={2012.08649},
+      archivePrefix={arXiv},
+      primaryClass={stat.ME},
+      url={https://arxiv.org/abs/2012.08649}, 
+}
+
+
+%%%使用后验预测检查模拟不同审查方案，提出如何通过模拟结果来设定 censoring 结构
+@Article{stats5010006,
+AUTHOR = {Moghaddam, Shirin and Newell, John and Hinde, John},
+TITLE = {A Bayesian Approach for Imputation of Censored Survival Data},
+JOURNAL = {Stats},
+VOLUME = {5},
+YEAR = {2022},
+NUMBER = {1},
+PAGES = {89--107},
+URL = {https://www.mdpi.com/2571-905X/5/1/6},
+ISSN = {2571-905X},
+ABSTRACT = {A common feature of much survival data is censoring due to incompletely observed lifetimes. Survival analysis methods and models have been designed to take account of this and provide appropriate relevant summaries, such as the Kaplan–Meier plot and the commonly quoted median survival time of the group under consideration. However, a single summary is not really a relevant quantity for communication to an individual patient, as it conveys no notion of variability and uncertainty, and the Kaplan–Meier plot can be difficult for the patient to understand and also is often mis-interpreted, even by some physicians. This paper considers an alternative approach of treating the censored data as a form of missing, incomplete data and proposes an imputation scheme to construct a completed dataset. This allows the use of standard descriptive statistics and graphical displays to convey both typical outcomes and the associated variability. We propose a Bayesian approach to impute any censored observations, making use of other information in the dataset, and provide a completed dataset. This can then be used for standard displays, summaries, and even, in theory, analysis and model fitting. We particularly focus on the data visualisation advantages of the completed data, allowing displays such as density plots, boxplots, etc, to complement the usual Kaplan–Meier display of the original dataset. We study the performance of this approach through a simulation study and consider its application to two clinical examples.},
+DOI = {10.3390/stats5010006}
+}
+
+
+%并解释了如何通过边际分布重建联合分布
+@article{sebastiani2008tutorial,
+  title={A tutorial on probability theory},
+  author={Sebastiani, Paola},
+  journal={University of Massachusetts at Amherst, MA USA},
+  year={2008}
+}
+%%详述如何通过边际化（integration）从模型中去除未知参数；
+@article{berger1999integrated,
+  title={Integrated likelihood methods for eliminating nuisance parameters},
+  author={Berger, James O and Liseo, Brunero and Wolpert, Robert L},
+  journal={Statistical science},
+  volume={14},
+  number={1},
+  pages={1--28},
+  year={1999},
+  publisher={Institute of Mathematical Statistics}
 }
