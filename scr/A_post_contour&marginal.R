@@ -118,7 +118,7 @@ post_hpd <- ggplot(grid_df, aes(x = lambda, y = A)) +
              inherit.aes = FALSE, colour = "white", fill = "black",
              shape = 21, size = 2.2, stroke = 0.4) +
   annotate("text", x = map_point$lambda, y = map_point$A,
-           label = "MAP", vjust = 1.8, size = 3.2) +
+           label = "MAP", vjust = 1.8, size = 4.2) +
   geom_hline(yintercept = ymax, linetype = "dashed", colour = "grey40") +
   scale_fill_manual(
     name   = "HPD bands",
