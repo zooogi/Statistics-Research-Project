@@ -314,7 +314,6 @@ year = {2018}
  doi = {10.1371/journal.pcbi.0030189},
  journal = {PLOS Computational Biology},
  keywords = {},
- note = {https://journals.plos.org/ploscompbiol/article/file?id=10.1371/journal.pcbi.0030189&type=printable},
  number = {10},
  pages = {e189},
  title = {Universally Sloppy Parameter Sensitivities in Systems Biology Models},
@@ -400,4 +399,94 @@ DOI = {10.3390/stats5010006}
   pages={1--28},
   year={1999},
   publisher={Institute of Mathematical Statistics}
+}
+
+@misc{babushkin_employee_turnover,
+  author       = {Edward Babushkin},
+  title        = {Employee Turnover Dataset},
+  year         = {2017},
+  howpublished = {\url{https://www.kaggle.com/datasets/davinwijaya/employee-turnover/data}},
+  note         = {}
+}
+
+
+
+
+%%%可识别性
+@misc{maclaren2020estimatedidentifiabilityestimabilitycausal,
+      title={What can be estimated? Identifiability, estimability, causal inference and ill-posed inverse problems}, 
+      author={Oliver J. Maclaren and Ruanui Nicholson},
+      year={2020},
+      eprint={1904.02826},
+      archivePrefix={arXiv},
+      primaryClass={math.ST},
+      url={https://arxiv.org/abs/1904.02826}, 
+}
+
+
+%这篇论文在第2节中明确指出 identifiability 是关于参数对是否能唯一确定概率分布的一个性质。
+@article{henao2011sparse,
+  title={Sparse Linear Identifiable Multivariate Modeling.},
+  author={Henao, Ricardo and Winther, Ole},
+  journal={Journal of Machine Learning Research},
+  volume={12},
+  number={3},
+  year={2011}
+}
+
+%%%grid
+@online{mcelreath2021grid,
+  author       = {McElreath, Richard},
+  title        = {Grid Approximation},
+  year         = {2021},
+  chapter      = {6},
+  booktitle    = {Bayes Rules! An Introduction to Applied Bayesian Modeling},
+  url          = {https://www.bayesrulesbook.com/chapter-6},
+  note         = {}
+}
+
+%%%一样是grid
+@article{ORMEROD201145,
+title = {Grid based variational approximations},
+journal = {Computational Statistics & Data Analysis},
+volume = {55},
+number = {1},
+pages = {45-56},
+year = {2011},
+issn = {0167-9473},
+doi = {https://doi.org/10.1016/j.csda.2010.04.024},
+url = {https://www.sciencedirect.com/science/article/pii/S0167947310001829},
+author = {John T. Ormerod},
+keywords = {Bayesian Inference, Variational approximation, Kullback–Liebler divergence, Markov chain Monte Carlo},
+abstract = {Variational methods for approximate Bayesian inference provide fast, flexible, deterministic alternatives to Monte Carlo methods. Unfortunately, unlike Monte Carlo methods, variational approximations cannot, in general, be made to be arbitrarily accurate. This paper develops grid-based variational approximations which endeavor to approximate marginal posterior densities in a spirit similar to the Integrated Nested Laplace Approximation (INLA) of Rue et al. (2009) but which may be applied in situations where INLA cannot be used. The method can greatly increase the accuracy of a base variational approximation, although not in general to arbitrary accuracy. The methodology developed is at least reasonably accurate on all of the examples considered in the paper.}
+}
+
+%%%%直接讨论grid方法替代MCMC进行后验近似的理论和实践优势。
+@misc{joshi2016improvinggridbasedbayesian,
+      title={Improving Grid Based Bayesian Methods}, 
+      author={Chaitanya Joshi and Paul T. Brown and Stephen Joe},
+      year={2016},
+      eprint={1609.09174},
+      archivePrefix={arXiv},
+      primaryClass={stat.CO},
+      url={https://arxiv.org/abs/1609.09174}, 
+}
+
+%使用HPD contours评估联合后验是否表现为高斯。也说明了为何选择非对称置信区域（如39.3%、86.5%）
+@phdthesis{kocev2021modeling,
+  title={Modeling, Estimating, and Visualizing Spatial and Temporal Uncertainty for Image-Guided Therapy},
+  author={Kocev, Bojan},
+  year={2021},
+  school={Jacobs University Bremen}
+}
+
+@article{cowles2009reparameterized,
+  title={Reparameterized and marginalized posterior and predictive sampling for complex Bayesian geostatistical models},
+  author={Cowles, Mary Kathryn and Yan, Jun and Smith, Brian},
+  journal={Journal of Computational and Graphical Statistics},
+  volume={18},
+  number={2},
+  pages={262--282},
+  year={2009},
+  publisher={Taylor \& Francis}
 }

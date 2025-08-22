@@ -43,7 +43,7 @@ This robustness is fully consistent with the theoretical result in equation~\eqr
 
 \subsection{Baseline Model Fit and Limitations}
 \label{res:baseline_ecdf}
-While Section~\ref{res:marginal} showed that marginalizing out $A$ preserves the baseline inference on $\lambda$, such consistency does not guarantee that the baseline model itself adequately reflects the data. To further assess its validity, we first perform a simulation-based model check. Specifically, we generated pseudo-data with a fixed value $\lambda=0.05$ and refitted the exponential model. As shown in Table~\ref{tab:post-ci}, the posterior mean (0.053) and 95\% CrI [0.0496, 0.0567] successfully recover the true value, indicating that the model is structurally sound. For completeness, the full posterior histogram is provided in Supplementary Figure S1.
+While Section~\ref{res:marginal} showed that marginalizing out $A$ preserves the baseline inference on $\lambda$, such consistency does not guarantee that the baseline model itself adequately reflects the data. To further assess its validity, we first perform a simulation-based model check. Specifically, we generated pseudo-data with a fixed value $\lambda=0.05$ and refitted the exponential model. As shown in Table~\ref{tab:post-ci}, the posterior mean (0.053) and 95\% CrI [0.0496, 0.0567] successfully recover the true value, indicating that the model is structurally sound. For completeness, the full posterior histogram is provided in Supplementary Figure~\ref{fig:posterior_s1}.
 \begin{table}[H]
 \centering
 \caption{{\small Posterior summaries and 95\% credible intervals (simulation-based model check)}}
@@ -57,7 +57,6 @@ $\lambda$   & 0.0531 & 0.0496 & 0.0567 & 1113 & 1.000 \\
 \bottomrule
 \end{tabular}
 \end{table}
-
 Having established that the baseline model is structurally coherent, we next examine its adequacy when applied to real data. In the posterior predictive model checking of the baseline specification, the true value of the observation-window parameter $A$ is unknown. Section~\ref{Impact of A} illustrated the distributional consequences of three candidate values, $A=30, \,200,$ and $1000$ months. Here, we concentrate on the two extremes, $A=30$ and $A=1000$, to examine how the baseline model behaves under contrasting window lengths. Posterior predictive checks under these settings yield the empirical cumulative distribution functions (ECDFs) shown in Figures~\ref{fig:ppc_a30}~\ref{fig:ppc_a1000}, which are compared against the real data.
 
 \textbf{Case $A=30$ (Figure~\ref{fig:ppc_a30}):} For both event times and censored durations, the predictive ECDFs rise sharply in the early period and deviate strongly from the observed curves. The simulated curves are nearly linear, approximating a uniform distribution, which implies that the model expects most individuals to either fail or be censored within a short window. This eliminates the exponential decay pattern visible in the real data. The corresponding counts are events = 184 and censored = 945 (Table~\ref{tab:modelcheck_counts}), which differ drastically from the real data (events = 571, censored = 558), with the censored proportion being far too high. The histograms (Figure~\ref{fig:fake-hist_a30} in Section~\ref{Impact of A}) likewise show that durations are artificially compressed into the 0–30 month range. This indicates that when $A$ is too small, the model mechanically forces most individuals into “premature censoring,” leading to a breakdown of the fit.
@@ -83,17 +82,38 @@ Simulated ($A=1000$) & 74   & 1055 \\
 \begin{figure}[H]
     \centering
     \includegraphics[height=4cm, width=0.8\textwidth]{images/ppc_two_a30.pdf}
-    \caption{{\small Posterior predictive ECDFs under fixed $A=30$.}}
+    \caption{{\small Posterior predictive ECDFs of event times (left) and censored durations (right) under fixed $A=30$.}}
     \label{fig:ppc_a30}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \includegraphics[height=4cm, width=0.8\textwidth]{images/ppc_two_a1000.pdf}
-    \caption{{\small Posterior predictive ECDFs under fixed $A=1000$}}
+    \caption{{\small Posterior predictive ECDFs of event times (left) and censored durations (right) under fixed $A=1000$.}}
     \label{fig:ppc_a1000}
 \end{figure}
 These results highlight a structural mismatch: the baseline exponential model cannot reproduce the censoring pattern observed in the data. To address this, we turn to the extended model with the observation-window parameter $A$ and evaluate its performance through posterior predictive model checking.
 
 
 \subsection{Posterior Predictive Model Checking (Extended Model)}
+
+The baseline model failed to reproduce the censoring structure, underscoring the need for an extended specification. By introducing the observation-window parameter $A$, the model is able to capture this structural feature. The joint posterior yields MAP estimates of $\lambda \approx 0.0138$ and $A \approx 179$, which are consistent with the intuitive setting of $A \approx 200$ discussed in Section~\ref{Impact of A}. This consistency illustrates how the Bayesian framework can formalize and refine prior intuition.
+
+Posterior predictive checks based on the MAP estimates demonstrate clear improvements in reproducing the observed data. For event times, the MAP-simulated ECDF (Figures~\ref{fig:ppc_map}) aligns closely with the empirical curve, especially in the early growth phase, indicating that the model captures the dynamics of event occurrence accurately. In contrast, the $A=1000$ specification produces a noticeably flatter curve, reflecting an underestimation of early event rates, even though its tail appears superficially smooth.
+
+For censored durations, the MAP fit is again more reasonable. While some discrepancies remain, the distributional structure is much closer to the real data: censored observations are spread across the 0–180 month range with a smooth decline in frequency, as shown in the histogram~\ref{fig:fake_map}. This avoids the over-compression seen under $A=30$ as well as the near-elimination of censoring under $A=1000$, where apparent curve alignment arises only from proportional effects rather than a faithful representation of the censoring mechanism.
+
+Overall, the MAP-based extended model not only reproduces the shape of the ECDFs but also recovers the structural balance between events and censoring. These results highlight the substantive improvement of the extended specification over the baseline model.
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=4cm, width=0.8\textwidth]{images/ppc_two_map.pdf}
+    \caption{{\small Posterior predictive ECDFs of event times (left) and censored durations (right) under the MAP estimates ($\lambda \approx 0.0138, A \approx 179$)}}
+    \label{fig:ppc_map}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=5cm, width=0.6\textwidth]{images/fake_duration_hist_Apost.pdf}
+    \caption{{\small Posterior predictive histograms of event times (right) and censored durations (left) under the MAP estimates ($\lambda \approx 0.0138, A \approx 179$)}}
+    \label{fig:fake_map}
+\end{figure}
