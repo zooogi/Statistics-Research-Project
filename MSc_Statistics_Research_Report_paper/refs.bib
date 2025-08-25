@@ -58,9 +58,7 @@
 }
 
 %%贝叶斯在生存模型里的优势.why 贝叶斯 likelihood等
-%%探讨如何用先验信息和直观观察来指导时间窗口（如 
-��
-A）的选择，在后验中反映该信息。
+%%探讨如何用先验信息和直观观察来指导时间窗口（如 A）的选择，在后验中反映该信息。
 @article{bartovs2022informed,
   title={Informed Bayesian survival analysis},
   author={Barto{\v{s}}, Franti{\v{s}}ek and Aust, Frederik and Haaf, Julia M},
@@ -364,7 +362,21 @@ year = {2018}
       primaryClass={stat.ME},
       url={https://arxiv.org/abs/2012.08649}, 
 }
-
+%讨论了如何将删失结构（包括administrative censoring）视为建模的一部分，而不是外部设计元素。
+@article{https://doi.org/10.1002/sim.4385,
+author = {Andersen, Per Kragh and Keiding, Niels},
+title = {Interpretability and importance of functionals in competing risks and multistate models},
+journal = {Statistics in Medicine},
+volume = {31},
+number = {11-12},
+pages = {1074-1088},
+keywords = {competing risks, illness–death model, survival analysis},
+doi = {https://doi.org/10.1002/sim.4385},
+url = {https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4385},
+eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1002/sim.4385},
+abstract = {The basic parameters in both survival analysis and more general multistate models, including the competing risks model and the illness–death model, are the transition hazards. It is often necessary to supplement the analysis of such models with other model parameters, which are all functionals of the transition hazards. Unfortunately, not all such functionals are equally meaningful in practical contexts, even though they may be mathematically well defined. We have found it useful to check whether the functionals satisfy three simple principles, which may be used as criteria for practical interpretability. Copyright © 2011 John Wiley \& Sons, Ltd.},
+year = {2012}
+}
 
 %%%使用后验预测检查模拟不同审查方案，提出如何通过模拟结果来设定 censoring 结构
 @Article{stats5010006,
@@ -489,4 +501,57 @@ abstract = {Variational methods for approximate Bayesian inference provide fast,
   pages={262--282},
   year={2009},
   publisher={Taylor \& Francis}
+}
+
+
+
+
+
+%%%%对John Graunt的统计革命做出详细解读，指出其对生存分析和人口统计的开创性影响。
+@article{doi:10.1177/09677720221079826,
+author = {Henry Connor},
+title ={John Graunt F.R.S. (1620-74): The founding father of human demography, epidemiology and vital statistics},
+
+journal = {Journal of Medical Biography},
+volume = {32},
+number = {1},
+pages = {57-69},
+year = {2024},
+doi = {10.1177/09677720221079826},
+    note ={PMID: 35167377},
+
+URL = { 
+    
+        https://doi.org/10.1177/09677720221079826
+    
+    
+
+},
+eprint = { 
+    
+        https://doi.org/10.1177/09677720221079826
+    
+    
+
+}
+,
+    abstract = { John Graunt, a largely self-educated London draper, can plausibly be regarded as the founding father of demography, epidemiology and vital statistics. In his only publication, based on a pioneering analysis of the London Bills of Mortality, he replaced guesswork with reasoned estimates of population sizes and the first accurate information on male:female ratios. He quantified the extent of immigration from countryside to city and his demonstration of the ‘dying out’ of a cohort paved the way for life table analysis. His comparison of London data with rural data provided the first recognition of the ‘urban penalty’. His use of the first known tabular aggregates of health data clarified distinctions between acute diseases, which were often epidemic, and chronic illnesses which were often endemic. He quantified the high infant mortality and attempted the calculation of a case fatality rate during an epidemic of fever. He was the first to document the phenomenon of ‘excess deaths’ during epidemics. He provided a template for numerical analysis of demographic and health data and initiated the concepts of statistical association, statistical inference and population sampling. By making a novel concept intelligible to a broad audience he influenced the thinking of doctors, demographers and mathematicians. }
+}
+
+%概述了从汉代户籍登记到明代黄册之间人口记录制度的发展演变。
+@article{von2012household,
+  title={Household registration, property rights, and social obligations in imperial China: principles and practices},
+  author={Von Glahn, Richard},
+  journal={Registration and recognition: documenting the person in world history},
+  pages={39--66},
+  year={2012},
+  publisher={Oxford University Press London}
+}
+
+%系统地讲解了Kaplan-Meier估计器（1958）和Cox比例风险模型（1972）的理论基础与数学形式。
+@book{liu2012survival,
+  title={Survival analysis: models and applications},
+  author={Liu, Xian},
+  year={2012},
+  publisher={John Wiley \& Sons}
 }

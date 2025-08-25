@@ -4,24 +4,25 @@
 \subsection{Why be Bayesian?}\label{Why Bayesian}
 When we first encounter statistical modelling, we often focus on finding the “best parameter estimate,” such as using Maximum Likelihood Estimation (MLE), the Method of Moments, or Least Squares regression as common non-Bayesian approaches to fit the model to the data~\cite{van2021bayesian}. This works well in many tasks, but in practice, we also need to know how uncertain that estimate is~\cite{gelman1995bayesian}. 
 
-In situations with a limited sample size, complex structures, or high censoring rates, classical estimators can be biased, and their uncertainty is hard to quantify~\cite{van2021bayesian, ibrahim2013bayesian}. For example, in Efron’s leukemia survival study~\cite{Efron01091977}, only $21$ patients were included, and over half were right-censored. The Cox model estimated a hazard ratio of about $2.0$, but with a standard error nearly as significant as the estimate, giving a wide 95\% CI ($\approx$0.8–5.0) and making risk assessment unreliable. This illustrates how high censoring and small samples can destabilise classical estimators, a challenge frequently encountered in survival studies where censoring may be driven by complex or partially unobserved mechanisms. Such situations are difficult for classical methods but naturally handled in a Bayesian framework.
+In situations with a limited sample size, complex structures, or high censoring rates, classical estimators can be biased, and their uncertainty is hard to quantify~\cite{van2021bayesian, ibrahim2013bayesian}. For example, in Efron’s leukemia survival study~\cite{Efron01091977}, only $21$ patients were included, and over half were right-censored. The Cox model estimated a hazard ratio of about $2.0$, but with a standard error nearly as significant as the estimate, giving a wide 95\% CI ($\approx$0.8–5.0) and making risk assessment unreliable. This illustrates how high censoring and small samples can destabilise classical estimators, a challenge frequently encountered in survival studies where complex or partially unobserved mechanisms may drive censoring. Such situations are difficult for classical methods but naturally handled in a Bayesian framework.
 
 Bayesian methods address this limitation by treating parameters as random variables whose uncertainty is described by a probability distribution~\cite{gelman1995bayesian}. This allows prior information and data evidence to be combined through
 $$
-\text{Posterior}(\theta \mid data)
+\text{Posterior}(\theta \mid D)
 \propto
-\text{Likelihood}(data \mid \theta)
+\text{Likelihood}( D \mid \theta)
 \times
 \text{Prior}(\theta),
 $$
 yielding a full posterior distribution rather than a single estimate. This reframes inference from “finding the right number” to dynamically updating and refining beliefs, providing not only point estimates but also credible intervals and posterior predictive distributions for a complete picture of uncertainty~\cite{gelman1995bayesian}.
 
-The flexibility of this approach makes it applicable from simple mean estimation and regression to hierarchical, time-series, and deep generative models~\cite{carlin1997bayes}. In survival analysis, where censoring is common, Bayesian models naturally accommodate it within the likelihood~\cite{bartovs2022informed}. When sample sizes are small or censoring rates are high, priors can stabilise estimation by incorporating historical data or expert knowledge~\cite{gelman1995bayesian}. Whether using parametric or non-parametric approaches, Bayesian inference offers a structured, interpretable, and extensible framework~\cite{van2021bayesian}. 
+The flexibility of this approach makes it applicable from simple mean estimation and regression to hierarchical, time-series, and deep generative models~\cite{carlin1997bayes}. In survival analysis, where censoring is common, Bayesian models naturally accommodate it within the likelihood~\cite{bartovs2022informed}. When sample sizes are small or censoring rates are high, priors can stabilise estimation by incorporating historical data or expert knowledge~\cite{gelman1995bayesian}. Beyond parameter estimation, Bayesian inference also provides a principled framework for model checking: by drawing parameters from the posterior and generating replicated datasets through posterior predictive simulation, one can directly assess whether the model captures the structural features of the observed data~\cite{https://doi.org/10.1002/ecm.1314, cho2025nonlinear}. Whether using parametric or non-parametric approaches, Bayesian inference offers a structured, interpretable, and extensible framework~\cite{van2021bayesian}. 
 
 Later in this study, we will build on this Bayesian foundation to introduce modelling extensions that explicitly account for censoring mechanisms, allowing us to address limitations of standard survival models in a principled way.
 
 
-
+%%%%%今天就到这，然后接下来你要把你做的那些衔接看一看，合不合理！然后接着修改老师的意见！！！
+%%%%反正你的结论肯定要大改的，尽量能改完，因为你还要跑模型！
 
 \subsection{Fundamentals of Survival Analysis} \label{Fundamentals of Survival Analysis}
 Given the limitations of classical methods discussed in the previous section, particularly under high censoring and small sample sizes, we adopt a Bayesian framework for survival analysis. Before introducing the proposed model, we briefly review the core quantities in survival analysis, which will serve as the foundation for our methodological development~\cite{kleinbaum1996survival}.
@@ -181,7 +182,7 @@ The computation is implemented in Stan, a probabilistic programming language for
 Figure~\ref{fig:exp veteran} compares the posterior samples for $\lambda$ (histogram) with the analytic Gamma posterior (red curve), showing excellent agreement and confirming that histograms or density estimates of MCMC draws are valid representations of the underlying distribution.
 \begin{figure}[H]
     \centering
-    \includegraphics[height=8.5cm, width=0.59\textwidth]{images/veteran_post_lam.png}
+    \includegraphics[height=7.5cm, width=0.55\textwidth]{images/veteran_post_lam.png}
     \caption{{\small Posterior distribution of $\lambda$ from MCMC samples (histogram) and analytic Gamma posterior (red curve) for the Veteran dataset.}}
     \label{fig:exp veteran}
 \end{figure}
@@ -198,17 +199,12 @@ Figure~\ref{fig:exp veteran} compares the posterior samples for $\lambda$ (histo
 
 \subsection{Model Checking}\label{sec:model checking}
 \input{MSc_Statistics_Research_Report_paper/section/Methods_subsection/model checking}
-
 \subsection{Impact of the Survey-Length Parameter \texorpdfstring{$A$}{A} on Censoring and Model Fit}
 \label{Impact of A}
 \input{MSc_Statistics_Research_Report_paper/section/Methods_subsection/Choosing and Interpreting A}
-
-
 \subsection{Bayesian Estimation of \texorpdfstring{$A$}{A} in Exponential Censoring Models}
 \label{A_bayes}
 \input{MSc_Statistics_Research_Report_paper/section/Methods_subsection/Bayesian Estimation of $A$ in Exponential Censoring Models}
-
-
 \subsection{Identifiability and Posterior Structure of \texorpdfstring{$\lambda$}{lambda} and \texorpdfstring{$A$}{A}}
 \input{MSc_Statistics_Research_Report_paper/section/Methods_subsection/Identifiability and Posterior Structure of lambda and A}
 
