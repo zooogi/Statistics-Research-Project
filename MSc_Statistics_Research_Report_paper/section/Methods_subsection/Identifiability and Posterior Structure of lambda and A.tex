@@ -5,7 +5,7 @@ To address this, we first establish the identifiability of $(\lambda, A)$, and t
 \subsubsection{Identifiability}
 Once the new parameter $A$ is introduced, the first question is whether the model remains identifiable. 
 \begin{definition}
-If the observed random variables are $(Y, \delta)$ whose distribution depends on parameters $(\lambda, A)$, denoted by
+If the observed random variables are $(Y, \delta)$ whose distribution depends on parameters $(\lambda, A)$, denoted by~\cite{maclaren2020estimatedidentifiabilityestimabilitycausal}
 \begin{equation}
     \mathcal{L}(Y,\delta \mid \lambda,A),
 \end{equation}
@@ -14,7 +14,7 @@ then the parameter pair $(\lambda, A)$ is identifiable if and only if
     \mathcal{L}(Y,\delta \mid \lambda_1,A_1) = \mathcal{L}(Y,\delta \mid \lambda_2,A_2)
 \quad \Rightarrow \quad (\lambda_1,A_1) = (\lambda_2,A_2).
 \end{equation}
-In other words, no two distinct parameter pairs can induce the same distribution of the observations.
+In other words, no two distinct parameter pairs can induce the same distribution of the observations~\cite{henao2011sparse, maclaren2020estimatedidentifiabilityestimabilitycausal}.
 \end{definition}
 \begin{proof}
     \begin{enumerate}
@@ -50,31 +50,31 @@ Under this setting, the log-posterior is
    + \log \pi_\lambda(\lambda) \nonumber \\[6pt]
 &\quad + \log \pi_A(A) + \log \mathbf 1\{A \ge \max_i y_i\}.
 \end{align}
-Since the model involves only two parameters $(\lambda, A)$, we approximate the posterior distribution by a regular two-dimensional grid. Specifically, we construct a grid of candidate points and evaluate the log-posterior $\log p(\lambda_i, A_j \mid \mathcal D)$ at each location. Exponentiating and normalizing then yields a discrete approximation of the posterior distribution
+Since the model involves only two parameters $(\lambda, A)$, we approximate the posterior distribution by a regular two-dimensional grid~\cite{mcelreath2021grid}. Specifically, we construct a grid of candidate points and evaluate the log-posterior $\log p(\lambda_i, A_j \mid \mathcal D)$ at each location. Exponentiating and normalizing then yields a discrete approximation of the posterior distribution~\cite{ORMEROD201145,mcelreath2021grid}
 \begin{equation}
     w_{ij} \;\propto\; \exp\!\Bigl(\log p(\lambda_i, A_j \mid \mathcal D)\Bigr), \qquad \tilde w_{ij} \;=\; \frac{w_{ij}}{\sum_{i,j} w_{ij}} ,
 \end{equation}
 where $w_{ij}$ denotes the unnormalized posterior weight at $(\lambda_i,A_j)$, and $\tilde w_{ij}$ gives the normalized probability distribution.
 
-Based on these weights, the geometry of the posterior can be visualized directly using contour plots. Unlike MCMC, this grid-based approach avoids issues of convergence diagnostics, while the two-dimensional grid enables a complete visualization of the posterior structure (e.g., unimodality, multimodality, tail behaviour). This helps to reveal parameter dependencies and assess finite-sample identifiability.
+Based on these weights, the geometry of the posterior can be visualized directly using contour plots~\cite{maclaren2020estimatedidentifiabilityestimabilitycausal, mcelreath2021grid}. Unlike MCMC, this grid-based approach avoids issues of convergence diagnostics, while the two-dimensional grid enables a complete visualization of the posterior structure~\cite{joshi2016improvinggridbasedbayesian} (e.g., unimodality, multimodality, tail behaviour). This helps to reveal parameter dependencies and assess finite-sample identifiability.
 
-In addition to raw contour visualization, we compute highest posterior density (HPD) regions on the grid, corresponding to coverage levels analogous to one- and two-standard-deviation intervals under a Gaussian distribution (39.3\% and 86.5\%). These HPD contours provide a quantitative summary of posterior uncertainty and allow us to assess whether the joint posterior exhibits approximately normal behaviour or deviates substantially (e.g., skewness, heavy tails).
+In addition to raw contour visualization, we compute highest posterior density (HPD) regions on the grid, corresponding to coverage levels analogous to one- and two-standard-deviation intervals under a Gaussian distribution (39.3\% and 86.5\%)~\cite{kocev2021modeling}. These HPD contours provide a quantitative summary of posterior uncertainty and allow us to assess whether the joint posterior exhibits approximately normal behaviour or deviates substantially (e.g., skewness, heavy tails).
 
-After obtaining the discretised posterior distribution, a natural next step is to extract the maximum a posteriori (MAP) estimate. Within the grid framework, the MAP corresponds to the grid point $(\lambda^*, A^*)$ with the highest weight
+After obtaining the discretised posterior distribution, a natural next step is to extract the maximum a posteriori (MAP) estimate~\cite{gelman1995bayesian}. Within the grid framework, the MAP corresponds to the grid point $(\lambda^*, A^*)$ with the highest weight
 \begin{equation}
     (\lambda^*, A^*) = \arg\max_{\lambda,A} \; p(\lambda,A \mid \mathcal D).
 \end{equation}
-This provides the most plausible parameter pair, which can serve as a reference point for pseudo-data generation and subsequent model checking.
+This provides the most plausible parameter pair, which can serve as a reference point for pseudo-data generation and subsequent model checking~\cite{robert2007bayesian, gelman1995bayesian}.
 
 
 
 \subsubsection{Marginalization of \texorpdfstring{$A$}{A} and Consistency Check}
 \label{边际化章节}
-The joint posterior $p(\lambda, A \mid \mathcal D)$ captures the dependence between the two parameters. To verify theoretical consistency with the original exponential model, we consider the marginal posterior of $\lambda$ obtained by integrating out $A$.   
+The joint posterior $p(\lambda, A \mid \mathcal D)$ captures the dependence between the two parameters. To verify theoretical consistency with the original exponential model, we consider the marginal posterior of $\lambda$ obtained by integrating out $A$~\cite{gelman1995bayesian}.   
 
 The central question is: does the marginal posterior of $\lambda$ coincide with that of the original exponential model (Equation~\ref{eq:16})? If so, this confirms that the extended model remains compatible with the original formulation and does not alter inference on $\lambda$.
 
-Starting from Equation~\eqref{A_post}, we integrate out $A$
+Starting from Equation~\eqref{A_post}, we integrate out $A$~\cite{berger1999integrated}
 \begin{equation}
     p(\lambda \mid \mathcal D)
 = \int p(\lambda, A \mid \mathcal D)\,dA.
@@ -108,6 +108,6 @@ A^{-n}\,\prod_{i:\,\delta_i=1}(A-y_i)\,\pi_A(A)\,dA}_{\text{constant, independen
 \end{align}
 This is exactly the posterior distribution of the original exponential model (Equation~\ref{eq:16}).  
 
-Numerically, the same result can be recovered by marginalizing over $A$ in the grid-based posterior representation: summing the normalized weights $\tilde w_{ij}$ along the $A$ dimension for each fixed $\lambda$ yields the marginal posterior of $\lambda$. This numerical implementation matches the analytical derivation above, providing a computational-theoretical cross-check.
+Numerically, the same result can be recovered by marginalizing over $A$ in the grid-based posterior representation: summing the normalized weights $\tilde w_{ij}$ along the $A$ dimension for each fixed $\lambda$ yields the marginal posterior of $\lambda$~\cite{ORMEROD201145, cowles2009reparameterized}. This numerical implementation matches the analytical derivation above, providing a computational-theoretical cross-check.
 
 In summary, marginalizing $A$ restores the same posterior distribution for $\lambda$ as in the original exponential model. This demonstrates that the extended model is fully consistent with the original formulation: introducing $A$ enriches the model by explicitly representing the censoring window, while preserving the fundamental inference on $\lambda$.

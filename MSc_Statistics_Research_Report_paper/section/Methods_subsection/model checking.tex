@@ -1,10 +1,10 @@
 \subsubsection{Why Are Two Layers of Model Checking Necessary}
 \label{subsec:wo Layers of Model Checking}
-In the previous section, we derived the exponential survival model under a Gamma prior, demonstrated its closed-form posterior, and confirmed the agreement between analytical and MCMC-based computation. While this validates parameter estimation under the model’s assumptions, it does not guarantee that the model itself captures the key structural features of the observed data~\cite{62bfc978-09b1-3997-9776-380d0b45e9c2, gelman1995bayesian}.
+In Section~\ref{指数模型贝叶斯推断过程}, we derived the exponential survival model under a Gamma prior, demonstrated its closed-form posterior, and confirmed the agreement between analytical and MCMC-based computation. While this validates parameter estimation under the model’s assumptions,  it does not guarantee that the model itself captures the key structural features of the observed data ~\cite{62bfc978-09b1-3997-9776-380d0b45e9c2, gelman1995bayesian} — for instance, the constant-hazard assumption of the exponential distribution may be too restrictive.
 
 In practice, the actual data-generating process may involve additional unobserved mechanisms~\cite{kalbfleisch2002statistical}. For example, there may be a fixed observation window applied to all individuals, shaping the censoring pattern in ways the current model does not explicitly represent. Ignoring such mechanisms can lead to systematic bias in parameter estimates and distort model predictions~\cite{stats5010006}.
 
-Before drawing inferences or making interpretations, it is therefore necessary to examine both structural validity and adequacy of fit~\cite{62bfc978-09b1-3997-9776-380d0b45e9c2}. In Bayesian modelling, the primary purpose of model checking is to assess whether the proposed model is grounded in solid assumptions, both in terms of its structure and its fitting ability~\cite{https://doi.org/10.1002/ecm.1314}. Unlike traditional approaches that rely solely on goodness-of-fit metrics (such as the likelihood value or information criteria like WAIC or LOO)~\cite{cho2025nonlinear, https://doi.org/10.1002/ecm.1314}, model checking shifts the focus away from mere “score performance” on observed data and toward verifying whether the model captures key structural features from a generative perspective. 
+Before drawing inferences or making interpretations, it is therefore necessary to examine both structural validity and adequacy of fit~\cite{62bfc978-09b1-3997-9776-380d0b45e9c2}. In Bayesian modelling, the primary purpose of model checking is to assess whether the proposed model is grounded in sound assumptions and whether it can reproduce the observed data~\cite{https://doi.org/10.1002/ecm.1314}. Unlike traditional approaches that rely solely on goodness-of-fit metrics (such as the likelihood value or information criteria like WAIC or LOO)~\cite{cho2025nonlinear, https://doi.org/10.1002/ecm.1314}, model checking shifts the focus away from mere “score performance” on observed data and toward verifying whether the model captures key structural features from a generative perspective. 
 
 As shown in Figure~\ref{flowchart}, this process reflects two fundamental validation tasks in Bayesian modelling.
 \begin{enumerate}
@@ -15,9 +15,9 @@ As shown in Figure~\ref{flowchart}, this process reflects two fundamental valida
 %%%%%%%%%%%%%%%流程图workflow%%%%%%%%%%
 \begin{figure}[H]
 \centering
-\resizebox{0.52\linewidth}{!}{
+\resizebox{0.55\linewidth}{!}{
 \begin{tikzpicture}[
- scale=0.50,
+ scale=0.53,
   every node/.style={transform shape}, 
   node distance=11mm,
   box/.style      ={rectangle, draw, rounded corners, align=center,
@@ -29,10 +29,10 @@ As shown in Figure~\ref{flowchart}, this process reflects two fundamental valida
 %--- Main process node ------------------------------------------------------
 \node[box]      (model)   {\textbf{Define/Revise a model}};
 
-\node[box]      (checking1)  [below=of model] {\textbf{Simulation-based Model Checking} \\
+\node[box]      (checking1)  [below=8mmof model] {\textbf{Simulation-based Model Checking} \\
 (Simulate with $\lambda_0$; fit model; recover $\lambda_0$?)};
 
-\node[decision] (pass1)   [below=10mm of checking1] {\textbf{Plausible?}};
+\node[decision] (pass1)   [below=6mm of checking1] {\textbf{Plausible?}};
 
 \node[box]      (fit)     [below=of pass1]  {\textbf{Fit to real data}\\
 (Compute posterior)};
@@ -41,7 +41,7 @@ As shown in Figure~\ref{flowchart}, this process reflects two fundamental valida
 (Generate fake data from Posterior)\\
 (Compare fake vs real)};
 
-\node[decision] (pass2)   [below=of gen] {\textbf{Adequate?}};
+\node[decision] (pass2)   [below=6mmof gen] {\textbf{Adequate?}};
 
 \node[box]     (report)  [below=of pass2] {\textbf{Report/Interpret}};
 
@@ -66,12 +66,13 @@ This workflow clearly distinguishes two levels of model checking.
 
 First is the \textbf{Simulation-based Model Checking}, which evaluates structural identifiability based on known parameters~\cite{10.1093/bioinformatics/btp358}. Before fitting any real data, we can simulate pseudo-datasets using a fixed value $\lambda_0$, and then re-fit the model using the same procedure. If we successfully “recover” $\lambda_0$, this suggests that the model structure is sound; failure to do so implies structural flaws in the model, rendering downstream inferences on real data invalid~\cite{10.1093/bioinformatics/btp358, pub.1044073403}.
 
-Second is the \textbf{Posterior Predictive Checking}, which assesses posterior adequacy after fitting the model to real data~\cite{https://doi.org/10.1002/ecm.1314}. We draw samples from the posterior distribution and generate “fake data” to check whether the model can reproduce the statistical features of the observed data. The key idea is that if data generated under the posterior distribution differ significantly from real data in terms of censoring structure and event-time distribution, this suggests that the model fails to capture the true underlying process~\cite{62bfc978-09b1-3997-9776-380d0b45e9c2}. Bayesian methods naturally account for this uncertainty by incorporating the full posterior distribution.
+Second is the \textbf{Posterior Predictive Checking}, which evaluates the adequacy of the fitted model after conditioning on real data~\cite{https://doi.org/10.1002/ecm.1314}. In this approach, samples are drawn from the posterior distribution and used to generate replicated or “fake” datasets. These are then compared against the observed data to assess whether the model captures key statistical features. The underlying principle is that if data simulated from the posterior distribution differ systematically from the observed data, for example, in terms of censoring patterns or the distribution of event times, this indicates that the model fails to represent the true underlying process~\cite{62bfc978-09b1-3997-9776-380d0b45e9c2}. Bayesian methods naturally account for uncertainty by incorporating the full posterior distribution into this checking procedure~\cite{van2021bayesian}, ensuring that the evaluation reflects the range of plausible parameter values. Crucially, the discrepancies revealed by posterior predictive checks not only highlight structural inadequacies but also motivate targeted model extensions, guiding the development of more realistic survival models.
+
 
 To implement this, we design a simulation procedure to generate synthetic survival datasets that preserve the censoring mechanism of the real data (see Algorithm 1)~\cite{ashhad2025generatingaccuratesyntheticsurvival}. The algorithm proceeds by drawing a posterior sample $\lambda^*$ and defining a suitable time window $[a, 0]$ to simulate individuals' entry times and latent event durations. This allows us to generate a “virtual dataset” that matches the sample size and censoring structure of the original data, thereby enabling a rigorous comparison for posterior predictive model checking.
 %%%%%%算法--------------
 \begin{tcolorbox}[
-  title  = Algorithm 1: Simulating a Fake Survival Dataset (e.g.Posterior predictive model checking),label={fake data},
+  title  = Algorithm 1: Simulating a Fake Survival Dataset (e.g., Posterior predictive model checking),label={fake data},
    fonttitle  = \bfseries\footnotesize,
    fontupper = \footnotesize,
     %width = 0.9\textwidth,   
@@ -79,8 +80,7 @@ To implement this, we design a simulation procedure to generate synthetic surviv
   colback = white,
   colframe=black,
    boxsep  = 3pt,
- left=4pt,right=4pt,top=5pt,bottom=4pt,
- breakable]
+ left=4pt,right=4pt,top=5pt,bottom=4pt]
 \textbf{Input}
 \begin{itemize}[itemsep=1pt,parsep=0pt,topsep=2pt]
 \item posterior samples $\{\lambda^{(s)}\}$ \hfill (obtained by fitting real data)
