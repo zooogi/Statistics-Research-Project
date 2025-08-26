@@ -1,7 +1,5 @@
-
-
-
-\subsection{Why be Bayesian?}\label{Why Bayesian}
+\subsection{Why be Bayesian?}
+\label{Why Bayesian}
 When we first encounter statistical modelling, we often focus on finding the “best parameter estimate,” such as using Maximum Likelihood Estimation (MLE), the Method of Moments, or Least Squares regression as common non-Bayesian approaches to fit the model to the data~\cite{van2021bayesian}. This works well in many tasks, but in practice, we also need to know how uncertain that estimate is~\cite{gelman1995bayesian}. 
 
 In situations with a limited sample size, complex structures, or high censoring rates, classical estimators can be biased, and their uncertainty is hard to quantify~\cite{van2021bayesian, ibrahim2013bayesian}. For example, in Efron’s leukemia survival study~\cite{Efron01091977}, only $21$ patients were included, and over half were right-censored. The Cox model estimated a hazard ratio of about $2.0$, but with a standard error nearly as significant as the estimate, giving a wide 95\% CI ($\approx$0.8–5.0) and making risk assessment unreliable. This illustrates how high censoring and small samples can destabilise classical estimators, a challenge frequently encountered in survival studies where complex or partially unobserved mechanisms may drive censoring. Such situations are difficult for classical methods but naturally handled in a Bayesian framework.
@@ -21,11 +19,9 @@ The flexibility of this approach makes it applicable from simple mean estimation
 Later in this study, we will build on this Bayesian foundation to introduce modelling extensions that explicitly account for censoring mechanisms, allowing us to address limitations of standard survival models in a principled way.
 
 
-%%%%%今天就到这，然后接下来你要把你做的那些衔接看一看，合不合理！然后接着修改老师的意见！！！
-%%%%反正你的结论肯定要大改的，尽量能改完，因为你还要跑模型！
-
-\subsection{Fundamentals of Survival Analysis} \label{Fundamentals of Survival Analysis}
-Given the limitations of classical methods discussed in the previous section, particularly under high censoring and small sample sizes, we adopt a Bayesian framework for survival analysis. Before introducing the proposed model, we briefly review the core quantities in survival analysis, which will serve as the foundation for our methodological development~\cite{kleinbaum1996survival}.
+\subsection{Fundamentals of Survival Analysis} 
+\label{Fundamentals of Survival Analysis}
+Given the limitations of classical methods discussed in Section~\ref{Why Bayesian}, particularly under high censoring and small sample sizes, we adopt a Bayesian framework for survival analysis. Before introducing the proposed model, we briefly review the core quantities in survival analysis, which will serve as the foundation for our methodological development~\cite{kleinbaum1996survival}.
 
 In survival analysis, let the true event time for subject $i=1,\dots,n$ be the random variable $T_i\ge 0$. Assume
 $$
@@ -75,7 +71,7 @@ These three functions are mathematically redundant. Knowing one determines the o
 
 \subsection{Parametric Exponential Model} \label{Exponential Model}
 %%%%Bridge
-In the previous section, we introduced the general setup of survival analysis and the motivation for Bayesian inference. Here, we take the exponential model as a worked example because its simplicity and closed-form properties make it easier to focus on the role of the censoring mechanism without additional model complexity~\cite{kalbfleisch2002statistical, lawless2011statistical}. This clarity will be useful later when introducing an observation-window parameter $A$ to examine its influence on the censoring structure. 
+To make these ideas concrete, we consider the exponential model as a worked example. Its simplicity and closed-form properties make it particularly suitable for highlighting the role of the censoring mechanism without introducing additional model complexity~\cite{kalbfleisch2002statistical, lawless2011statistical}. This makes it a convenient baseline for the model-checking exercises that follow, where we assess whether such a simple hazard structure can adequately capture the observed data.
 
 %%%General survival likelihood and Bayesian formulation
 \subsubsection{General Survival Likelihood and Bayesian Formulation}

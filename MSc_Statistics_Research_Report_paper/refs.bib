@@ -424,27 +424,23 @@ DOI = {10.3390/stats5010006}
 
 
 
-%%%可识别性
-@misc{maclaren2020estimatedidentifiabilityestimabilitycausal,
-      title={What can be estimated? Identifiability, estimability, causal inference and ill-posed inverse problems}, 
-      author={Oliver J. Maclaren and Ruanui Nicholson},
-      year={2020},
-      eprint={1904.02826},
-      archivePrefix={arXiv},
-      primaryClass={math.ST},
-      url={https://arxiv.org/abs/1904.02826}, 
+%%%可识别性定义，维基给的
+@book{lehmann1998theory,
+  title={Theory of point estimation},
+  author={Lehmann, Erich Leo and Casella, George},
+  year={1998},
+  publisher={Springer}
+}
+%%%可识别性，维基那里，但是一一映射转换成等号的那个证明
+@book{van2000asymptotic,
+  title={Asymptotic statistics},
+  author={Van der Vaart, Aad W},
+  volume={3},
+  year={2000},
+  publisher={Cambridge university press}
 }
 
 
-%这篇论文在第2节中明确指出 identifiability 是关于参数对是否能唯一确定概率分布的一个性质。
-@article{henao2011sparse,
-  title={Sparse Linear Identifiable Multivariate Modeling.},
-  author={Henao, Ricardo and Winther, Ole},
-  journal={Journal of Machine Learning Research},
-  volume={12},
-  number={3},
-  year={2011}
-}
 
 %%%grid
 @online{mcelreath2021grid,
@@ -554,4 +550,57 @@ eprint = {
   author={Liu, Xian},
   year={2012},
   publisher={John Wiley \& Sons}
+}
+
+
+%%使用恒定进入率模拟删失数据来检验贝叶斯模型的适用性，是此文的关键分析方法。
+@article{doi:10.1177/0049124103257303,
+author = {Scott M. Lynch and Bruce Western},
+title ={Bayesian Posterior Predictive Checks for Complex Models},
+
+journal = {Sociological Methods \& Research},
+volume = {32},
+number = {3},
+pages = {301-335},
+year = {2004},
+doi = {10.1177/0049124103257303},
+
+URL = { 
+    
+        https://doi.org/10.1177/0049124103257303
+    
+    
+
+},
+eprint = { 
+    
+        https://doi.org/10.1177/0049124103257303
+    
+    
+
+}
+,
+    abstract = { In sociological research, it is often difficult to compare nonnested models and to evaluate the fit of models in which outcome variables are not normally distributed. In this article, the authors demonstrate the utility of Bayesian posterior predictive distributions specifically, as well as a Bayesian approach to modeling more generally, in tackling these issues. First, they review the Bayesian approach to statistics and computation. Second, they discuss the evaluation of model fit in a bivariate probit model. Third, they discuss comparing fixed- and random-effects hierarchical linear models. Both examples highlight the use of Bayesian posterior predictive distributions beyond these particular cases. }
+}
+
+
+@misc{maclaren2020estimatedidentifiabilityestimabilitycausal,
+      title={What can be estimated? Identifiability, estimability, causal inference and ill-posed inverse problems}, 
+      author={Oliver J. Maclaren and Ruanui Nicholson},
+      year={2020},
+      eprint={1904.02826},
+      archivePrefix={arXiv},
+      primaryClass={math.ST},
+      url={https://arxiv.org/abs/1904.02826}, 
+}
+
+
+%这篇论文在第2节中明确指出 identifiability 是关于参数对是否能唯一确定概率分布的一个性质。
+@article{henao2011sparse,
+  title={Sparse Linear Identifiable Multivariate Modeling.},
+  author={Henao, Ricardo and Winther, Ole},
+  journal={Journal of Machine Learning Research},
+  volume={12},
+  number={3},
+  year={2011}
 }

@@ -1,36 +1,46 @@
 After completing the Bayesian estimation for parameter $A$, a natural question arises: 
-Does the extended model remain theoretically identifiable and consistent with the original exponential survival model? 
-To address this, we first establish the identifiability of $(\lambda, A)$, and then examine how the joint posterior structure and marginalization of $A$ reflect consistency with the baseline model. 
+Does the extended survival model, under the parametrization $(\lambda, A)$, remain theoretically identifiable and consistent with the original exponential survival model?
+To address this, we first establish the identifiability of $(\lambda, A)$ within this model, and then examine how the joint posterior structure and marginalization of $A$ reflect consistency with the baseline model. 
 
 \subsubsection{Identifiability}
-Once the new parameter $A$ is introduced, the first question is whether the model remains identifiable. 
-\begin{definition}
-If the observed random variables are $(Y, \delta)$ whose distribution depends on parameters $(\lambda, A)$, denoted by~\cite{maclaren2020estimatedidentifiabilityestimabilitycausal}
+Once the new parameter $A$ is introduced, the first question is whether the model indexed by $(\lambda, A)$ remains identifiable. That is, whether distinct parameter values induce distinct distributions of the observables.
+\begin{definition}\textbf{(Identifiability)}. Consider a statistical model $\mathcal P=\{P_\theta:\theta\in\Theta\}$, where $\theta$ is the parameter indexing the family and $\Theta$ may be finite- or infinite-dimensional. We say that $\mathcal P$ is identifiable under the parametrization $\theta$ if the following condition holds~\cite{lehmann1998theory, van2000asymptotic}
 \begin{equation}
-    \mathcal{L}(Y,\delta \mid \lambda,A),
+    P_{\theta_1}=P_{\theta_2}\ \Longrightarrow\ \theta_1=\theta_2,\qquad \forall\,\theta_1,\theta_2\in\Theta .
 \end{equation}
-then the parameter pair $(\lambda, A)$ is identifiable if and only if
-\begin{equation}
-    \mathcal{L}(Y,\delta \mid \lambda_1,A_1) = \mathcal{L}(Y,\delta \mid \lambda_2,A_2)
-\quad \Rightarrow \quad (\lambda_1,A_1) = (\lambda_2,A_2).
-\end{equation}
-In other words, no two distinct parameter pairs can induce the same distribution of the observations~\cite{henao2011sparse, maclaren2020estimatedidentifiabilityestimabilitycausal}.
+Equivalently, the mapping $\theta\mapsto P_\theta$ is injective~\cite{lehmann1998theory}.
 \end{definition}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{proof}
-    \begin{enumerate}
-        \item \textbf{Identifiability of $A$}. The most direct approach is to examine the support of the observed data $Y$. For censored observations ($\delta=0$), the density is
-         \begin{equation}
-             f(Y=y,\delta=0 \mid \lambda,A) = \frac{1}{A} e^{-\lambda y}, \quad 0 \le y \le A.
-         \end{equation}
-         Its support is $[0, A]$, which is determined entirely by $A$ and independent of $\lambda$. Since the support is an intrinsic property of the distribution, two parameter pairs that generate the same distribution must share the same support, hence $A_1=A_2$. Thus, $A$ is identified from the support.
-         \item \textbf{Identifiability of $\lambda$.}
-         Once $A$ is fixed, all distributions share the same support $[0, A]$, so the support no longer distinguishes parameters. We then exploit the “shape’’ of the distribution via the ratio of event to censoring densities，
-         \begin{equation}
-             R(y) = \frac{f(Y=y,\delta=1 \mid \lambda,A)}{f(Y=y,\delta=0 \mid \lambda,A)} = \lambda (A-y), \quad 0<y<A.
-         \end{equation}
-         This ratio is linear in $y$, with slope $-\lambda$ and intercept $\lambda A$. Since $A$ has already been identified from the support, the slope uniquely determines $\lambda$.
-    \end{enumerate}
-    If two parameter pairs $(\lambda_1,A_1)$ and $(\lambda_2,A_2)$ induce the same observed distribution, then necessarily $A_1=A_2$, and hence $\lambda_1=\lambda_2$. Therefore, the parameter pair $(\lambda, A)$ is structurally identifiable in this model.
+The observed data are pairs $(Y,\delta)$ with $Y=\min(T,C)$ and $\delta=\mathbf 1\{T\le C\}$. 
+Under $T\sim\text{Exp}(\lambda)$, independent censoring with horizon $A$, and uniform entry, 
+the distribution $P_\psi$ with $\psi=(\lambda,A)$ is characterized by two component densities
+\begin{equation}
+f_0(y\mid\lambda,A)=\frac{1}{A}\,e^{-\lambda y}, \quad 0\le y\le A, \qquad (\delta=0),
+\end{equation}
+\begin{equation}
+f_1(y\mid\lambda,A)=\lambda e^{-\lambda y}\Big(1-\tfrac{y}{A}\Big), \quad 0<y<A, \qquad (\delta=1).
+\end{equation}
+\textbf{Identifiability of $A$}. 
+For censored observations $(\delta=0)$, the density $f_0$ has support $[0,A]$, depending only on $A$. Suppose $P_{\lambda_1,A_1}=P_{\lambda_2,A_2}$. If $A_1\ne A_2$, without loss of generality let $A_1<A_2$, 
+and consider $B=(A_1,(A_1+A_2)/2]$. Then
+\begin{equation}
+P_{\lambda_1,A_1}(Y\in B,\delta=0)=\int_B \tfrac{1}{A_1}e^{-\lambda_1 y}\,dy=0,
+\end{equation}
+while
+\begin{equation}
+P_{\lambda_2,A_2}(Y\in B,\delta=0)=\int_B \tfrac{1}{A_2}e^{-\lambda_2 y}\,dy>0.
+\end{equation}
+This contradiction implies $A_1=A_2$. Hence, the parameter $A$ is identifiable.
+
+\textbf{Identifiability of $\lambda$.}
+Fixing $A$, the support is identical across all parameter values, so differences must arise from the shape of the distribution. Since $P_\psi$ is fully determined by the pair $(f_0,f_1)$, any functional transformation thereof also characterizes the model. In particular, the ratio of event to censoring densities,
+\begin{equation}
+R(y;\lambda,A)=\frac{f_1(y\mid\lambda,A)}{f_0(y\mid\lambda,A)}=\lambda(A-y), \qquad 0<y<A ,
+\end{equation}
+provides a convenient summary to examine the role of $\lambda$. This ratio is a deterministic linear function in $y$, with slope $-\lambda$ and intercept $\lambda A$. Since $A$ has already been identified in step 1, equality of ratios implies $\lambda_1=\lambda_2$. 
+
+Therefore, both parameters are uniquely determined by the distribution of $(Y,\delta)$, and the model is identifiable in $(\lambda,A)$.
 \end{proof}
 
 \subsubsection{Grid-based Contour Analysis of the Joint Posterior}
@@ -50,11 +60,11 @@ Under this setting, the log-posterior is
    + \log \pi_\lambda(\lambda) \nonumber \\[6pt]
 &\quad + \log \pi_A(A) + \log \mathbf 1\{A \ge \max_i y_i\}.
 \end{align}
-Since the model involves only two parameters $(\lambda, A)$, we approximate the posterior distribution by a regular two-dimensional grid~\cite{mcelreath2021grid}. Specifically, we construct a grid of candidate points and evaluate the log-posterior $\log p(\lambda_i, A_j \mid \mathcal D)$ at each location. Exponentiating and normalizing then yields a discrete approximation of the posterior distribution~\cite{ORMEROD201145,mcelreath2021grid}
+Since the model involves only two parameters $(\lambda, A)$, we approximate the posterior on a two-dimensional grid~\cite{mcelreath2021grid}. At each grid point $(\lambda_i, A_j)$, we evaluate the log-posterior, exponentiate, and normalize to obtain weights~\cite{ORMEROD201145,mcelreath2021grid}
 \begin{equation}
     w_{ij} \;\propto\; \exp\!\Bigl(\log p(\lambda_i, A_j \mid \mathcal D)\Bigr), \qquad \tilde w_{ij} \;=\; \frac{w_{ij}}{\sum_{i,j} w_{ij}} ,
 \end{equation}
-where $w_{ij}$ denotes the unnormalized posterior weight at $(\lambda_i,A_j)$, and $\tilde w_{ij}$ gives the normalized probability distribution.
+which provides a discrete approximation to the posterior distribution.
 
 Based on these weights, the geometry of the posterior can be visualized directly using contour plots~\cite{maclaren2020estimatedidentifiabilityestimabilitycausal, mcelreath2021grid}. Unlike MCMC, this grid-based approach avoids issues of convergence diagnostics, while the two-dimensional grid enables a complete visualization of the posterior structure~\cite{joshi2016improvinggridbasedbayesian} (e.g., unimodality, multimodality, tail behaviour). This helps to reveal parameter dependencies and assess finite-sample identifiability.
 

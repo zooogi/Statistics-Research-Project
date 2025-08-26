@@ -69,18 +69,22 @@ First is the \textbf{Simulation-based Model Checking}, which evaluates structura
 Second is the \textbf{Posterior Predictive Checking}, which evaluates the adequacy of the fitted model after conditioning on real data~\cite{https://doi.org/10.1002/ecm.1314}. In this approach, samples are drawn from the posterior distribution and used to generate replicated or “fake” datasets. These are then compared against the observed data to assess whether the model captures key statistical features. The underlying principle is that if data simulated from the posterior distribution differ systematically from the observed data, for example, in terms of censoring patterns or the distribution of event times, this indicates that the model fails to represent the true underlying process~\cite{62bfc978-09b1-3997-9776-380d0b45e9c2}. Bayesian methods naturally account for uncertainty by incorporating the full posterior distribution into this checking procedure~\cite{van2021bayesian}, ensuring that the evaluation reflects the range of plausible parameter values. Crucially, the discrepancies revealed by posterior predictive checks not only highlight structural inadequacies but also motivate targeted model extensions, guiding the development of more realistic survival models.
 
 
-To implement this, we design a simulation procedure to generate synthetic survival datasets that preserve the censoring mechanism of the real data (see Algorithm 1)~\cite{ashhad2025generatingaccuratesyntheticsurvival}. The algorithm proceeds by drawing a posterior sample $\lambda^*$ and defining a suitable time window $[a, 0]$ to simulate individuals' entry times and latent event durations. This allows us to generate a “virtual dataset” that matches the sample size and censoring structure of the original data, thereby enabling a rigorous comparison for posterior predictive model checking.
+To implement this, we design a simulation procedure to generate synthetic survival datasets that preserve the censoring mechanism of the real data (see Algorithm 1)~\cite{ashhad2025generatingaccuratesyntheticsurvival}. The algorithm proceeds by drawing a posterior sample $\lambda^*$ and defining a suitable time window $[a, 0]$ to simulate individuals' entry times and latent event durations. For tractability, we assume that entry times are uniformly distributed across the observation window, corresponding to a constant entry rate during the study period. This allows us to generate a “virtual dataset” that matches the sample size and censoring structure of the original data, thereby enabling a rigorous comparison for posterior predictive model checking.
 %%%%%%算法--------------
 \begin{tcolorbox}[
-  title  = Algorithm 1: Simulating a Fake Survival Dataset (e.g., Posterior predictive model checking),label={fake data},
+  title  = {Algorithm 1: Simulating a Fake Survival Dataset (e.g., Posterior predictive model checking)},
+  label={fake data},
    fonttitle  = \bfseries\footnotesize,
-   fontupper = \footnotesize,
+   fontupper=\footnotesize,
     %width = 0.9\textwidth,   
   box align = center, 
   colback = white,
   colframe=black,
    boxsep  = 3pt,
- left=4pt,right=4pt,top=5pt,bottom=4pt]
+  left=4pt,
+   right=4pt,
+  top=5pt,
+  bottom=4pt]
 \textbf{Input}
 \begin{itemize}[itemsep=1pt,parsep=0pt,topsep=2pt]
 \item posterior samples $\{\lambda^{(s)}\}$ \hfill (obtained by fitting real data)
@@ -118,12 +122,6 @@ To implement this, we design a simulation procedure to generate synthetic surviv
 
 \subsubsection{Model Checking via ECDF under Independent Censoring}
 In model checking, to compare the overall distributional shapes of the real data and the simulated data, we use the empirical cumulative distribution function (ECDF) rather than histograms. Unlike histograms, ECDFs do not depend on subjective choices of bin widths and break points, thereby avoiding visual biases~\cite{berg2008data}. Moreover, an ECDF is a monotone right-continuous step function defined on $[0,\infty)$, which stably displays differences between samples over the entire time axis~\cite{arnold2011nonparametric, berg2008data}. Importantly, ECDFs can be plugged directly into distance statistics such as the Kolmogorov–Smirnov or Cramér–von Mises metrics~\cite{arnold2011nonparametric}, facilitating quantitative assessment of model fit.
-
-
-%%%%%%%%%今天到这了，下面还没有添加文献！！！然后后面对应的需要修改的内容还没改。明天要改完他了！！！然后周六要跑那个高等线图！！！然后先写那个章节！！！周日要写intro！！！加标题
-%%%或者周六先写个intro然后加上跑出来那个高等线图！！！
-%%%周二才写那个似然函数的A那个可识别性。
-%%%周二再继续改吧。然后我想在把结果写完之前发给他看看，然后让他给点建议。然后剩下最后一周要写完结果和conclusion了！！！
 
 In survival data, the observed duration is determined jointly by the latent event time $T\ge 0$ and the censoring time $C\ge 0$. The observed quantity is
 $$
