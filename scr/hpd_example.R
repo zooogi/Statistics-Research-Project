@@ -41,9 +41,8 @@ make_hpd_plot <- function(dens_fun, pars, xlim = c(-4, 4), ylim = c(-4, 4),
       values = c("grey80", "grey40"),       # 浅灰(外) → 深灰(内)
       labels = c("86.5% HPD", "39.3% HPD")
     ) +
-    labs(title = title,
-         x = expression(x[1]), y = expression(x[2])) +
-    theme_minimal(base_size = 12) +
+    labs(x = expression(x[1]), y = expression(x[2])) +
+    theme_minimal(base_size = 16) +
     theme(plot.title = element_text(face = "bold"),
           panel.grid = element_blank(),
           legend.position = "right" )
