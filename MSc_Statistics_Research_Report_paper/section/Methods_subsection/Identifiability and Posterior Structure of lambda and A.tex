@@ -68,8 +68,13 @@ which provides a discrete approximation to the posterior distribution.
 
 Based on these weights, the geometry of the posterior can be visualized directly using contour plots~\cite{maclaren2020estimatedidentifiabilityestimabilitycausal, mcelreath2021grid}. Unlike MCMC, this grid-based approach avoids issues of convergence diagnostics, while the two-dimensional grid enables a complete visualization of the posterior structure~\cite{joshi2016improvinggridbasedbayesian} (e.g., unimodality, multimodality, tail behaviour). This helps to reveal parameter dependencies and assess finite-sample identifiability.
 
-In addition to raw contour visualization, we compute highest posterior density (HPD) regions on the grid, corresponding to coverage levels analogous to one- and two-standard-deviation intervals under a Gaussian distribution (39.3\% and 86.5\%)~\cite{kocev2021modeling}. These HPD contours provide a quantitative summary of posterior uncertainty and allow us to assess whether the joint posterior exhibits approximately normal behaviour or deviates substantially (e.g., skewness, heavy tails).
-
+In addition to raw contour visualization, we compute highest posterior density (HPD) regions on the grid, corresponding to coverage levels analogous to one- and two-standard-deviation intervals under a Gaussian distribution (39.3\% and 86.5\%)~\cite{kocev2021modeling}. These HPD contours provide a quantitative summary of posterior uncertainty, enabling us to assess whether the joint posterior exhibits approximately normal behavior or deviates substantially (e.g., through skewness or heavy tails).
+\begin{figure}[H]
+    \centering
+    \includegraphics[height=5.5cm, width=0.8\textwidth]{images/hpd_normal_vs_student-t.pdf}
+    \caption{{\small Illustrative HPD regions (39.3\% and 86.5\%) under a bivariate normal posterior (left) and a heavy-tailed $t$ distribution ($\text{df}=2.5$, right), both with $\mu=(0,0)$ and $\Sigma=I_2$.}}
+    \label{fig:hpd-example}
+\end{figure}
 After obtaining the discretised posterior distribution, a natural next step is to extract the maximum a posteriori (MAP) estimate~\cite{gelman1995bayesian}. Within the grid framework, the MAP corresponds to the grid point $(\lambda^*, A^*)$ with the highest weight
 \begin{equation}
     (\lambda^*, A^*) = \arg\max_{\lambda,A} \; p(\lambda,A \mid \mathcal D).
