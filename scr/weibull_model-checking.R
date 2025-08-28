@@ -39,9 +39,8 @@ df_plot <- bind_rows(df_plot_real, df_plot_fake)
 p <- ggplot(df_plot, aes(x = time, color = source, group = source)) +
   stat_ecdf(linewidth = 0.8) +
   facet_wrap(~ status, scales = "free_x") +
-  labs(x = NULL, y = "ECDF",
-       title = sprintf("Posterior-predictive ECDFs under Weibull (A = %s)", A_fixed)) +
-  theme_minimal(base_size = 12) +
+  labs(x = "Months", y = "ECDF") +
+  theme_minimal(base_size = 16) +
   theme(legend.position = "right")
 print(p)
 ggsave("images/weibull_ecdf.png", plot = p, width = 7, height = 5, dpi = 300)
