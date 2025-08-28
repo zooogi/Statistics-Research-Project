@@ -44,7 +44,7 @@ Therefore, both parameters are uniquely determined by the distribution of $(Y,\d
 \end{proof}
 
 \subsubsection{Grid-based Contour Analysis of the Joint Posterior}
-
+\label{sec: Contour Joint Posterior}
 To further examine how identifiability appears in finite-sample settings, we characterize the shape of the joint posterior distribution and visualize its structure numerically.
 
 As shown in Equation~\eqref{A_post} of Section~\ref{A_bayes}, we adopt the same prior for $\lambda$ as in Section~\ref{指数模型贝叶斯推断过程} (the exponential model case), to ensure comparability and to facilitate the later marginalization check in Section~\ref{边际化章节}. For $A$, we use a uniform prior $\mathrm{Unif}(y_{\max}, y_{\max}+500)$, which is relatively broad but still consistent with the constraints discussed in Section~\ref{Impact of A}: the survey duration cannot extend indefinitely (e.g., 1000 months).
@@ -68,18 +68,18 @@ which provides a discrete approximation to the posterior distribution.
 
 Based on these weights, the geometry of the posterior can be visualized directly using contour plots~\cite{maclaren2020estimatedidentifiabilityestimabilitycausal, mcelreath2021grid}. Unlike MCMC, this grid-based approach avoids issues of convergence diagnostics, while the two-dimensional grid enables a complete visualization of the posterior structure~\cite{joshi2016improvinggridbasedbayesian} (e.g., unimodality, multimodality, tail behaviour). This helps to reveal parameter dependencies and assess finite-sample identifiability.
 
-In addition to raw contour visualization, we compute highest posterior density (HPD) regions on the grid, corresponding to coverage levels analogous to one- and two-standard-deviation intervals under a Gaussian distribution (39.3\% and 86.5\%)~\cite{kocev2021modeling}. These HPD contours provide a quantitative summary of posterior uncertainty, enabling us to assess whether the joint posterior exhibits approximately normal behavior or deviates substantially (e.g., through skewness or heavy tails).
+In addition to raw contour visualization, we compute highest posterior density (HPD) regions on the grid, corresponding to coverage levels analogous to one- and two-standard-deviation intervals under a Gaussian distribution (39.3\% and 86.5\%)~\cite{kocev2021modeling}. For a Gaussian posterior, these two HPD bands expand in a near-elliptical fashion, with the outer region roughly twice the scale of the inner one. Deviations from this scaling, therefore, provide a simple diagnostic of non-Gaussian features such as skewness or heavy tails. Figure~\ref{fig:hpd-example} illustrates this: while the Gaussian benchmark shows the expected elliptical scaling, the heavy-tailed $t$ distribution produces outer regions that expand disproportionately, reflecting its heavier tails.
 \begin{figure}[H]
     \centering
     \includegraphics[height=5.5cm, width=0.8\textwidth]{images/hpd_normal_vs_student-t.pdf}
-    \caption{{\small Illustrative HPD regions (39.3\% and 86.5\%) under a bivariate normal posterior (left) and a heavy-tailed $t$ distribution ($\text{df}=2.5$, right), both with $\mu=(0,0)$ and $\Sigma=I_2$.}}
+    \caption{{\small Illustrative HPD regions (39.3\% and 86.5\%) under a bivariate normal benchmark (left) and a heavy-tailed $t$ distribution ($\text{df}=2.5$, right), both with $\mu=(0,0)$ and $\Sigma=I_2$.}}
     \label{fig:hpd-example}
 \end{figure}
-After obtaining the discretised posterior distribution, a natural next step is to extract the maximum a posteriori (MAP) estimate~\cite{gelman1995bayesian}. Within the grid framework, the MAP corresponds to the grid point $(\lambda^*, A^*)$ with the highest weight
+After obtaining the discretised posterior distribution, we extract the maximum a posteriori (MAP) estimate, defined as~\cite{gelman1995bayesian}.
 \begin{equation}
     (\lambda^*, A^*) = \arg\max_{\lambda,A} \; p(\lambda,A \mid \mathcal D).
 \end{equation}
-This provides the most plausible parameter pair, which can serve as a reference point for pseudo-data generation and subsequent model checking~\cite{robert2007bayesian, gelman1995bayesian}.
+The MAP corresponds to the grid point with the highest weight, serves as the Bayesian analogue of the maximum likelihood estimate~\cite{robert2007bayesian, gelman1995bayesian}, and provides a representative parameter pair for generating pseudo-data in subsequent model checking.
 
 
 
