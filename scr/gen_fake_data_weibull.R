@@ -1,25 +1,26 @@
-# Weibull(rate λ, shape k) 版的假数据生成
-# R 的 rweibull 用 (shape=k, scale=θ)，与 rate 的换算是 θ = λ^(-1/k)
+# Fake data generation in Weibull (rate λ, shape k) version
+# The rweibull of R is expressed as (shape=k, scale=θ), 
+# and the conversion to rate is θ=λ ^ (-1/k)
 generate_data_fixed_weibull <- function(n = 1000,
                                         lambda = 0.05,   # rate
                                         k      = 1.4,    # shape
-                                        a      = -100,   # 进入时间下界，窗口是 [a, 0]
+                                        a      = -100,  
                                         seed   = 42) {
   set.seed(seed)
   
-  # 1) 潜在事件时长 T ~ Weibull(k, scale = λ^{-1/k})
+  # 1)  T ~ Weibull(k, scale = λ^{-1/k})
   theta <- lambda^(-1/k)
   y <- rweibull(n, shape = k, scale = theta)
   
-  # 2) 入样时间（相对“现在=0”）：均匀进入
-  T_entry <- runif(n, min = a, max = 0)  # 负数
+  # 2) Sample injection time (relative to "now=0"): uniform entry
+  T_entry <- runif(n, min = a, max = 0) 
   
-  # 3) 离开时间 = 入样 + 潜在时长
+  # 3) Departure time=sample injection+potential duration
   t_leave <- T_entry + y
   
-  # 4) 行政删失：到 0 为止
-  event <- as.integer(t_leave < 0)       # 1=事件被观测；0=删失
-  time  <- ifelse(event == 1, y, -T_entry)  # 观测到的时间
+  # 4) Administrative deletion: up to 0
+  event <- as.integer(t_leave < 0)     
+  time  <- ifelse(event == 1, y, -T_entry) 
   
   data.frame(time = time, event = event)
 }

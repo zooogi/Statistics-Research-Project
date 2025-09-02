@@ -15,8 +15,8 @@ generate_data_fixed_lambda <- function(n = 1000,
   t  <- T + y
   
   # censoring rule
-  event <- as.integer(t < 0)          # t < 0 产生逻辑向量：TRUE(事件观测) / FALSE(删失)。
-  #as.integer() 把 TRUE / FALSE 转成 1 / 0，
+  event <- as.integer(t < 0)        #T<0 generates logical vectors: TRUE (event observation)/False (censoring).
+  #As. intege() converts True/False to 1/0,，
   time  <- ifelse(event == 1, y, -T)   # observed time
   
   data.frame(time = time, event = event)

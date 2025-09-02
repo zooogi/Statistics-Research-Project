@@ -5,7 +5,6 @@ source("src/generate_fake_data_exp.R")
 fake_df <- generate_data_fixed_lambda(n = 1000, lambda = 0.05, a = -150, seed = 204)
 head(fake_df)
 table(fake_df$event)
-write.csv(fake_df, "data/fake_data_sanity.csv", row.names = FALSE)
 
 ggplot(fake_df, aes(x = time)) +
   geom_histogram(binwidth = 3, fill = "steelblue", alpha = 0.7) +
@@ -42,7 +41,7 @@ model {
 stan_sanity_data <- list(
   N     = nrow(fake_df),
   y     = fake_df$time,       
-  status = fake_df$event           # 0/1 向量
+  status = fake_df$event          
 )
 
 #fit
@@ -67,11 +66,11 @@ bayesplot::mcmc_trace(
 )
 ggsave("images/sanitycheck_exp_model_traceplot.png", width = 6, height = 4)
 
-#取后验采样的lambda
+#Take the lambda of posterior sampling
 post_sanity_exp <- extract(fit_exp_sanity,"lambda")$lambda
 
 
-#画出后验采样的lambda直方图
+#Draw a lambda histogram of posterior sampling
 png("images/simulation-based_model_check.png", width = 6, height = 4, units = "in", res = 300)
 hist(post_sanity_exp,
      breaks = 100,           

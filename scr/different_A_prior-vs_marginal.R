@@ -3,8 +3,9 @@ source("scr/A_post_contour&marginal.R")
 
 #### A prior ###############
 
-## ---- Truncated Normal prior:  A ~ N(mu, sigma^2) truncated at [a_min, +inf) ----
-## 默认把截断点设为 ymax，均值锁定在 ymax + 50，标准差 20
+## --Truncated Normal prior:  A ~ N(mu, sigma^2) truncated at [a_min, +inf) ---
+## By default, the cutoff point is set to ymax,
+#with the mean locked at ymax+50 and a standard deviation of 20
 logprior_A_truncnorm_scalar <- function(A,
                                         mu    = ymax + 50,
                                         sigma = 20,
@@ -97,8 +98,8 @@ p_lambda_cmp2 <- ggplot(lambda_df2, aes(x = lambda, y = density,
     "Grid posterior (with A, Trunc-Normal)" = 0.7
   )) +
   scale_color_manual(values = c(
-    "Grid posterior (with A, Uniform)"      = "#377EB8",  # 蓝（均匀先验）
-    "Grid posterior (with A, Trunc-Normal)" = "#4DAF4A"   # 绿（截断正态）
+    "Grid posterior (with A, Uniform)"      = "#377EB8",  
+    "Grid posterior (with A, Trunc-Normal)" = "#4DAF4A"   
   )) +
   scale_linetype_manual(values = c(
     "Grid posterior (with A, Uniform)"      = "dashed",

@@ -14,23 +14,23 @@ fake_postpred_modelcheck_exp<- generate_data_fixed_lambda(n = N, lambda = post_m
                                                           a = -200, seed = 25)
 #----------------summary------------------
 summary(fake_postpred_modelcheck_exp)
-table(fake_postpred_modelcheck_exp$event)# A=200的数据分布
+table(fake_postpred_modelcheck_exp$event)# Data distribution of A=200
 
-#----------------变成数据框合并
+#----------------merge
 real <- df %>%
   transmute(source = "real",
-            Y = stag,            # 观测时长 Y = min(T, C)
-            delta = event)       # 事件指示
+            Y = stag,            
+            delta = event)       
 
 fake <- fake_postpred_modelcheck_exp %>%
   transmute(source = "fake",
-            Y = time,  # 统一成正的观测时长
+            Y = time,  
             delta = event)
 # 合并
 dat_all <- bind_rows(real, fake)
 
 #----------plot----------------
-# ECDF（事件子样本）
+# ECDF event
 p2b1<- ggplot(filter(dat_all, delta == 1),
        aes(x = Y, colour = source)) +
   stat_ecdf(size = 1) +
@@ -40,7 +40,7 @@ p2b1<- ggplot(filter(dat_all, delta == 1),
 #save
 
 
-#ECDF（删失子样本）
+#censored
 p2b2<- ggplot(filter(dat_all, delta == 0),
         aes(x = Y, colour = source)) +
   stat_ecdf(size = 1) +
@@ -67,8 +67,8 @@ combo2b <- (p2b1 + p2b2 ) +
 combo2b
 ggsave("images/ppc_two_a200.pdf",
        plot   = combo2b,
-       width  = 7,   # 目标在论文中的实际宽度（英寸）
-       height = 2.8,   # 合理高度，别太矮
+       width  = 7,   
+       height = 2.8,   
        device = "pdf") 
 
 ######################################
@@ -81,9 +81,9 @@ table(fake_ppc_a30_exp$event)
 
 fake_a30 <- fake_ppc_a30_exp %>%
   transmute(source = "fake",
-            Y = time,  # 统一成正的观测时长
+            Y = time,  
             delta = event)
-# 合并
+# merge
 dat_a30 <- bind_rows(real, fake_a30)
 
 #########-----------a=-1000----------------------
@@ -94,9 +94,9 @@ table(fake_ppc_a1000_exp$event)
 
 fake_a1000 <- fake_ppc_a1000_exp %>%
   transmute(source = "fake",
-            Y = time,  # 统一成正的观测时长
+            Y = time,  
             delta = event)
-# 合并
+# merge
 dat_a1000 <- bind_rows(real, fake_a1000)
 
 
@@ -106,7 +106,7 @@ dat_a1000 <- bind_rows(real, fake_a1000)
 
 #----------plot----------------
 #a=-30-------------------
-# ECDF（事件子样本）
+#event
 base <- 15
 p31<-ggplot(filter(dat_a30, delta == 1),
        aes(x = Y, colour = source)) +
@@ -119,7 +119,7 @@ p31<-ggplot(filter(dat_a30, delta == 1),
 #save
 ggsave("images/ppc_event_ecdf_A30.png", width = 6, height = 4, dpi = 300)
 
-#ECDF（删失子样本）
+#ECDF (censored Subsample)
 p32<-ggplot(filter(dat_a30, delta == 0),
        aes(x = Y, colour = source)) +
   stat_ecdf(size = 1) +
@@ -156,7 +156,7 @@ ggsave("images/ppc_two_a30.pdf",
 
 
 #------------------------a=-1000-----------------
-# ECDF（事件子样本）
+# ECDF (Event Subsample)
 p1k1<-ggplot(filter(dat_a1000, delta == 1),
        aes(x = Y, colour = source)) +
   stat_ecdf(size = 1) +
@@ -194,7 +194,7 @@ comb <- (p1k1 + p1k2 ) +
 comb
 ggsave("images/ppc_two_a1000.pdf",
        plot   = comb,
-       width  = 7,   # 目标在论文中的实际宽度（英寸）
-       height = 2.8,   # 合理高度，别太矮
+       width  = 7,   
+       height = 2.8,  
        device = "pdf") 
 

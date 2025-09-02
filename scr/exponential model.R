@@ -2,7 +2,7 @@ df <- read.csv("data/raw_data_turnover.csv")
 table(df$event)
 summary(df$stag)
 length(df$event)
-#是否有缺失值
+#Are there any missing values
 sum(is.na(df))  
 library(bayesplot)
 library(rstan)
@@ -46,7 +46,7 @@ model {
 stan_turnover <- list(
   N     = nrow(df),
   y     = df$stag,       
-  status = df$event           # 0/1 向量
+  status = df$event          
 )
 
 #fit
@@ -61,8 +61,8 @@ fit_stan_turnover <- stan(
 )
 
 #————————————————————————————————————————
-##看看fit的结果
-summary(fit_stan_turnover)$summary  # 查看后验均值、标准差、Rhat 等
+##Take a look at the fit results
+summary(fit_stan_turnover)$summary  
 # —— traceplot —— 
 bayesplot::mcmc_trace(
   as.array(fit_stan_turnover, pars = "lambda"),
@@ -70,18 +70,18 @@ bayesplot::mcmc_trace(
 )
 ggsave("images/turnover_exp_model_traceplot.png", width = 6, height = 4)
 
-#取后验采样的lambda
+#Take the lambda of posterior sampling
 post_lam_turnover_stan <- rstan::extract(fit_stan_turnover,"lambda")$lambda
 
 d <- sum(df$event == 1)
 alpha<-0.001
 sum_y  <- sum(df$stag)
 beta<-0.001
-# 用一个网格来评估解析密度
+# Use a grid to evaluate analytical density
 lambda_grid  <- seq(min(post_lam_turnover_stan), max(post_lam_turnover_stan), length = 1000)
 analytic_dens <- dgamma(lambda_grid, shape =  d + alpha, rate = sum_y+beta)
 
-#画出后验采样的lambda直方图
+#Draw a lambda histogram of posterior sampling
 png("images/turnover post lambda.png", width = 6, height = 4, units = "in", res = 300)
 hist(post_lam_turnover_stan,
      breaks = 30,           

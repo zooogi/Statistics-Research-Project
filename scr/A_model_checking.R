@@ -11,21 +11,21 @@ fake_A_post<- generate_data_fixed_lambda(n = N, lambda = lambda_map,
 summary(fake_A_post)
 table(fake_A_post$event)
 
-#----------------变成数据框合并
+#----------------Merge into data frame
 real_A <- df %>%
   transmute(source = "real",
-            Y = stag,            # 观测时长 Y = min(T, C)
-            delta = event)       # 事件指示
+            Y = stag,            # Observation duration Y = min(T, C)
+            delta = event)    
 
 fake_A <- fake_A_post %>%
   transmute(source = "fake",
-            Y = time,  # 统一成正的观测时长
+            Y = time,  
             delta = event)
-# 合并
+# merge
 dat_all_A <- bind_rows(real_A, fake_A)
 
 #----------plot----------------
-# ECDF（事件子样本）
+# ECDF (Event subsample)
 pA1<- ggplot(filter(dat_all_A, delta == 1),
               aes(x = Y, colour = source)) +
   stat_ecdf(size = 1) +
@@ -35,7 +35,7 @@ pA1<- ggplot(filter(dat_all_A, delta == 1),
 
 pA1
 
-#ECDF（删失子样本）
+#ECDF (censored subsample)
 pA2<- ggplot(filter(dat_all_A, delta == 0),
               aes(x = Y, colour = source)) +
   stat_ecdf(size = 1) +

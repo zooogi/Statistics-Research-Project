@@ -97,7 +97,7 @@ mcmc_dens_overlay(posterior, pars = grep("^lambda\\[", dimnames(posterior)$param
 
 #------------ppc model checking------------------------------------
 
-# 取一组后验样本
+# Take a set of posterior samples
 post_lambda <- rstan::extract(fit, pars="lambda")$lambda   # draws x J
 A_fixed <- 179
 id <- sample(seq_len(nrow(post_lambda)), 1)
