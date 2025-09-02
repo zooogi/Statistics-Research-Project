@@ -28,12 +28,16 @@ bayesian-survival-project/
 ```
 ## How to Reproduce
 1. Run scripts in scr/ to:
--Process the dataset in data/turnover.csv
--Fit Bayesian survival models
--Generate posterior predictive checks
--Export figures to images/
 
-2. Compile the LaTeX files in paper/ (or open on Overleaf) to generate the thesis.
+   -Process the dataset in data/turnover.csv
+
+   -Fit Bayesian survival models
+
+   -Generate posterior predictive checks
+
+   -Export figures to images/
+
+3. Compile the LaTeX files in paper/ (or open on Overleaf) to generate the thesis.
 
 ## Dataset
 The employee turnover dataset is publicly available at https://www.kaggle.com/datasets/davinwijaya/employee-turnover/data
