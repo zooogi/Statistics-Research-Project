@@ -22,11 +22,11 @@ logprior_A_truncnorm_scalar <- function(A,
   log_den <- pnorm(a_min, mean = mu, sd = sigma,
                    lower.tail = FALSE, log.p = TRUE)
   
-  # 截断密度：log_num - log_den
+  # Cut off density：log_num - log_den
   return(log_num - log_den)
 }
 
-## 向量化版本，方便在网格上调用
+## Vectorized version, convenient for calling on the grid
 logprior_A_truncnorm <- Vectorize(function(A, mu = ymax + 50, sigma = 20, a_min = ymax)
   logprior_A_truncnorm_scalar(A, mu = mu, sigma = sigma, a_min = a_min)
 )
@@ -45,7 +45,7 @@ for (i in seq_len(nL)) {
   }
 }
 
-## 归一化
+## normalization
 lp_vec_tn     <- as.vector(lp_mat_tn)
 m_tn          <- max(lp_vec_tn)
 post_unn_tn   <- exp(lp_vec_tn - m_tn)
@@ -57,17 +57,17 @@ post_mat_tn   <- matrix(post_vec_tn, nrow = nL, ncol = nA)
 
 
 ## =========================
-## 2) 计算 lambda 的边际
+## 2) Calculate the margin of lambda
 ## =========================
-p_lambda_tn  <- rowSums(post_mat_tn) * dA   # Trunc-Normal(A) 的结果
+p_lambda_tn  <- rowSums(post_mat_tn) * dA   
 
-## 轻微数值漂移校正（可选）：保证积分≈1
+## Minor numerical drift correction: Ensure integration ≈ 1
 p_lambda_tn  <- p_lambda_tn  / (sum(p_lambda_tn)  * dlam)
 cat(" Trunc-Normal ≈", sum(p_lambda_tn) * dlam, "\n")
 
 
 ## =========================
-## 3) 组装到同一张图并绘制
+## 3) Assemble onto the same image and draw
 ## =========================
 
 lambda_df2 <- tibble(

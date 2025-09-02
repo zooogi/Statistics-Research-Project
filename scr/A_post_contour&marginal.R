@@ -12,8 +12,8 @@ alpha <- 0.001; beta <- 0.001
 #formula 20（paper）
 shape_post <- sum(delta) + alpha
 rate_post  <- sum(y) + beta
-lam_lo <- qgamma(0.001, shape_post, rate_post)   # ~ 0.1% 分位
-lam_hi <- qgamma(0.999, shape_post, rate_post)   # ~ 99.9% 分位
+lam_lo <- qgamma(0.001, shape_post, rate_post)  
+lam_hi <- qgamma(0.999, shape_post, rate_post)  
 
 ## The range of A
 A_lo <- ymax + 1e-6
@@ -122,7 +122,7 @@ post_hpd <- ggplot(grid_df, aes(x = lambda, y = A)) +
   geom_hline(yintercept = ymax, linetype = "dashed", colour = "grey40") +
   scale_fill_manual(
     name   = "HPD bands",
-    values = c("grey75", "grey30"),          # 外圈浅、内圈深
+    values = c("grey75", "grey30"),         
     labels = c("86.5% HPD", "39.3% HPD")
   ) +
   coord_cartesian(ylim = c(179, 182)) +
