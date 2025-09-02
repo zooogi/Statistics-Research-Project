@@ -55,7 +55,13 @@ I am sincerely indebted to my supervisor, Professor Daniel Mortlock, whose insig
 \clearpage
 
 \begin{abstract}
-    Abstracts should be no longer than 300 words, and similar in style to a general science or statistics research paper.
+This thesis explores model checking in Bayesian survival analysis, using employee turnover data as a motivating case. The dataset records the tenure of 1,129 employees, providing a setting where censoring and observation windows strongly influence inference.
+
+We develop a Bayesian framework that treats the observation window as an estimable parameter, allowing its structural role in censoring to be explicitly evaluated. A key theoretical result emerges: the marginal posterior of the event-rate parameter $\lambda$ is unaffected by prior choices on the observation window $A$, provided $A \geq y_{\max}$. This unusual separability underscores the robustness of inference on $\lambda$ despite model extension.
+
+Posterior predictive model checking, however, reveals that the exponential model with constant hazard fails to capture the “early steep, later flat” turnover pattern, systematically underestimating mid-range events. This mismatch highlights the limits of constant hazards and demonstrates the value of Bayesian model checking not only in diagnosing misfit but also in guiding model improvement.
+
+Overall, the study shows how Bayesian model checking can both advance survival methodology and provide actionable insights into workforce turnover.
 \end{abstract}
 
 \setcounter{tocdepth}{2} 
@@ -72,6 +78,7 @@ I am sincerely indebted to my supervisor, Professor Daniel Mortlock, whose insig
 \section{Introduction}
 \input{MSc_Statistics_Research_Report_paper/section/Introduction}
 \section{Dataset Overview}
+\label{sec: data}
 \input{MSc_Statistics_Research_Report_paper/section/Data}
 \section{Methods}\label{sec:methods}
 \input{MSc_Statistics_Research_Report_paper/section/Methods}
