@@ -30,14 +30,14 @@ model {
 }
 "
 
-# 准备 stan_data，一定要包含 status
+# Prepare stan_data, which must include status
 stan_data <- list(
   N      = nrow(veteran),
   y      = veteran$time,
   status = veteran$status
 )
 
-# 运行 MCMC
+# run MCMC
 fit_stan <- stan(
   model_code = stan_code,
   data       = stan_data,
@@ -47,14 +47,14 @@ fit_stan <- stan(
   refresh    = 0
 )
 
-# 提取后验
+# extract post
 post_lambda_stan <- extract(fit_stan,"lambda")$lambda
 y      <- veteran$time
 d <- sum(veteran$status)
 alpha<-0.001
 sum_y  <- sum(y)
 beta<-0.001
-# 用一个网格来评估解析密度
+# Use a grid to evaluate analytical density
 lambda_grid_stan      <- seq(min(post_lambda_stan), max(post_lambda_stan), length = 1000)
 analytic_density <- dgamma(lambda_grid_stan, shape =  d + alpha, rate = sum_y+beta)
 

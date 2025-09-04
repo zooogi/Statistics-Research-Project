@@ -25,7 +25,7 @@ transformed parameters {
   vector[J] lambda = exp(log_lambda);
 }
 model {
-  // 弱信息先验
+  // 弱信息先验；Weak information prior
   log_lambda ~ normal(0, 2);
 
   // 对数似然：sum_{i,j} [ d_ij * log λ_j  -  τ_ij * λ_j ]
@@ -51,7 +51,7 @@ generated quantities {
 }
 "
 
-# 分段切点（最后一个建议 ≥ max(stag) 或 ≥ A）
+# Segmented cutting point (last suggestion ≥ max (stage) or ≥ A)
 cuts <- c(40, 75, 105, 120, 160, 200)
 J <- length(cuts)
 c0 <- c(0, head(cuts, -1))
@@ -67,8 +67,8 @@ d   <- matrix(0L, N, J)
 
 for (j in 1:J){
   a <- c0[j]; b <- c1[j]
-  tau[, j] <- pmax(0, pmin(y, b) - a)                     # 暴露时间
-  d[, j]   <- as.integer(del == 1 & y > a & y <= b)       # 事件落在哪段
+  tau[, j] <- pmax(0, pmin(y, b) - a)                    
+  d[, j]   <- as.integer(del == 1 & y > a & y <= b)      
 }
 
 stan_data <- list(N=N, J=J, tau=tau, d=d)
@@ -77,16 +77,16 @@ stan_data <- list(N=N, J=J, tau=tau, d=d)
 sm  <- stan_model(model_code = stan_pwe_nocov)
 fit <- sampling(sm, data=stan_data, chains=4, iter=2000, warmup=1000, seed=1)
 
-# 简要summary
+# summary
 print(fit, pars="lambda", probs=c(.025,.5,.975))
 
-# 详细summary矩阵
+# Detailed summary matrix
 sum_all <- summary(fit)$summary
 lambda_sum <- sum_all[grep("^lambda\\[", rownames(sum_all)),
                       c("mean","sd","2.5%","50%","97.5%","Rhat","n_eff")]
 lambda_sum
 
-# traceplot / 密度
+# traceplot /density
 posterior <- as.array(fit)
 mcmc_trace(posterior, pars = grep("^lambda\\[", dimnames(posterior)$parameters, value = TRUE))
 mcmc_dens_overlay(posterior, pars = grep("^lambda\\[", dimnames(posterior)$parameters, value = TRUE))
@@ -104,10 +104,10 @@ id <- sample(seq_len(nrow(post_lambda)), 1)
 lam_draw <- as.numeric(post_lambda[id, ])
 stopifnot(all(is.finite(lam_draw)), all(lam_draw>0))
 
-# 生成假数据
+# Generate fake data
 fake <- simulate_pwe(N, lam_draw, cuts, A_fixed, seed=253)
 
-# ECDF 对比
+# ECDF comparison
 df_plot <- bind_rows(
   data.frame(time=df$stag, event=df$event, source="real"),
   data.frame(time=fake$time, event=fake$event, source="fake")
