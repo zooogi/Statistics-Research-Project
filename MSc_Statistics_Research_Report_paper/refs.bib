@@ -40,7 +40,7 @@
 
 
 
-%%贝叶斯模型基础
+%%生存模型模型基础
 @book{kleinbaum1996survival,
   title={Survival analysis a self-learning text},
   author={Kleinbaum, David G and Klein, Mitchel},
@@ -603,4 +603,27 @@ eprint = {
   volume={12},
   number={3},
   year={2011}
+}
+
+%%%探讨了在嵌套贝叶斯非参数模型中，参数之间由于模型结构（如frailty terms）而产生纠缠，使得先验敏感性无法避免。
+@misc{ohnishi2025principalstratificationrecurrentevents,
+      title={Principal stratification with recurrent events truncated by a terminal event: A nested Bayesian nonparametric approach}, 
+      author={Yuki Ohnishi and Michael O. Harhay and Fan Li},
+      year={2025},
+      eprint={2506.19015},
+      archivePrefix={arXiv},
+      primaryClass={stat.ME},
+      url={https://arxiv.org/abs/2506.19015}, 
+}
+
+
+%%%%贝叶斯生存模型对寿险中止行为建模时，不引入协变量会造成风险估计的偏倚；
+
+协变量（如客户特征、政策类型）帮助识别“异质风险路径”；
+
+所有重要风险建模必须考虑个体特征差异。
+@article{mahama5342937modeling,
+  title={Modeling Modern Life Insurance Policy Lapses in Ghana: A Competing Risk Approach},
+  author={Mahama, Asuma Jato and Omari-Sasu, Akoto Yaw and Alhassan, Faisal and Akulibile, James},
+  journal={Available at SSRN 5342937}
 }

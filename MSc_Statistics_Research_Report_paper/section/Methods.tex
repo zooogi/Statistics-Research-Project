@@ -33,12 +33,12 @@ Y_i=\min(T_i,\;C_i),\qquad \delta_i=\mathbf 1\{T_i\le C_i\}.
 $$
 The basic functions that describe the distribution of $T$ are:
 \begin{enumerate}
-    \item \textbf{Survival function}, the probability that the event has not occurred after time $t$
+    \item \textbf{Survival function}, which gives the probability that the event has not occurred by time $t$
    \begin{equation}
        S_T(t)=\mathbb P(T>t)=1-F_T(t),\qquad t\ge 0,
    \end{equation}
    where $F_T(t)=\mathbb P(T\le t)$. The function $S_T(\cdot)$ is non-increasing in $t$, is typically taken to be right-continuous, and satisfies $S_T(0^-)=1$~\cite{ibrahim2013bayesian}.
-   \item \textbf{Probability density function (PDF)}, the instantaneous density of failure at time $t$ (when $F_T$ is absolutely continuous with respect to Lebesgue measure)
+   \item \textbf{Probability density function (PDF)}, the instantaneous density of failure at time $t$ (for absolutely continuous $F_T$)
    \begin{equation}
    f_T(t)=\frac{d}{dt}F_T(t)=-\frac{d}{dt}S_T(t)
   \end{equation}
@@ -87,7 +87,7 @@ where $\delta_i=1$ indicates an observed event for subject $i$ (contributing $f_
 
 This formulation coherently combines exact failure times and censored observations under the independent censoring assumption, forming the basis for frequentist estimation approaches and, in the Bayesian framework, being further combined with a prior to yield the posterior distribution~\cite{kalbfleisch2002statistical}.
 
-In the Bayesian framework, the likelihood is combined with a prior $\pi(\theta)$ to form the (unnormalized) posterior
+Under the Bayesian approach, combining the likelihood with a prior $\pi(\theta)$ produces the (unnormalized) posterior
 \begin{equation}
 \pi(\theta \mid D)
 \propto
