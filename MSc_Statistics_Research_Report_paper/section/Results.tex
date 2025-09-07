@@ -1,10 +1,12 @@
 \subsection{Posterior Inference under the Extended Model}
 \label{res:post_contour}
-Figure~\ref{fig:contour} shows the joint posterior of $(\lambda, A)$ with the MAP estimate and HPD regions (39.3\% and 86.5\%). The MAP occurs at $\lambda \approx 0.0138$ and $A = y_{\max} \approx 179.45$ months, indicating that the estimate of $A$ coincides with the maximum observed tenure. This suggests that inference for $A$ is largely driven by the boundary condition $A \geq y_{\max}$ rather than information from the data.
+Figure~\ref{fig:contour} shows the joint posterior of $(\lambda, A)$ with the MAP estimate and HPD regions (39.3\% and 86.5\%). The MAP is located at $\lambda \approx 0.0138$ and $A = y_{\max} \approx 179.45$ months, meaning that the estimate of $A$ coincides exactly with the maximum observed tenure. This indicates that inference on $A$ is driven mainly by the boundary constraint $A \geq y_{\max}$, rather than additional information from the data.
 
-The posterior of $\lambda$ is sharply concentrated, showing it is well identified, whereas $A$ remains highly uncertain. The HPD regions expand vertically along the $A$ axis and are truncated at the boundary, revealing that the uncertainty in $A$ mainly reflects “how much larger than $y_{\max}$” it could be. If the posterior were Gaussian and independent, the HPD bands would form concentric ellipses (See Figure~\ref{fig:hpd-example} in Section~\ref{sec: Contour Joint Posterior}); instead, the skewed shape highlights boundary-driven effects, while $\lambda$ is nearly independent of $A$.
+The posterior of $\lambda$ is tightly concentrated and symmetric around the MAP, showing that $\lambda$ is well identified by the observed event times. In contrast, the posterior for $A$ extends vertically upward from the boundary: the HPD regions do not pin down a precise value, but instead reflect the lack of information about “how much larger than $y_{\max}$” $A$ could be. This “narrowness” near the boundary arises from the hard constraint, not from strong data support.
 
-This motivates the marginalization analysis in the next section, which checks whether integrating out $A$ preserves the inferential structure of $\lambda$ relative to the baseline exponential model.
+If the posterior were Gaussian and independent, the HPD regions would form concentric ellipses (see Figure~\ref{fig:hpd-example}); instead, they are truncated at the boundary and stretched in the $A$ direction, highlighting that $A$ is boundary-driven while $\lambda$ is nearly independent and remains well identified.
+
+This motivates the marginalization analysis in the next section, which examines whether integrating out $A$ leaves the inference for $\lambda$ consistent with the baseline exponential model.
 \begin{figure}[H]
     \centering
     \includegraphics[height=9cm, width=0.65\textwidth]{images/post_contour.pdf}
